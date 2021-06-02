@@ -65,7 +65,7 @@ int main(int argc, char * argv[])
     }
 
     MainWindow *browser = new MainWindow();
-    browser->resize(1024, 768);
+    browser->resize(1920, 1080);
     browser->show();
     return app.exec();
 }

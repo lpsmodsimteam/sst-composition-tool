@@ -49,6 +49,7 @@
 ****************************************************************************/
 
 #include <QtWidgets>
+#include <QtWebEngineWidgets>
 
 QT_BEGIN_NAMESPACE
 class QWebEngineView;
@@ -60,29 +61,11 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    Q_INVOKABLE void send_graph(QVariant);
+    Q_INVOKABLE void get_elements();
+
     MainWindow();
 
-protected slots:
-
-    void adjustLocation();
-    void changeLocation();
-    void adjustTitle();
-    void setProgress(int p);
-    void finishLoading(bool);
-
-    void viewSource();
-
-    void highlightAllLinks();
-    void rotateImages(bool invert);
-    void removeGifImages();
-    void removeInlineFrames();
-    void removeObjectElements();
-    void removeEmbeddedElements();
-
 private:
-    QString jQuery;
     QWebEngineView *view;
-    QLineEdit *locationEdit;
-    QAction *rotateAction;
-    int progress;
 };

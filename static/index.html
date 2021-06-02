@@ -8,7 +8,8 @@
   <meta name="description" content="Simple library for flow programming. Drawflow allows you to create data flows easily and quickly.">
 </head>
 <body>
-  <script src="qrc:drawflowjs"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="qrc:drawflowjs"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs=" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="qrc:drawflowcss">
   <link rel="stylesheet" type="text/css" href="qrc:beautiful" />
@@ -17,6 +18,35 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
   <script src="https://unpkg.com/micromodal/dist/micromodal.min.js"></script>
 
+   <script type="text/javascript" src="qrc:///qtwebchannel/qwebchannel.js"></script>
+
+   <script type="text/javascript">
+
+      var qt_channel;
+      document.addEventListener("DOMContentLoaded", function () {
+         new QWebChannel(qt.webChannelTransport, function (channel) {
+            qt_channel = channel.objects.jshelper;
+         });
+      });
+
+      function send_graph(data) {
+         if(typeof qt_channel !== "undefined") {
+            alert(data);
+            qt_channel.send_graph(data);
+         } else {
+            alert("  --> theQtObj not defined");
+         }
+      }
+
+    function get_elements() {
+       if(typeof qt_channel !== "undefined") {
+          qt_channel.get_elements();
+       } else {
+          alert("  --> theQtObj not defined");
+       }
+    }
+
+   </script>
 
   <header>
     <h2>Drawflow</h2>
@@ -24,8 +54,9 @@
     <div class="them-edit-link"><a href="https://jerosoler.github.io/drawflow-theme-generator/" target="_blank">🎨</a></div>
   </header>
   <div class="wrapper">
-    <div class="col">
-      <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="facebook">
+    <div class="col" name="elements">
+<!--
+    <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="facebook">
         <i class="fab fa-facebook"></i><span> Facebook</span>
       </div>
       <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="slack">
@@ -61,7 +92,7 @@
       <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="dbclick">
         <i class="fas fa-mouse"></i><span> DBClick!</span>
       </div>
-
+-->
 
     </div>
     <div class="col-right">
@@ -73,10 +104,9 @@
       </div>
       <div id="drawflow" ondrop="drop(event)" ondragover="allowDrop(event)">
 
-        <div class="btn-export" onclick="Swal.fire({ title: 'Export',
-        html: '<pre><code>'+JSON.stringify(editor.export(), null,4)+'</code></pre>'
-        })">Export</div>
-        <div class="btn-clear" onclick="editor.clearModuleSelected()">Clear</div>
+        <div class="btn-export" onclick="send_graph(editor.export())">Export</div>
+
+        <div class="btn-clear" onclick="get_elements()">Clear</div>
         <div class="btn-lock">
           <i id="lock" class="fas fa-lock" onclick="editor.editor_mode='fixed'; changeMode('lock');"></i>
           <i id="unlock" class="fas fa-lock-open" onclick="editor.editor_mode='edit'; changeMode('unlock');" style="display:none;"></i>
@@ -94,7 +124,358 @@
     var id = document.getElementById("drawflow");
     const editor = new Drawflow(id);
     editor.reroute = true;
-    editor.drawflow = {"drawflow":{"Home":{"data":{"1":{"id":1,"name":"welcome","data":{},"class":"welcome","html":"\n    <div>\n      <div class=\"title-box\">👏 Welcome!!</div>\n      <div class=\"box\">\n        <p>Simple flow library <b>demo</b>\n        <a href=\"https://github.com/jerosoler/Drawflow\" target=\"_blank\">Drawflow</a> by <b>Jero Soler</b></p><br>\n\n        <p>Multiple input / outputs<br>\n           Data sync nodes<br>\n           Import / export<br>\n           Modules support<br>\n           Simple use<br>\n           Type: Fixed or Edit<br>\n           Events: view console<br>\n           Pure Javascript<br>\n        </p>\n        <br>\n        <p><b><u>Shortkeys:</u></b></p>\n        <p>🎹 <b>Delete</b> for remove selected<br>\n        💠 Mouse Left Click == Move<br>\n        ❌ Mouse Right == Delete Option<br>\n        🔍 Ctrl + Wheel == Zoom<br>\n        📱 Mobile support<br>\n        ...</p>\n      </div>\n    </div>\n    ","typenode": false, "inputs":{},"outputs":{},"pos_x":50,"pos_y":50},"2":{"id":2,"name":"slack","data":{},"class":"slack","html":"\n          <div>\n            <div class=\"title-box\"><i class=\"fab fa-slack\"></i> Slack chat message</div>\n          </div>\n          ","typenode": false, "inputs":{"input_1":{"connections":[{"node":"7","input":"output_1"}]}},"outputs":{},"pos_x":1028,"pos_y":87},"3":{"id":3,"name":"telegram","data":{"channel":"channel_2"},"class":"telegram","html":"\n          <div>\n            <div class=\"title-box\"><i class=\"fab fa-telegram-plane\"></i> Telegram bot</div>\n            <div class=\"box\">\n              <p>Send to telegram</p>\n              <p>select channel</p>\n              <select df-channel>\n                <option value=\"channel_1\">Channel 1</option>\n                <option value=\"channel_2\">Channel 2</option>\n                <option value=\"channel_3\">Channel 3</option>\n                <option value=\"channel_4\">Channel 4</option>\n              </select>\n            </div>\n          </div>\n          ","typenode": false, "inputs":{"input_1":{"connections":[{"node":"7","input":"output_1"}]}},"outputs":{},"pos_x":1032,"pos_y":184},"4":{"id":4,"name":"email","data":{},"class":"email","html":"\n            <div>\n              <div class=\"title-box\"><i class=\"fas fa-at\"></i> Send Email </div>\n            </div>\n            ","typenode": false, "inputs":{"input_1":{"connections":[{"node":"5","input":"output_1"}]}},"outputs":{},"pos_x":1033,"pos_y":439},"5":{"id":5,"name":"template","data":{"template":"Write your template"},"class":"template","html":"\n            <div>\n              <div class=\"title-box\"><i class=\"fas fa-code\"></i> Template</div>\n              <div class=\"box\">\n                Ger Vars\n                <textarea df-template></textarea>\n                Output template with vars\n              </div>\n            </div>\n            ","typenode": false, "inputs":{"input_1":{"connections":[{"node":"6","input":"output_1"}]}},"outputs":{"output_1":{"connections":[{"node":"4","output":"input_1"},{"node":"11","output":"input_1"}]}},"pos_x":607,"pos_y":304},"6":{"id":6,"name":"github","data":{"name":"https://github.com/jerosoler/Drawflow"},"class":"github","html":"\n          <div>\n            <div class=\"title-box\"><i class=\"fab fa-github \"></i> Github Stars</div>\n            <div class=\"box\">\n              <p>Enter repository url</p>\n            <input type=\"text\" df-name>\n            </div>\n          </div>\n          ","typenode": false, "inputs":{},"outputs":{"output_1":{"connections":[{"node":"5","output":"input_1"}]}},"pos_x":341,"pos_y":191},"7":{"id":7,"name":"facebook","data":{},"class":"facebook","html":"\n        <div>\n          <div class=\"title-box\"><i class=\"fab fa-facebook\"></i> Facebook Message</div>\n        </div>\n        ","typenode": false, "inputs":{},"outputs":{"output_1":{"connections":[{"node":"2","output":"input_1"},{"node":"3","output":"input_1"},{"node":"11","output":"input_1"}]}},"pos_x":347,"pos_y":87},"11":{"id":11,"name":"log","data":{},"class":"log","html":"\n            <div>\n              <div class=\"title-box\"><i class=\"fas fa-file-signature\"></i> Save log file </div>\n            </div>\n            ","typenode": false, "inputs":{"input_1":{"connections":[{"node":"5","input":"output_1"},{"node":"7","input":"output_1"}]}},"outputs":{},"pos_x":1031,"pos_y":363}}},"Other":{"data":{"8":{"id":8,"name":"personalized","data":{},"class":"personalized","html":"\n            <div>\n              Personalized\n            </div>\n            ","typenode": false, "inputs":{"input_1":{"connections":[{"node":"12","input":"output_1"},{"node":"12","input":"output_2"},{"node":"12","input":"output_3"},{"node":"12","input":"output_4"}]}},"outputs":{"output_1":{"connections":[{"node":"9","output":"input_1"}]}},"pos_x":764,"pos_y":227},"9":{"id":9,"name":"dbclick","data":{"name":"Hello World!!"},"class":"dbclick","html":"\n            <div>\n            <div class=\"title-box\"><i class=\"fas fa-mouse\"></i> Db Click</div>\n              <div class=\"box dbclickbox\" ondblclick=\"showpopup(event)\">\n                Db Click here\n                <div class=\"modal\" style=\"display:none\">\n                  <div class=\"modal-content\">\n                    <span class=\"close\" onclick=\"closemodal(event)\">&times;</span>\n                    Change your variable {name} !\n                    <input type=\"text\" df-name>\n                  </div>\n\n                </div>\n              </div>\n            </div>\n            ","typenode": false, "inputs":{"input_1":{"connections":[{"node":"8","input":"output_1"}]}},"outputs":{"output_1":{"connections":[{"node":"12","output":"input_2"}]}},"pos_x":209,"pos_y":38},"12":{"id":12,"name":"multiple","data":{},"class":"multiple","html":"\n            <div>\n              <div class=\"box\">\n                Multiple!\n              </div>\n            </div>\n            ","typenode": false, "inputs":{"input_1":{"connections":[]},"input_2":{"connections":[{"node":"9","input":"output_1"}]},"input_3":{"connections":[]}},"outputs":{"output_1":{"connections":[{"node":"8","output":"input_1"}]},"output_2":{"connections":[{"node":"8","output":"input_1"}]},"output_3":{"connections":[{"node":"8","output":"input_1"}]},"output_4":{"connections":[{"node":"8","output":"input_1"}]}},"pos_x":179,"pos_y":272}}}}}
+    editor.drawflow = {
+   "drawflow":{
+      "Home":{
+         "data":{
+            "2":{
+               "id":2,
+               "name":"slack",
+               "data":{
+                  
+               },
+               "class":"slack",
+               "html":"          <div>            <div class=\"title-box\"><i class=\"fab fa-slack\"></i> Slack chat message</div>          </div>          ",
+               "typenode":false,
+               "inputs":{
+                  "input_1":{
+                     "connections":[
+                        {
+                           "node":"7",
+                           "input":"output_1"
+                        }
+                     ]
+                  }
+               },
+               "outputs":{
+                  
+               },
+               "pos_x":1028,
+               "pos_y":87
+            },
+            "3":{
+               "id":3,
+               "name":"telegram",
+               "data":{
+                  "channel":"channel_2"
+               },
+               "class":"telegram",
+               "html":"          <div>            <div class=\"title-box\"><i class=\"fab fa-telegram-plane\"></i> Telegram bot</div>            <div class=\"box\">              <p>Send to telegram</p>              <p>select channel</p>              <select df-channel>                <option value=\"channel_1\">Channel 1</option>                <option value=\"channel_2\">Channel 2</option>                <option value=\"channel_3\">Channel 3</option>                <option value=\"channel_4\">Channel 4</option>              </select>            </div>          </div>          ",
+               "typenode":false,
+               "inputs":{
+                  "input_1":{
+                     "connections":[
+                        {
+                           "node":"7",
+                           "input":"output_1"
+                        }
+                     ]
+                  }
+               },
+               "outputs":{
+                  
+               },
+               "pos_x":1032,
+               "pos_y":184
+            },
+            "4":{
+               "id":4,
+               "name":"email",
+               "data":{
+                  
+               },
+               "class":"email",
+               "html":"            <div>              <div class=\"title-box\"><i class=\"fas fa-at\"></i> Send Email </div>            </div>            ",
+               "typenode":false,
+               "inputs":{
+                  "input_1":{
+                     "connections":[
+                        {
+                           "node":"5",
+                           "input":"output_1"
+                        }
+                     ]
+                  }
+               },
+               "outputs":{
+                  
+               },
+               "pos_x":1033,
+               "pos_y":439
+            },
+            "5":{
+               "id":5,
+               "name":"template",
+               "data":{
+                  "template":"Write your template"
+               },
+               "class":"template",
+               "html":"            <div>              <div class=\"title-box\"><i class=\"fas fa-code\"></i> Template</div>              <div class=\"box\">                Ger Vars                <textarea df-template></textarea>                Output template with vars              </div>            </div>            ",
+               "typenode":false,
+               "inputs":{
+                  "input_1":{
+                     "connections":[
+                        {
+                           "node":"6",
+                           "input":"output_1"
+                        }
+                     ]
+                  }
+               },
+               "outputs":{
+                  "output_1":{
+                     "connections":[
+                        {
+                           "node":"4",
+                           "output":"input_1"
+                        },
+                        {
+                           "node":"11",
+                           "output":"input_1"
+                        }
+                     ]
+                  }
+               },
+               "pos_x":607,
+               "pos_y":304
+            },
+            "6":{
+               "id":6,
+               "name":"github",
+               "data":{
+                  "name":"https://github.com/jerosoler/Drawflow"
+               },
+               "class":"github",
+               "html":"          <div>            <div class=\"title-box\"><i class=\"fab fa-github \"></i> Github Stars</div>            <div class=\"box\">              <p>Enter repository url</p>            <input type=\"text\" df-name>            </div>          </div>          ",
+               "typenode":false,
+               "inputs":{
+                  
+               },
+               "outputs":{
+                  "output_1":{
+                     "connections":[
+                        {
+                           "node":"5",
+                           "output":"input_1"
+                        }
+                     ]
+                  }
+               },
+               "pos_x":341,
+               "pos_y":191
+            },
+            "7":{
+               "id":7,
+               "name":"facebook",
+               "data":{
+                  
+               },
+               "class":"facebook",
+               "html":"        <div>          <div class=\"title-box\"><i class=\"fab fa-facebook\"></i> Facebook Message</div>        </div>        ",
+               "typenode":false,
+               "inputs":{
+                  
+               },
+               "outputs":{
+                  "output_1":{
+                     "connections":[
+                        {
+                           "node":"2",
+                           "output":"input_1"
+                        },
+                        {
+                           "node":"3",
+                           "output":"input_1"
+                        },
+                        {
+                           "node":"11",
+                           "output":"input_1"
+                        }
+                     ]
+                  }
+               },
+               "pos_x":347,
+               "pos_y":87
+            },
+            "11":{
+               "id":11,
+               "name":"log",
+               "data":{
+                  
+               },
+               "class":"log",
+               "html":"            <div>              <div class=\"title-box\"><i class=\"fas fa-file-signature\"></i> Save log file </div>            </div>            ",
+               "typenode":false,
+               "inputs":{
+                  "input_1":{
+                     "connections":[
+                        {
+                           "node":"5",
+                           "input":"output_1"
+                        },
+                        {
+                           "node":"7",
+                           "input":"output_1"
+                        }
+                     ]
+                  }
+               },
+               "outputs":{
+                  
+               },
+               "pos_x":1031,
+               "pos_y":363
+            }
+         }
+      },
+      "Other":{
+         "data":{
+            "8":{
+               "id":8,
+               "name":"personalized",
+               "data":{
+                  
+               },
+               "class":"personalized",
+               "html":"            <div>              Personalized            </div>            ",
+               "typenode":false,
+               "inputs":{
+                  "input_1":{
+                     "connections":[
+                        {
+                           "node":"12",
+                           "input":"output_1"
+                        },
+                        {
+                           "node":"12",
+                           "input":"output_2"
+                        },
+                        {
+                           "node":"12",
+                           "input":"output_3"
+                        },
+                        {
+                           "node":"12",
+                           "input":"output_4"
+                        }
+                     ]
+                  }
+               },
+               "outputs":{
+                  "output_1":{
+                     "connections":[
+                        {
+                           "node":"9",
+                           "output":"input_1"
+                        }
+                     ]
+                  }
+               },
+               "pos_x":764,
+               "pos_y":227
+            },
+            "9":{
+               "id":9,
+               "name":"dbclick",
+               "data":{
+                  "name":"Hello World!!"
+               },
+               "class":"dbclick",
+               "html":"            <div>            <div class=\"title-box\"><i class=\"fas fa-mouse\"></i> Db Click</div>              <div class=\"box dbclickbox\" ondblclick=\"showpopup(event)\">                Db Click here                <div class=\"modal\" style=\"display:none\">                  <div class=\"modal-content\">                    <span class=\"close\" onclick=\"closemodal(event)\">&times;</span>                    Change your variable {name} !                    <input type=\"text\" df-name>                  </div>                </div>              </div>            </div>            ",
+               "typenode":false,
+               "inputs":{
+                  "input_1":{
+                     "connections":[
+                        {
+                           "node":"8",
+                           "input":"output_1"
+                        }
+                     ]
+                  }
+               },
+               "outputs":{
+                  "output_1":{
+                     "connections":[
+                        {
+                           "node":"12",
+                           "output":"input_2"
+                        }
+                     ]
+                  }
+               },
+               "pos_x":209,
+               "pos_y":38
+            },
+            "12":{
+               "id":12,
+               "name":"multiple",
+               "data":{
+                  
+               },
+               "class":"multiple",
+               "html":"            <div>              <div class=\"box\">                Multiple!              </div>            </div>            ",
+               "typenode":false,
+               "inputs":{
+                  "input_1":{
+                     "connections":[
+                        
+                     ]
+                  },
+                  "input_2":{
+                     "connections":[
+                        {
+                           "node":"9",
+                           "input":"output_1"
+                        }
+                     ]
+                  },
+                  "input_3":{
+                     "connections":[
+                        
+                     ]
+                  }
+               },
+               "outputs":{
+                  "output_1":{
+                     "connections":[
+                        {
+                           "node":"8",
+                           "output":"input_1"
+                        }
+                     ]
+                  },
+                  "output_2":{
+                     "connections":[
+                        {
+                           "node":"8",
+                           "output":"input_1"
+                        }
+                     ]
+                  },
+                  "output_3":{
+                     "connections":[
+                        {
+                           "node":"8",
+                           "output":"input_1"
+                        }
+                     ]
+                  },
+                  "output_4":{
+                     "connections":[
+                        {
+                           "node":"8",
+                           "output":"input_1"
+                        }
+                     ]
+                  }
+               },
+               "pos_x":179,
+               "pos_y":272
+            }
+         }
+      }
+   }
+}
     editor.start();
 
 
@@ -166,9 +547,9 @@
       console.log(connection);
     })
 
-    editor.on('mouseMove', function(position) {
-      console.log('Position mouse x:' + position.x + ' y:'+ position.y);
-    })
+    // editor.on('mouseMove', function(position) {
+    //   console.log('Position mouse x:' + position.x + ' y:'+ position.y);
+    // })
 
     editor.on('nodeMoved', function(id) {
       console.log("Node moved " + id);
@@ -178,9 +559,9 @@
       console.log('Zoom level ' + zoom);
     })
 
-    editor.on('translate', function(position) {
-      console.log('Translate x:' + position.x + ' y:'+ position.y);
-    })
+    // editor.on('translate', function(position) {
+    //   console.log('Translate x:' + position.x + ' y:'+ position.y);
+    // })
 
     editor.on('addReroute', function(id) {
       console.log("Reroute added " + id);
