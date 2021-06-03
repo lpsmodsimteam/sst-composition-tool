@@ -76,7 +76,10 @@ MainWindow::MainWindow()
 Q_INVOKABLE void MainWindow::get_elements()
 {
     qDebug() << "DONE";
-    QString code = QStringLiteral("jQuery('div[name=\"elements\"]').next().text('gfndjkgbfdjgb')");
+    QString code("jQuery('div[name=\"elements\"]').append('<div class=\"drag-drawflow\" "
+                 "draggable=\"true\" ondragstart=\"drag(event)\" data-node=\"facebook\">"
+                 "<i class=\"fab fa-facebook\"></i><span> Facebook</span>"
+                 "</div>')");
     qDebug() << "DONE";
     view->page()->runJavaScript(code);
     qDebug() << "DONE";
@@ -92,79 +95,3 @@ Q_INVOKABLE void MainWindow::send_graph(QVariant s)
     qDebug() << "heyyyyyy" << QJsonDocument(s.toJsonObject()).toJson(QJsonDocument::Compact).toStdString().c_str();
     qDebug() << "heyyyyyy" << doc.object().value("drawflow");
 }
-
-//void MainWindow::adjustLocation()
-//{
-//    locationEdit->setText(view->url().toString());
-//}
-
-//void MainWindow::changeLocation()
-//{
-//    QUrl url = QUrl::fromUserInput(locationEdit->text());
-//    view->load(url);
-//    view->setFocus();
-//}
-
-//void MainWindow::adjustTitle()
-//{
-//    if (progress <= 0 || progress >= 100)
-//        setWindowTitle(view->title());
-//    else
-//        setWindowTitle(QStringLiteral("%1 (%2%)").arg(view->title()).arg(progress));
-//}
-
-//void MainWindow::setProgress(int p)
-//{
-//    progress = p;
-//    adjustTitle();
-//}
-
-//void MainWindow::finishLoading(bool)
-//{
-//    progress = 100;
-//    adjustTitle();
-//    view->page()->runJavaScript(jQuery);
-
-//    rotateImages(rotateAction->isChecked());
-//}
-
-//void MainWindow::highlightAllLinks()
-//{
-//    QString code = QStringLiteral("qt.jQuery('a').each( function () { qt.jQuery(this).css('background-color', 'yellow') } )");
-//    view->page()->runJavaScript(code);
-//}
-
-//void MainWindow::rotateImages(bool invert)
-//{
-//    QString code;
-
-//    if (invert)
-//        code = QStringLiteral("qt.jQuery('img').each( function () { qt.jQuery(this).css('transition', 'transform 2s'); qt.jQuery(this).css('transform', 'rotate(180deg)') } )");
-//    else
-//        code = QStringLiteral("qt.jQuery('img').each( function () { qt.jQuery(this).css('transition', 'transform 2s'); qt.jQuery(this).css('transform', 'rotate(0deg)') } )");
-//    view->page()->runJavaScript(code);
-//}
-
-//void MainWindow::removeGifImages()
-//{
-//    QString code = QStringLiteral("qt.jQuery('[src*=gif]').remove()");
-//    view->page()->runJavaScript(code);
-//}
-
-//void MainWindow::removeInlineFrames()
-//{
-//    QString code = QStringLiteral("qt.jQuery('iframe').remove()");
-//    view->page()->runJavaScript(code);
-//}
-
-//void MainWindow::removeObjectElements()
-//{
-//    QString code = QStringLiteral("qt.jQuery('object').remove()");
-//    view->page()->runJavaScript(code);
-//}
-
-//void MainWindow::removeEmbeddedElements()
-//{
-//    QString code = QStringLiteral("qt.jQuery('embed').remove()");
-//    view->page()->runJavaScript(code);
-//}
