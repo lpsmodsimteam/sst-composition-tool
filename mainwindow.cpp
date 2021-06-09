@@ -52,46 +52,40 @@
 #include <QtWebEngineWidgets>
 #include <QtWidgets>
 
-MainWindow::MainWindow()
-{
-    setAttribute(Qt::WA_DeleteOnClose, true);
+MainWindow::MainWindow() {
+	setAttribute(Qt::WA_DeleteOnClose, true);
 
-    view = new QWebEngineView(this);
+	view = new QWebEngineView(this);
 
-    // file: MyWebEngineView.cpp, MyWebEngineView extends QWebEngineView
-    QWebChannel *channel = new QWebChannel(view->page());
+	QWebChannel* channel = new QWebChannel(view->page());
 
-    // set the web channel to be used by the page
-    // see http://doc.qt.io/qt-5/qwebenginepage.html#setWebChannel
-    view->page()->setWebChannel(channel);
+	view->page()->setWebChannel(channel);
 
-    // register QObjects to be exposed to JavaScript
-    channel->registerObject(QStringLiteral("jshelper"), this);
+	// register QObjects to be exposed to JavaScript
+	channel->registerObject(QStringLiteral("jshelper"), this);
 
-    view->load(QUrl("qrc:index"));
+	view->load(QUrl("qrc:index"));
 
-    setCentralWidget(view);
+	setCentralWidget(view);
 }
 
-Q_INVOKABLE void MainWindow::get_elements()
-{
-    qDebug() << "DONE";
-    QString code("jQuery('div[name=\"elements\"]').append('<div class=\"drag-drawflow\" "
-                 "draggable=\"true\" ondragstart=\"drag(event)\" data-node=\"facebook\">"
-                 "<i class=\"fab fa-facebook\"></i><span> Facebook</span>"
-                 "</div>')");
-    qDebug() << "DONE";
-    view->page()->runJavaScript(code);
-    qDebug() << "DONE";
+Q_INVOKABLE void MainWindow::get_elements() {
+	QString jquery_append_element_div(
+		"jQuery('div[name=\"elements\"]').append('<div class=\"drag-drawflow\" "
+		"draggable=\"true\" ondragstart=\"drag(event)\" data-node=\"%1\">"
+		"<i class=\"fas fa-code\"></i><span> %1</span></div>')");
+	QString code = jquery_append_element_div.arg("facebook");
+	view->page()->runJavaScript(code);
 }
 
-Q_INVOKABLE void MainWindow::send_graph(QVariant s)
-{
-    QJsonObject jsonObj = s.toJsonObject(); // assume this has been populated with Json data
-    QJsonDocument doc(jsonObj);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
+Q_INVOKABLE void MainWindow::send_graph(QVariant s) {
+	QJsonObject jsonObj = s.toJsonObject(); // assume this has been populated with Json data
+	QJsonDocument doc(jsonObj);
+	QString strJson(doc.toJson(QJsonDocument::Compact));
 
-    qDebug() << "heyyyyyy" << s.toString();
-    qDebug() << "heyyyyyy" << QJsonDocument(s.toJsonObject()).toJson(QJsonDocument::Compact).toStdString().c_str();
-    qDebug() << "heyyyyyy" << doc.object().value("drawflow");
+	qDebug() << "heyyyyyy" << s.toString();
+	qDebug()
+		<< "heyyyyyy"
+		<< QJsonDocument(s.toJsonObject()).toJson(QJsonDocument::Compact).toStdString().c_str();
+	qDebug() << "heyyyyyy" << doc.object().value("drawflow");
 }

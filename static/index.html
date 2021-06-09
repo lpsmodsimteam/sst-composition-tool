@@ -64,6 +64,7 @@
            <li onclick="editor.changeModule('Other'); changeModule(event);">Other Module</li>
           </ul>
         </div>
+
         <div id="drawflow" ondrop="drop(event)" ondragover="allowDrop(event)">
 
           <div class="btn-clear" onclick="get_elements()">Get Elements</div>
@@ -130,83 +131,91 @@
       }
 
       function addNodeToDrawFlow(name, pos_x, pos_y) {
-        if (editor.editor_mode === 'fixed') {
-          return false;
-        }
-        pos_x = pos_x * ( editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom)) - (editor.precanvas.getBoundingClientRect().x * ( editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom)));
-        pos_y = pos_y * ( editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)) - (editor.precanvas.getBoundingClientRect().y * ( editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)));
+          if (editor.editor_mode === 'fixed') {
+              return false;
+          }
+          pos_x = pos_x * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom)) - (editor.precanvas.getBoundingClientRect().x * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom)));
+          pos_y = pos_y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)) - (editor.precanvas.getBoundingClientRect().y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)));
 
-        switch (name) {
+          switch (name) {
 
-          case 'facebook':
-            var facebook = `
-            <div>
-             <div class="title-box"><i class="fab fa-facebook"></i> Facebook Message</div>
-            </div>
-            `;
-             editor.addNode('facebook', 0,  1, pos_x, pos_y, 'facebook', {}, facebook );
-            break;
+              case 'facebook':
+                  var facebook = `
+                  <div>
+                   <div class="title-box"><i class="fab fa-facebook"></i> Facebook Message</div>
+                  </div>
+                  `;
+                  editor.addNode('facebook', 0, 1, pos_x, pos_y, 'facebook', {'param': 897}, facebook);
+                  break;
 
-          case 'slack':
-            var slackchat = `
-            <div>
-            <div class="title-box"><i class="fab fa-slack"></i> Slack chat message</div>
-            </div>
-            `
-            editor.addNode('slack', 1, 0, pos_x, pos_y, 'slack', {}, slackchat );
-            break;
+              case 'slack':
+                  var slackchat = `
+                  <div>
+                  <div class="title-box"><i class="fab fa-slack"></i> Slack chat message</div>
+                  </div>
+                  `
+                  editor.addNode('slack', 1, 0, pos_x, pos_y, 'slack', {}, slackchat);
+                  break;
 
-          case 'github':
-            var githubtemplate = `
-            <div>
-              <div class="title-box"><i class="fab fa-github "></i> Github Stars</div>
-              <div class="box">
-                <p>Enter repository url</p>
-              <input type="text" df-name>
-              </div>
-            </div>
-            `;
-            editor.addNode('github', 0, 1, pos_x, pos_y, 'github', { "name": ''}, githubtemplate );
-            break;
+              case 'github':
+                  var githubtemplate = `
+                  <div>
+                    <div class="title-box"><i class="fab fa-github "></i> Github Stars</div>
+                    <div class="box">
+                      <p>Enter repository url</p>
+                    <input type="text" df-name>
+                    </div>
+                  </div>
+                  `;
+                  editor.addNode('github', 0, 1, pos_x, pos_y, 'github', {
+                      "name": ''
+                  }, githubtemplate);
+                  break;
 
-          case 'telegram':
-            var telegrambot = `
-            <div>
-            <div class="title-box"><i class="fab fa-telegram-plane"></i> Telegram bot</div>
-            <div class="box">
-              <p>Send to telegram</p>
-              <p>select channel</p>
-              <select df-channel>
-               <option value="channel_1">Channel 1</option>
-               <option value="channel_2">Channel 2</option>
-               <option value="channel_3">Channel 3</option>
-               <option value="channel_4">Channel 4</option>
-              </select>
-            </div>
-            </div>
-            `;
-            editor.addNode('telegram', 1, 0, pos_x, pos_y, 'telegram', { "channel": 'channel_3'}, telegrambot );
-            break;
+              case 'telegram':
+                  var telegrambot = `
+                  <div>
+                  <div class="title-box"><i class="fab fa-telegram-plane"></i> Telegram bot</div>
+                  <div class="box">
+                    <p>Send to telegram</p>
+                    <p>select channel</p>
+                    <select df-channel>
+                     <option value="channel_1">Channel 1</option>
+                     <option value="channel_2">Channel 2</option>
+                     <option value="channel_3">Channel 3</option>
+                     <option value="channel_4">Channel 4</option>
+                    </select>
+                  </div>
+                  </div>
+                  `;
+                  editor.addNode('telegram', 1, 0, pos_x, pos_y, 'telegram', {
+                      "channel": 'channel_3'
+                  }, telegrambot);
+                  break;
 
-          case 'aws':
-            var aws = `
-            <div>
-            <div class="title-box"><i class="fab fa-aws"></i> Aws Save </div>
-            <div class="box">
-              <p>Save in aws</p>
-              <input type="text" df-db-dbname placeholder="DB name"><br><br>
-              <input type="text" df-db-key placeholder="DB key">
-              <p>Output Log</p>
-            </div>
-            </div>
-            `;
-            editor.addNode('aws', 1, 1, pos_x, pos_y, 'aws', { "db": { "dbname": '', "key": '' }}, aws );
-            break;
+              case 'aws':
+                  var aws = `
+                  <div>
+                  <div class="title-box"><i class="fab fa-aws"></i> Aws Save </div>
+                  <div class="box">
+                    <p>Save in aws</p>
+                    <input type="text" df-db-dbname placeholder="DB name"><br><br>
+                    <input type="text" df-db-key placeholder="DB key">
+                    <p>Output Log</p>
+                  </div>
+                  </div>
+                  `;
+                  editor.addNode('aws', 1, 1, pos_x, pos_y, 'aws', {
+                      "db": {
+                          "dbname": '',
+                          "key": ''
+                      }
+                  }, aws);
+                  break;
 
-          default:
-        }
+              default:
+          }
       }
-
       var transform = '';
       function showpopup(e) {
         e.target.closest(".drawflow-node").style.zIndex = "9999";

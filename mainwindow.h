@@ -48,24 +48,23 @@
 **
 ****************************************************************************/
 
-#include <QtWidgets>
 #include <QtWebEngineWidgets>
+#include <QtWidgets>
 
 QT_BEGIN_NAMESPACE
 class QWebEngineView;
 class QLineEdit;
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow
-{
-    Q_OBJECT
+class MainWindow : public QMainWindow {
+	Q_OBJECT
 
 public:
-    Q_INVOKABLE void send_graph(QVariant);
-    Q_INVOKABLE void get_elements();
+	Q_INVOKABLE void send_graph(QVariant);
+	Q_INVOKABLE void get_elements();
 
-    MainWindow();
+	MainWindow();
 
 private:
-    QWebEngineView *view;
+	QWebEngineView* view;
 };

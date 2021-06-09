@@ -48,24 +48,23 @@
 **
 ****************************************************************************/
 
-#include <QtWidgets>
 #include "mainwindow.h"
+#include <QtWidgets>
 #include <qtwebenginewidgetsglobal.h>
 
-int main(int argc, char * argv[])
-{
-    QCoreApplication::setOrganizationName("SST GUI");
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QApplication app(argc, argv);
+int main(int argc, char* argv[]) {
+	QCoreApplication::setOrganizationName("SST GUI");
+	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+	QApplication app(argc, argv);
 
-    QFile f("qrc:/beautiful");
-    if (f.open(QIODevice::ReadOnly)) {
-       app.setStyleSheet(QString(f.readAll()));
-       f.close();
-    }
+	QFile f("qrc:/beautiful");
+	if(f.open(QIODevice::ReadOnly)) {
+		app.setStyleSheet(QString(f.readAll()));
+		f.close();
+	}
 
-    MainWindow *browser = new MainWindow();
-    browser->resize(1920, 1080);
-    browser->show();
-    return app.exec();
+	MainWindow* browser = new MainWindow();
+	browser->resize(1920, 1080);
+	browser->show();
+	return app.exec();
 }
