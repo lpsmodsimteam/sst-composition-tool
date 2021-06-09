@@ -83,9 +83,9 @@ Q_INVOKABLE void MainWindow::send_graph(QVariant s) {
 	QJsonDocument doc(jsonObj);
 	QString strJson(doc.toJson(QJsonDocument::Compact));
 
-	qDebug() << "heyyyyyy" << s.toString();
+	qDebug() << "s.tostring" << s.toString();
 	qDebug()
 		<< "heyyyyyy"
 		<< QJsonDocument(s.toJsonObject()).toJson(QJsonDocument::Compact).toStdString().c_str();
-	qDebug() << "heyyyyyy" << doc.object().value("drawflow");
+	qDebug() << "doc.object" << doc.object().value("drawflow");
 }

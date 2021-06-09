@@ -52,7 +52,33 @@
 #include <QtWidgets>
 #include <qtwebenginewidgetsglobal.h>
 
+void suppress_debug_output(QtMsgType type, const QMessageLogContext&, const QString& msg) {
+	// QByteArray localMsg = msg.toLocal8Bit();
+	const char* output = msg.toLocal8Bit().constData();
+	switch(type) {
+	case QtDebugMsg:
+		fprintf(stderr, "Debug: %s\n", output);
+		break;
+	case QtInfoMsg:
+		fprintf(stderr, "Info: %s\n", output);
+		break;
+	case QtWarningMsg:
+		if(std::string(output).find("broken!") == std::string::npos) {
+			fprintf(stderr, "Warning: %s\n", output);
+		}
+		break;
+	case QtCriticalMsg:
+		fprintf(stderr, "Critical: %s\n", output);
+		break;
+	case QtFatalMsg:
+		fprintf(stderr, "Fatal: %s\n", output);
+		break;
+	}
+}
+
 int main(int argc, char* argv[]) {
+
+	qInstallMessageHandler(suppress_debug_output);
 	QCoreApplication::setOrganizationName("SST GUI");
 	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 	QApplication app(argc, argv);
