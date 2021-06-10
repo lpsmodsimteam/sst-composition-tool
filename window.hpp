@@ -1,3 +1,6 @@
+#ifndef WINDOW_HPP
+#define WINDOW_HPP
+
 /****************************************************************************
 **
 ** Copyright (C) 2016 The Qt Company Ltd.
@@ -48,44 +51,29 @@
 **
 ****************************************************************************/
 
-#include "mainwindow.h"
 #include <QtWebEngineWidgets>
 #include <QtWidgets>
 
-MainWindow::MainWindow() {
-	setAttribute(Qt::WA_DeleteOnClose, true);
+QT_BEGIN_NAMESPACE
+class QWebEngineView;
+class QLineEdit;
+QT_END_NAMESPACE
 
-	view = new QWebEngineView(this);
+class MainWindow : public QMainWindow {
+	Q_OBJECT
 
-	QWebChannel* channel = new QWebChannel(view->page());
+public:
+	Q_INVOKABLE void send_graph(QVariant);
+	Q_INVOKABLE void get_elements();
 
-	view->page()->setWebChannel(channel);
+	MainWindow();
 
-	// register QObjects to be exposed to JavaScript
-	channel->registerObject(QStringLiteral("jshelper"), this);
+	~MainWindow();
 
-	view->load(QUrl("qrc:index"));
+private:
 
-	setCentralWidget(view);
-}
+	QWebEngineView* view;
+	QWebChannel* channel;
+};
 
-Q_INVOKABLE void MainWindow::get_elements() {
-	QString jquery_append_element_div(
-		"jQuery('div[name=\"elements\"]').append('<div class=\"drag-drawflow\" "
-		"draggable=\"true\" ondragstart=\"drag(event)\" data-node=\"%1\">"
-		"<i class=\"fas fa-code\"></i><span> %1</span></div>')");
-	QString code = jquery_append_element_div.arg("facebook");
-	view->page()->runJavaScript(code);
-}
-
-Q_INVOKABLE void MainWindow::send_graph(QVariant s) {
-	QJsonObject jsonObj = s.toJsonObject(); // assume this has been populated with Json data
-	QJsonDocument doc(jsonObj);
-	QString strJson(doc.toJson(QJsonDocument::Compact));
-
-	qDebug() << "s.tostring" << s.toString();
-	qDebug()
-		<< "heyyyyyy"
-		<< QJsonDocument(s.toJsonObject()).toJson(QJsonDocument::Compact).toStdString().c_str();
-	qDebug() << "doc.object" << doc.object().value("drawflow");
-}
+#endif // WINDOW_HPP

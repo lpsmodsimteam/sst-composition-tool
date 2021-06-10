@@ -3,9 +3,11 @@ QT += \
     webenginewidgets \
     webchannel
 
-HEADERS =   mainwindow.h
+HEADERS = \
+    util.hpp \
+    window.hpp
 SOURCES =   main.cpp \
-            mainwindow.cpp
+    window.cpp
 RESOURCES = index.qrc
 # Disable Qt Quick compiler because the example doesn't use QML, but more importantly so that
 # the source code of the .js files is not removed from the embedded qrc file.

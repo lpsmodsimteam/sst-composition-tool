@@ -48,23 +48,52 @@
 **
 ****************************************************************************/
 
+#include "window.hpp"
+#include "util.hpp"
+
 #include <QtWebEngineWidgets>
 #include <QtWidgets>
 
-QT_BEGIN_NAMESPACE
-class QWebEngineView;
-class QLineEdit;
-QT_END_NAMESPACE
+MainWindow::MainWindow() {
+	setAttribute(Qt::WA_DeleteOnClose, true);
 
-class MainWindow : public QMainWindow {
-	Q_OBJECT
+	view = new QWebEngineView(this);
 
-public:
-	Q_INVOKABLE void send_graph(QVariant);
-	Q_INVOKABLE void get_elements();
+	channel = new QWebChannel(view->page());
 
-	MainWindow();
+	view->page()->setWebChannel(channel);
 
-private:
-	QWebEngineView* view;
-};
+	// register QObjects to be exposed to JavaScript
+	channel->registerObject(QStringLiteral("jshelper"), this);
+
+	view->load(QUrl("qrc:index"));
+
+	setCentralWidget(view);
+}
+
+MainWindow::~MainWindow() {
+	delete channel;
+	delete view;
+}
+
+Q_INVOKABLE void MainWindow::get_elements() {
+	QString jquery_append_element_div(
+		"jQuery('div[name=\"elements\"]').append('<div class=\"drag-drawflow\" "
+		"draggable=\"true\" ondragstart=\"drag(event)\" data-node=\"%1\">"
+		"<i class=\"fas fa-code\"></i><span> %1</span></div>')");
+	QString code = jquery_append_element_div.arg("facebook");
+	view->page()->runJavaScript(code);
+}
+
+Q_INVOKABLE void MainWindow::send_graph(QVariant s) {
+
+	QLinkedList<QString> keys = {"drawflow", "Home", "data"};
+	QJsonValue value = get_value(to_json_obj(s), keys);
+
+	qDebug() << value;
+
+	QLinkedList<QString> keys2 = {"1", "data", "param"};
+	value = get_value(to_json_obj(value), keys2);
+
+	qDebug() << value;
+}

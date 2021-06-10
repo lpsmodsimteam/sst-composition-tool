@@ -11,10 +11,10 @@ set(CMAKE_AUTOUIC ON)
 
 find_package(Qt5 COMPONENTS Widgets WebEngineWidgets REQUIRED)
 
-set(HEADERS mainwindow.h)
+set(HEADERS window.hpp util.hpp)
 set(SOURCES
     main.cpp
-    mainwindow.cpp
+    window.cpp
 )
 
 qt5_add_resources(SOURCES index.qrc)
