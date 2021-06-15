@@ -7,6 +7,7 @@ HEADERS = \
     util.hpp \
     window.hpp
 SOURCES =   main.cpp \
+    util.cpp \
     window.cpp
 RESOURCES = index.qrc
 # Disable Qt Quick compiler because the example doesn't use QML, but more importantly so that

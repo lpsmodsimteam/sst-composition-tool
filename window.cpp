@@ -55,6 +55,7 @@
 #include <QtWidgets>
 
 MainWindow::MainWindow() {
+
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
 	view = new QWebEngineView(this);
@@ -72,11 +73,13 @@ MainWindow::MainWindow() {
 }
 
 MainWindow::~MainWindow() {
+
 	delete channel;
 	delete view;
 }
 
 Q_INVOKABLE void MainWindow::get_elements() {
+
 	QString jquery_append_element_div(
 		"jQuery('div[name=\"elements\"]').append('<div class=\"drag-drawflow\" "
 		"draggable=\"true\" ondragstart=\"drag(event)\" data-node=\"%1\">"
@@ -87,13 +90,15 @@ Q_INVOKABLE void MainWindow::get_elements() {
 
 Q_INVOKABLE void MainWindow::send_graph(QVariant s) {
 
+	qDebug() << to_json_obj(s);
 	QLinkedList<QString> keys = {"drawflow", "Home", "data"};
-	QJsonValue value = get_value(to_json_obj(s), keys);
+	QJsonValue value = get_json_value(to_json_obj(s), keys);
 
 	qDebug() << value;
 
-	QLinkedList<QString> keys2 = {"1", "data", "param"};
-	value = get_value(to_json_obj(value), keys2);
+	keys.clear();
+	keys = {"1", "data", "param"};
+	value = get_json_value(to_json_obj(value), keys);
 
 	qDebug() << value;
 }
