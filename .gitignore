@@ -1,10 +1,7 @@
-*.o
-qrc_*
-moc_*
-sstconfiggui
-Makefile
-.qmake.stash
+*.pyc
+.venv/
 .clang-format
 *.pro.user
 .vscode/
-build/
+__pycache__/
+.env

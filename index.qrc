@@ -1,8 +1,0 @@
-<RCC>
-    <qresource prefix="/" >
-        <file alias="index">static/index.html</file>
-        <file alias="beautiful">static/beautiful.css</file>
-        <file alias="drawflowjs">static/drawflow.min.js</file>
-        <file alias="drawflowcss">static/drawflow.min.css</file>
-    </qresource>
-</RCC>
