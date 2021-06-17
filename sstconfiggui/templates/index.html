@@ -25,12 +25,15 @@
     <div class="wrapper">
       <div class="col">
         {{ element_divs|safe }}
-        <span id="nodes"></span>
+
+        <input id="group_nodes_name" type="text" placeholder="Group name">
+        <div id="group_nodes" class="btn-export">Group</div>
+        <div><span id="group_nodes_msg"></span></div>
       </div>
       <div class="col-right">
         <div class="menu">
           <ul id="hierarchy">
-            <li onclick="editor.changeModule('Home'); changeModule(event);" class="selected">Home</li>
+            <li onclick="editor.changeModule('Home'); changeModule(event);">Home</li>
           </ul>
         </div>
         <div id="drawflow" ondrop="drop(event)" ondragover="allowDrop(event)">
@@ -50,6 +53,7 @@
         </div>
       </div>
     </div>
+
     <script type="text/javascript">
 
       $("#export_button").click(function(e) {
@@ -96,32 +100,6 @@
         editor.addNode(name, 1, 1, pos_x, pos_y, name, {}, df_box_divs[name]);
       }
 
-      var transform = '';
-      function showpopup(e) {
-        e.target.closest(".drawflow-node").style.zIndex = "9999";
-        e.target.children[0].style.display = "block";
-        //document.getElementById("modalfix").style.display = "block";
-        //e.target.children[0].style.transform = 'translate('+translate.x+'px, '+translate.y+'px)';
-        transform = editor.precanvas.style.transform;
-        editor.precanvas.style.transform = '';
-        editor.precanvas.style.left = editor.canvas_x + 'px';
-        editor.precanvas.style.top = editor.canvas_y + 'px';
-        console.log(transform);
-        //e.target.children[0].style.top  =  -editor.canvas_y - editor.container.offsetTop +'px';
-        //e.target.children[0].style.left  =  -editor.canvas_x  - editor.container.offsetLeft +'px';
-        editor.editor_mode = "fixed";
-      }
-
-      function closemodal(e) {
-        e.target.closest(".drawflow-node").style.zIndex = "2";
-        e.target.parentElement.parentElement.style.display = "none";
-        //document.getElementById("modalfix").style.display = "none";
-        editor.precanvas.style.transform = transform;
-        editor.precanvas.style.left = '0px';
-        editor.precanvas.style.top = '0px';
-        editor.editor_mode = "edit";
-      }
-
       function changeModule(event) {
         var all = document.querySelectorAll(".menu ul li");
         for (var i = 0; i < all.length; i++) {
@@ -148,6 +126,57 @@
       editor.reroute = true;
       editor.start();
 
+      var grouped = 0;
+      var selectedNodes = [];
+      $("#group_nodes").click(function(e) {
+
+        e.preventDefault();
+        if (!(grouped % 2) && !selectedNodes.length) {
+          $("#group_nodes_msg").text("In grouping mode");
+          console.log(grouped);
+
+          editor.on('nodeSelected', function(id) {
+
+            if (!selectedNodes.includes(id)) {
+
+              selectedNodes.push(id);
+              $("#group_nodes_msg").text(selectedNodes);
+              console.log("Node selected " + id);
+
+            }
+
+          });
+
+        } else {
+
+          var groupName = "Group " + grouped;
+
+          $("#group_nodes_msg").text("Created new group");
+
+          editor.addModule(groupName);
+          editor.changeModule(groupName);
+          var newModuleDivHtml = "<li onclick=\"editor.changeModule('" + groupName + "'); changeModule(event);\">" + groupName + "</li>";
+          $(newModuleDivHtml).appendTo('#hierarchy');
+
+          for (var i = 0; i < selectedNodes.length; i++) {
+            var old_node = editor.getNodeFromId(selectedNodes[i]);
+
+            ({_id, name, inputs, outputs, posx, posy, class_name, data, html} = old_node);
+            console.log(name, inputs, outputs, posx, posy);
+            editor.addNode(name, 1, 1, posx, posy, class_name, data, html);
+            editor.removeNodeId("node-" + old_node["id"]);
+
+          }
+
+        }
+
+        grouped++;
+
+      })
+
+    </script>
+
+    <script type="text/javascript">
       //editor.addNode(name, inputs, outputs, posx, posy, class, data, html);
       /*editor.addNode('welcome', 0, 0, 50, 50, 'welcome', {}, welcome );
       // */
@@ -158,22 +187,7 @@
       // editor.on('nodeRemoved', function(id) {
       //   console.log("Node removed " + id);
       // })
-      var selectedNodes = [];
-      editor.on('nodeSelected', function(id) {
 
-        if (!selectedNodes.includes(id)) {
-          editor.addModule(id);
-          var newModuleDivHtml = "<li onclick=\"editor.changeModule('" + id + "'); changeModule(event);\">" + id + "</li>";
-          $(newModuleDivHtml).appendTo('#hierarchy');
-
-          selectedNodes.push(id);
-          $("#nodes").text(selectedNodes);
-          console.log("Node selected " + id);
-          console.log(selectedNodes.includes(id));
-
-        }
-
-      })
       // editor.on('moduleCreated', function(name) {
       //   console.log("Module Created " + name);
       // })
@@ -206,8 +220,7 @@
       // editor.on('removeReroute', function(id) {
       //   console.log("Reroute removed " + id);
       // })
-
-
     </script>
+
   </body>
 </html>
