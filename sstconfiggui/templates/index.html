@@ -6,10 +6,12 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Drawflow | Simple Flow program libray</title>
     <meta name="description" content="Simple library for flow programming. Drawflow allows you to create data flows easily and quickly.">
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/drawflow.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/beautiful.css') }}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
     <script src="{{ url_for('static', filename='js/drawflow.min.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
@@ -21,12 +23,14 @@
       <h2>SST Config</h2>
     </header>
     <div class="wrapper">
-      <div class="col">{{ element_divs|safe }}</div>
+      <div class="col">
+        {{ element_divs|safe }}
+        <span id="nodes"></span>
+      </div>
       <div class="col-right">
         <div class="menu">
-          <ul>
+          <ul id="hierarchy">
             <li onclick="editor.changeModule('Home'); changeModule(event);" class="selected">Home</li>
-            <li onclick="editor.changeModule('Other'); changeModule(event);">Other Module</li>
           </ul>
         </div>
         <div id="drawflow" ondrop="drop(event)" ondragover="allowDrop(event)">
@@ -47,65 +51,14 @@
       </div>
     </div>
     <script type="text/javascript">
-      var id = document.getElementById("drawflow");
-      const editor = new Drawflow(id);
-      const df_box_divs = JSON.parse({{df_box_divs | tojson}});
-      editor.reroute = true;
-      editor.start();
-      //editor.addNode(name, inputs, outputs, posx, posy, class, data, html);
-      /*editor.addNode('welcome', 0, 0, 50, 50, 'welcome', {}, welcome );
-      editor.addModule('Other');
-      // */
-      // // Events!
-      // editor.on('nodeCreated', function(id) {
-      //   console.log("Node created " + id);
-      // })
-      // editor.on('nodeRemoved', function(id) {
-      //   console.log("Node removed " + id);
-      // })
-      // editor.on('nodeSelected', function(id) {
-      //   console.log("Node selected " + id);
-      // })
-      // editor.on('moduleCreated', function(name) {
-      //   console.log("Module Created " + name);
-      // })
-      // editor.on('moduleChanged', function(name) {
-      //   console.log("Module Changed " + name);
-      // })
-      // editor.on('connectionCreated', function(connection) {
-      //   console.log('Connection created');
-      //   console.log(connection);
-      // })
-      // editor.on('connectionRemoved', function(connection) {
-      //   console.log('Connection removed');
-      //   console.log(connection);
-      // })
-      // editor.on('mouseMove', function(position) {
-      //   console.log('Position mouse x:' + position.x + ' y:'+ position.y);
-      // })
-      // editor.on('nodeMoved', function(id) {
-      //   console.log("Node moved " + id);
-      // })
-      // editor.on('zoom', function(zoom) {
-      //   console.log('Zoom level ' + zoom);
-      // })
-      // editor.on('translate', function(position) {
-      //   console.log('Translate x:' + position.x + ' y:'+ position.y);
-      // })
-      // editor.on('addReroute', function(id) {
-      //   console.log("Reroute added " + id);
-      // })
-      // editor.on('removeReroute', function(id) {
-      //   console.log("Reroute removed " + id);
-      // })
 
       $("#export_button").click(function(e) {
         e.preventDefault();
-        // console.log(editor.export());
         $.post("/export_drawflow_data", {
           drawflow_data: JSON.stringify(editor.export())
         });
       });
+
       /* DRAG EVENT */
       /* Mouse and Touch Actions */
       var elements = document.getElementsByClassName('drag-drawflow');
@@ -142,8 +95,8 @@
             editor.zoom)));
         editor.addNode(name, 1, 1, pos_x, pos_y, name, {}, df_box_divs[name]);
       }
-      var transform = '';
 
+      var transform = '';
       function showpopup(e) {
         e.target.closest(".drawflow-node").style.zIndex = "9999";
         e.target.children[0].style.display = "block";
@@ -187,6 +140,74 @@
           unlock.style.display = 'none';
         }
       }
+    </script>
+    <script type="text/javascript">
+      var id = document.getElementById("drawflow");
+      const editor = new Drawflow(id);
+      const df_box_divs = JSON.parse({{df_box_divs | tojson}});
+      editor.reroute = true;
+      editor.start();
+
+      //editor.addNode(name, inputs, outputs, posx, posy, class, data, html);
+      /*editor.addNode('welcome', 0, 0, 50, 50, 'welcome', {}, welcome );
+      // */
+      // // Events!
+      // editor.on('nodeCreated', function(id) {
+      //   console.log("Node created " + id);
+      // })
+      // editor.on('nodeRemoved', function(id) {
+      //   console.log("Node removed " + id);
+      // })
+      var selectedNodes = [];
+      editor.on('nodeSelected', function(id) {
+
+        if (!selectedNodes.includes(id)) {
+          editor.addModule(id);
+          var newModuleDivHtml = "<li onclick=\"editor.changeModule('" + id + "'); changeModule(event);\">" + id + "</li>";
+          $(newModuleDivHtml).appendTo('#hierarchy');
+
+          selectedNodes.push(id);
+          $("#nodes").text(selectedNodes);
+          console.log("Node selected " + id);
+          console.log(selectedNodes.includes(id));
+
+        }
+
+      })
+      // editor.on('moduleCreated', function(name) {
+      //   console.log("Module Created " + name);
+      // })
+      // editor.on('moduleChanged', function(name) {
+      //   console.log("Module Changed " + name);
+      // })
+      // editor.on('connectionCreated', function(connection) {
+      //   console.log('Connection created');
+      //   console.log(connection);
+      // })
+      // editor.on('connectionRemoved', function(connection) {
+      //   console.log('Connection removed');
+      //   console.log(connection);
+      // })
+      // editor.on('mouseMove', function(position) {
+      //   console.log('Position mouse x:' + position.x + ' y:'+ position.y);
+      // })
+      // editor.on('nodeMoved', function(id) {
+      //   console.log("Node moved " + id);
+      // })
+      // editor.on('zoom', function(zoom) {
+      //   console.log('Zoom level ' + zoom);
+      // })
+      // editor.on('translate', function(position) {
+      //   console.log('Translate x:' + position.x + ' y:'+ position.y);
+      // })
+      // editor.on('addReroute', function(id) {
+      //   console.log("Reroute added " + id);
+      // })
+      // editor.on('removeReroute', function(id) {
+      //   console.log("Reroute removed " + id);
+      // })
+
+
     </script>
   </body>
 </html>

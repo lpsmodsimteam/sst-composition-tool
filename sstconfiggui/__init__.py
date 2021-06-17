@@ -1,7 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import json
 
 from flask import Flask, render_template, request
 
+from .templates import DF_BOX_DIVS_TEMPL, INPUT_TAG_TEMPL, ELEMENT_DIV_TEMPL
 
 ELEMENTS = [
     {"name": "add", "param": {"clock": "1MHz", "link_speed": "1ps", "a": 1, "b": 2}},
@@ -10,21 +14,6 @@ ELEMENTS = [
     {"name": "div", "param": {"clock": "1MHz", "link_speed": "1ps", "a": 1, "b": 2}},
     {"name": "reg", "param": {"clock": "1MHz", "link_speed": "1ps", "a": 1}},
 ]
-
-DIV_STR = """<div>
-    <div class="title-box"><i class="fas fa-code"></i> {element}</div>
-    <div class="box">
-        {input_tag}
-    </div>
-</div>
-"""
-
-INPUT_TAG_TEMPL = """<input type="text" df-{key} placeholder="{key}">"""
-
-ELEMENT_DIV_TEMPL = """<div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="{0}">
-    <i class="fas fa-code"></i><span> {0}</span>
-</div>
-"""
 
 
 def create_app(test_config=None):
@@ -42,7 +31,7 @@ def create_app(test_config=None):
             input_tags = ""
             for k, v in element["param"].items():
                 input_tags += INPUT_TAG_TEMPL.format(key=k)
-            df_box_divs[element["name"]] = DIV_STR.format(
+            df_box_divs[element["name"]] = DF_BOX_DIVS_TEMPL.format(
                 element=element["name"], input_tag=input_tags
             )
             element_divs += ELEMENT_DIV_TEMPL.format(element["name"])
