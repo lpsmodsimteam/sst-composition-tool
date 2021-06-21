@@ -26,8 +26,9 @@
       <div class="col">
         {{ element_divs|safe }}
 
-        <input id="group_nodes_name" type="text" placeholder="Group name">
-        <div id="group_nodes" class="btn-export">Group</div>
+        <input id="group_nodes_name" type="text" value="group_name">
+        <input id="group_nodes" type="checkbox" placeholder="Group">
+        <!-- <div id="group_nodes" class="btn-export">Group</div> -->
         <div><span id="group_nodes_msg"></span></div>
       </div>
       <div class="col-right">
@@ -53,6 +54,10 @@
         </div>
       </div>
     </div>
+
+    <script type="text/javascript">
+      const df_box_divs = JSON.parse({{df_box_divs | tojson}});
+    </script>
 
     <script type="text/javascript">
 
@@ -97,7 +102,7 @@
           .clientHeight * editor.zoom)) - (editor.precanvas.getBoundingClientRect()
           .y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight *
             editor.zoom)));
-        editor.addNode(name, 1, 1, pos_x, pos_y, name, {}, df_box_divs[name]);
+        editor.addNode(name, 2, 1, pos_x, pos_y, name, {}, df_box_divs[name]);
       }
 
       function changeModule(event) {
@@ -119,107 +124,95 @@
         }
       }
     </script>
+
     <script type="text/javascript">
       var id = document.getElementById("drawflow");
       const editor = new Drawflow(id);
-      const df_box_divs = JSON.parse({{df_box_divs | tojson}});
       editor.reroute = true;
       editor.start();
-
-      var grouped = 0;
-      var selectedNodes = [];
-      $("#group_nodes").click(function(e) {
-
-        e.preventDefault();
-        if (!(grouped % 2) && !selectedNodes.length) {
-          $("#group_nodes_msg").text("In grouping mode");
-          console.log(grouped);
-
-          editor.on('nodeSelected', function(id) {
-
-            if (!selectedNodes.includes(id)) {
-
-              selectedNodes.push(id);
-              $("#group_nodes_msg").text(selectedNodes);
-              console.log("Node selected " + id);
-
-            }
-
-          });
-
-        } else {
-
-          var groupName = "Group " + grouped;
-
-          $("#group_nodes_msg").text("Created new group");
-
-          editor.addModule(groupName);
-          editor.changeModule(groupName);
-          var newModuleDivHtml = "<li onclick=\"editor.changeModule('" + groupName + "'); changeModule(event);\">" + groupName + "</li>";
-          $(newModuleDivHtml).appendTo('#hierarchy');
-
-          for (var i = 0; i < selectedNodes.length; i++) {
-            var old_node = editor.getNodeFromId(selectedNodes[i]);
-
-            ({_id, name, inputs, outputs, posx, posy, class_name, data, html} = old_node);
-            console.log(name, inputs, outputs, posx, posy);
-            editor.addNode(name, 1, 1, posx, posy, class_name, data, html);
-            editor.removeNodeId("node-" + old_node["id"]);
-
-          }
-
-        }
-
-        grouped++;
-
-      })
-
     </script>
 
     <script type="text/javascript">
-      //editor.addNode(name, inputs, outputs, posx, posy, class, data, html);
-      /*editor.addNode('welcome', 0, 0, 50, 50, 'welcome', {}, welcome );
-      // */
-      // // Events!
-      // editor.on('nodeCreated', function(id) {
-      //   console.log("Node created " + id);
-      // })
-      // editor.on('nodeRemoved', function(id) {
-      //   console.log("Node removed " + id);
-      // })
 
-      // editor.on('moduleCreated', function(name) {
-      //   console.log("Module Created " + name);
-      // })
-      // editor.on('moduleChanged', function(name) {
-      //   console.log("Module Changed " + name);
-      // })
-      // editor.on('connectionCreated', function(connection) {
-      //   console.log('Connection created');
-      //   console.log(connection);
-      // })
-      // editor.on('connectionRemoved', function(connection) {
-      //   console.log('Connection removed');
-      //   console.log(connection);
-      // })
-      // editor.on('mouseMove', function(position) {
-      //   console.log('Position mouse x:' + position.x + ' y:'+ position.y);
-      // })
-      // editor.on('nodeMoved', function(id) {
-      //   console.log("Node moved " + id);
-      // })
-      // editor.on('zoom', function(zoom) {
-      //   console.log('Zoom level ' + zoom);
-      // })
-      // editor.on('translate', function(position) {
-      //   console.log('Translate x:' + position.x + ' y:'+ position.y);
-      // })
-      // editor.on('addReroute', function(id) {
-      //   console.log("Reroute added " + id);
-      // })
-      // editor.on('removeReroute', function(id) {
-      //   console.log("Reroute removed " + id);
-      // })
+      var groupNodeHTML = `<div class="dbclickbox" ondblclick="editor.changeModule('__GROUP__')">__GROUP__</div>`;
+
+      function moveNodesToModule(groupName, selectedNodes) {
+
+        var totalInputs = 0;
+        var totalOutputs = 0;
+        for (var i = 0; i < selectedNodes.length; i++) {
+
+          // get node of current module
+          var oldNode = editor.getNodeFromId(selectedNodes[i]);
+
+          // expand values into variables
+          var newName = oldNode["name"];
+          var newInputs = oldNode["inputs"];
+          var newOutputs = oldNode["outputs"];
+          var newPosX = oldNode["pos_x"]
+          var newPosY = oldNode["pos_y"]
+          var newData = oldNode["data"]
+          var newHTML = oldNode["html"]
+          var numInputs = Object.keys(newInputs).length;
+          var numOutputs = Object.keys(newOutputs).length;
+          editor.addNode(newName, numInputs, numOutputs, newPosX, newPosY, newName, newData,
+            newHTML);
+          editor.removeNodeId("node-" + oldNode["id"]);
+
+          totalInputs += numInputs;
+          totalOutputs += numOutputs;
+          // console.log(newInputs)
+          // console.log(newOutputs)
+
+          // for (var j = 0; j < newInputs.length; j++) {
+          //   console.log(newInputs[j]);
+          // }
+
+        }
+
+        editor.changeModule('Home');
+        editor.addNode("__GROUP__", totalInputs, totalOutputs, 0, 0, "__GROUP__", {}, groupNodeHTML.replaceAll("__GROUP__", groupName));
+
+      }
+
+      var groupedNum = 0;
+      var selectedNodes = [];
+
+      $("#group_nodes").change(function(e) {
+
+        e.preventDefault();
+
+        if ($("#group_nodes").is(":checked")) {
+
+          $("#group_nodes_msg").text("In grouping mode");
+
+          editor.on('nodeSelected', function(id) {
+            if (!selectedNodes.includes(id)) {
+              selectedNodes.push(id);
+              $("#group_nodes_msg").text("Nodes selected " + selectedNodes);
+            }
+          });
+
+        } else if (selectedNodes.length) {
+
+          var groupName = $("#group_nodes_name").val();
+          $("#group_nodes_msg").text("Created: " + groupName);
+          editor.addModule(groupName);
+          editor.changeModule(groupName);
+          var newModuleDivHtml = "<li onclick=\"editor.changeModule('" +
+            groupName + "'); changeModule(event);\">" + groupName + "</li>";
+          $(newModuleDivHtml).appendTo("#hierarchy");
+          moveNodesToModule(groupName, selectedNodes);
+
+          // reset variables and states
+          selectedNodes.length = 0;
+          $("#group_nodes_name").val('')
+          groupedNum++;
+
+        }
+
+      })
+
     </script>
 
   </body>

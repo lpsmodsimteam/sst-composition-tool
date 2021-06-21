@@ -5,7 +5,13 @@ import json
 
 from flask import Flask, render_template, request
 
-from .templates import DF_BOX_DIVS_TEMPL, INPUT_TAG_TEMPL, ELEMENT_DIV_TEMPL
+from .templates import (
+    DF_BOX_DIVS_TEMPL,
+    INPUT_TAG_TEMPL,
+    ELEMENT_DIV_TEMPL,
+    HIDDEN_ELEMENT_DIV_TEMPL,
+    DF_BOX_DIVS,
+)
 
 ELEMENTS = [
     {"name": "add", "param": {"clock": "1MHz", "link_speed": "1ps", "a": 1, "b": 2}},
@@ -24,26 +30,31 @@ def create_app(test_config=None):
     @app.route("/")
     def index():
 
-        df_box_divs = {}
-        element_divs = ""
+        element_divs = HIDDEN_ELEMENT_DIV_TEMPL
 
         for element in ELEMENTS:
             input_tags = ""
+            element_name = element["name"]
+
             for k, v in element["param"].items():
                 input_tags += INPUT_TAG_TEMPL.format(key=k)
-            df_box_divs[element["name"]] = DF_BOX_DIVS_TEMPL.format(
-                element=element["name"], input_tag=input_tags
+            DF_BOX_DIVS[element_name] = DF_BOX_DIVS_TEMPL.format(
+                element=element_name, input_tag=input_tags
             )
-            element_divs += ELEMENT_DIV_TEMPL.format(element["name"])
+
+            element_divs += ELEMENT_DIV_TEMPL.format(element_name)
 
         return render_template(
-            "index.html", element_divs=element_divs, df_box_divs=json.dumps(df_box_divs)
+            "index.html", element_divs=element_divs, df_box_divs=json.dumps(DF_BOX_DIVS)
         )
 
     @app.route("/export_drawflow_data", methods=["POST"])
     def export_data():
 
-        print(json.loads(request.form["drawflow_data"]))
+        from pprint import pprint
+
+        data = json.loads(request.form["drawflow_data"])["drawflow"]
+        pprint(data)
         return ""
 
     return app
