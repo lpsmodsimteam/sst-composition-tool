@@ -5,13 +5,7 @@ import json
 
 from flask import Flask, render_template, request
 
-from .templates import (
-    DF_BOX_DIVS_TEMPL,
-    INPUT_TAG_TEMPL,
-    ELEMENT_DIV_TEMPL,
-    HIDDEN_ELEMENT_DIV_TEMPL,
-    DF_BOX_DIVS,
-)
+from .templates import DF_BOX_DIVS_TEMPL, INPUT_TAG_TEMPL, ELEMENT_DIV_TEMPL, DF_BOX_DIVS
 
 ELEMENTS = [
     {"name": "add", "param": {"clock": "1MHz", "link_speed": "1ps", "a": 1, "b": 2}},
@@ -30,14 +24,14 @@ def create_app(test_config=None):
     @app.route("/")
     def index():
 
-        element_divs = HIDDEN_ELEMENT_DIV_TEMPL
+        element_divs = ""
 
         for element in ELEMENTS:
             input_tags = ""
             element_name = element["name"]
 
-            for k, v in element["param"].items():
-                input_tags += INPUT_TAG_TEMPL.format(key=k)
+            for param in element["param"].keys():
+                input_tags += INPUT_TAG_TEMPL.format(key=param)
             DF_BOX_DIVS[element_name] = DF_BOX_DIVS_TEMPL.format(
                 element=element_name, input_tag=input_tags
             )

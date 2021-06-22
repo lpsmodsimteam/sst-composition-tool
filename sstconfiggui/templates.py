@@ -20,12 +20,4 @@ ELEMENT_DIV_TEMPL = """
 </div>
 """
 
-HIDDEN_ELEMENT_DIV_TEMPL = """
-<div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="__GROUP__" hidden>
-  <i class="fas fa-code"></i><span> __GROUP__</span>
-</div>
-"""
-
-DF_BOX_DIVS = {
-    "__GROUP__": """<div class="dbclickbox" ondblclick="editor.changeModule('__GROUP__')">__GROUP__</div>"""
-}
+DF_BOX_DIVS = {}

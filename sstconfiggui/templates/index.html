@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Drawflow | Simple Flow program libray</title>
-    <meta name="description" content="Simple library for flow programming. Drawflow allows you to create data flows easily and quickly.">
+    <title>SST Hierarchical Composition Tool</title>
+    <meta name="description" content="SST Hierarchical Composition Tool">
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/drawflow.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/beautiful.css') }}" />
@@ -20,16 +20,11 @@
   </head>
   <body>
     <header>
-      <h2>SST Config</h2>
+      <h2>SST Hierarchical Composition Tool</h2>
     </header>
     <div class="wrapper">
-      <div class="col">
+      <div id="element_list" class="col">
         {{ element_divs|safe }}
-
-        <input id="group_nodes_name" type="text" value="group_name">
-        <input id="group_nodes" type="checkbox" placeholder="Group">
-        <!-- <div id="group_nodes" class="btn-export">Group</div> -->
-        <div><span id="group_nodes_msg"></span></div>
       </div>
       <div class="col-right">
         <div class="menu">
@@ -39,6 +34,9 @@
         </div>
         <div id="drawflow" ondrop="drop(event)" ondragover="allowDrop(event)">
           <form method="post">
+            <input id="group_nodes_name" type="text" value="group_name">
+            <input id="group_nodes" type="checkbox" placeholder="Group">
+            <div><span id="group_nodes_msg"></span></div>
             <div class="btn-export" id="export_button">Export</div>
             <div class="btn-clear" onclick="editor.clearModuleSelected()">Clear</div>
             <div class="btn-lock">
@@ -56,7 +54,7 @@
     </div>
 
     <script type="text/javascript">
-      const df_box_divs = JSON.parse({{df_box_divs | tojson}});
+      dfBoxDivs = JSON.parse({{df_box_divs | tojson}});
     </script>
 
     <script type="text/javascript">
@@ -102,7 +100,7 @@
           .clientHeight * editor.zoom)) - (editor.precanvas.getBoundingClientRect()
           .y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight *
             editor.zoom)));
-        editor.addNode(name, 2, 1, pos_x, pos_y, name, {}, df_box_divs[name]);
+        editor.addNode(name, 2, 1, pos_x, pos_y, name, {}, dfBoxDivs[name]);
       }
 
       function changeModule(event) {
@@ -136,6 +134,12 @@
 
       var groupNodeHTML = `<div class="dbclickbox" ondblclick="editor.changeModule('__GROUP__')">__GROUP__</div>`;
 
+      var elementDivHtml = `
+        <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="__GROUP__">
+          <i class="fas fa-code"></i><span> __GROUP__</span>
+        </div>
+        `;
+
       function moveNodesToModule(groupName, selectedNodes) {
 
         var totalInputs = 0;
@@ -164,14 +168,23 @@
           // console.log(newInputs)
           // console.log(newOutputs)
 
-          // for (var j = 0; j < newInputs.length; j++) {
-          //   console.log(newInputs[j]);
-          // }
+          for (var j = 0; j < newInputs.length; j++) {
+            console.log(newInputs[j]);
+          }
+
+          for (var j = 0; j < newOutputs.length; j++) {
+            console.log(newOutputs[j]);
+          }
 
         }
 
         editor.changeModule('Home');
-        editor.addNode("__GROUP__", totalInputs, totalOutputs, 0, 0, "__GROUP__", {}, groupNodeHTML.replaceAll("__GROUP__", groupName));
+        var newElementDivHtml = elementDivHtml.replaceAll("__GROUP__", groupName);
+        var newGroupNodeHTML = groupNodeHTML.replaceAll("__GROUP__", groupName);
+
+        $(newElementDivHtml).appendTo("#element_list");
+        dfBoxDivs[groupName] = newGroupNodeHTML;
+        editor.addNode(groupName, totalInputs, totalOutputs, 0, 0, groupName, {}, newGroupNodeHTML);
 
       }
 
