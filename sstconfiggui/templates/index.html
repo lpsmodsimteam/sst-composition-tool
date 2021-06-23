@@ -34,7 +34,7 @@
         </div>
         <div id="drawflow" ondrop="drop(event)" ondragover="allowDrop(event)">
           <form method="post">
-            <input id="group_nodes_name" type="text" value="group_name">
+            <input id="group_nodes_name" type="text" value="group_name_0">
             <input id="group_nodes" type="checkbox" placeholder="Group">
             <div><span id="group_nodes_msg"></span></div>
             <div class="btn-export" id="export_button">Export</div>
@@ -132,18 +132,13 @@
 
     <script type="text/javascript">
 
-      var groupNodeHTML = `<div class="dbclickbox" ondblclick="editor.changeModule('__GROUP__')">__GROUP__</div>`;
-
-      var elementDivHtml = `
-        <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="__GROUP__">
-          <i class="fas fa-code"></i><span> __GROUP__</span>
-        </div>
-        `;
-
       function moveNodesToModule(groupName, selectedNodes) {
 
         var totalInputs = 0;
         var totalOutputs = 0;
+        var minPosX = Infinity;
+        var minPosY = Infinity;
+
         for (var i = 0; i < selectedNodes.length; i++) {
 
           // get node of current module
@@ -165,31 +160,47 @@
 
           totalInputs += numInputs;
           totalOutputs += numOutputs;
-          // console.log(newInputs)
-          // console.log(newOutputs)
+          minPosX = Math.min(minPosX, newPosX);
+          minPosY = Math.min(minPosY, newPosY);
 
-          for (var j = 0; j < newInputs.length; j++) {
-            console.log(newInputs[j]);
+          for (const j in newInputs) {
+            console.log(i, newInputs[j]);
+            console.log(newInputs[j]["connections"])
           }
 
-          for (var j = 0; j < newOutputs.length; j++) {
-            console.log(newOutputs[j]);
+          for (const j in newOutputs) {
+            console.log(i, newOutputs[j]);
+            console.log(newOutputs[j]["connections"])
           }
 
         }
 
         editor.changeModule('Home');
-        var newElementDivHtml = elementDivHtml.replaceAll("__GROUP__", groupName);
-        var newGroupNodeHTML = groupNodeHTML.replaceAll("__GROUP__", groupName);
 
+        var newElementDivHtml = `
+        <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="` + groupName + `">
+          <i class="fas fa-code"></i><span> ` + groupName + `</span>
+        </div>
+        `;
         $(newElementDivHtml).appendTo("#element_list");
+
+        var newGroupNodeHTML = `
+        <div class="dbclickbox" ondblclick="editor.changeModule('` + groupName + `')">` + groupName + `</div>
+        `;
         dfBoxDivs[groupName] = newGroupNodeHTML;
-        editor.addNode(groupName, totalInputs, totalOutputs, 0, 0, groupName, {}, newGroupNodeHTML);
+        editor.addNode(groupName, totalInputs, totalOutputs, minPosX, minPosY, groupName, {}, newGroupNodeHTML);
 
       }
 
       var groupedNum = 0;
       var selectedNodes = [];
+
+      editor.on('nodeSelected', function(id) {
+        if ($("#group_nodes").is(":checked") && !selectedNodes.includes(id)) {
+          selectedNodes.push(id);
+          $("#group_nodes_msg").text("Nodes selected " + selectedNodes);
+        }
+      });
 
       $("#group_nodes").change(function(e) {
 
@@ -199,28 +210,25 @@
 
           $("#group_nodes_msg").text("In grouping mode");
 
-          editor.on('nodeSelected', function(id) {
-            if (!selectedNodes.includes(id)) {
-              selectedNodes.push(id);
-              $("#group_nodes_msg").text("Nodes selected " + selectedNodes);
-            }
-          });
-
         } else if (selectedNodes.length) {
 
           var groupName = $("#group_nodes_name").val();
-          $("#group_nodes_msg").text("Created: " + groupName);
-          editor.addModule(groupName);
-          editor.changeModule(groupName);
-          var newModuleDivHtml = "<li onclick=\"editor.changeModule('" +
-            groupName + "'); changeModule(event);\">" + groupName + "</li>";
-          $(newModuleDivHtml).appendTo("#hierarchy");
-          moveNodesToModule(groupName, selectedNodes);
 
-          // reset variables and states
-          selectedNodes.length = 0;
-          $("#group_nodes_name").val('')
-          groupedNum++;
+          if (groupName) {
+
+            $("#group_nodes_msg").text("Created: " + groupName);
+            editor.addModule(groupName);
+            editor.changeModule(groupName);
+            var newModuleDivHtml = "<li onclick=\"editor.changeModule('" + groupName + "'); changeModule(event);\">" +
+              groupName + "</li>";
+            $(newModuleDivHtml).appendTo("#hierarchy");
+            moveNodesToModule(groupName, selectedNodes);
+
+            // reset variables and states
+            selectedNodes.length = 0;
+            groupedNum++;
+            $("#group_nodes_name").val('group_name_' + groupedNum);
+          }
 
         }
 
