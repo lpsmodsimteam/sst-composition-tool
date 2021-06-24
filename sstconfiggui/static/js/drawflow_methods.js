@@ -88,6 +88,7 @@ function moveConnectionsToModule(newConnections) {
 
         for (const j in newConnections[i]["outputs"]) {
             var newOutputs = newConnections[i]["outputs"][j]["connections"];
+
             if (newOutputs.length) {
                 for (const k in newOutputs) {
                     editor.addConnection(oldToNewNodeMap[newConnections[i]["old_id"]],
@@ -99,6 +100,69 @@ function moveConnectionsToModule(newConnections) {
     }
 }
 
+function addGroupNodesStyles(groupName, newNamesArr) {
+
+    dfBoxDivs[groupName]["link"] = {"input" : [], "output" : []};
+
+    var inputStyles = "";
+    var newNumInputs = 0;
+    for (const i in newNamesArr) {
+        const inputsArr = dfBoxDivs[newNamesArr[i]]["link"]["input"];
+        for (var j = 0; j < inputsArr.length; j++) {
+
+            dfBoxDivs[groupName]["link"]["input"].push(inputsArr[j]);
+            inputStyles += `
+                         .drawflow-node.` +
+                           groupName + ` .inputs .input:nth-child(` + (newNumInputs + 1) +
+                           `):before {
+                         display: block;
+                         content: "` +
+                           inputsArr[j] + `";
+                         position: relative;
+                         right: 30px;
+                     }
+                     `;
+            newNumInputs++;
+        }
+    }
+
+    var outputStyles = "";
+    var newNumOutputs = 0;
+    for (const i in newNamesArr) {
+        const outputsArr = dfBoxDivs[newNamesArr[i]]["link"]["output"];
+        for (var j = 0; j < outputsArr.length; j++) {
+            dfBoxDivs[groupName]["link"]["output"].push(outputsArr[j]);
+            outputStyles += `
+                         .drawflow-node.` +
+                            groupName + ` .outputs .output:nth-child(` + (newNumOutputs + 1) +
+                            `):before {
+                         display: block;
+                         content: "` +
+                            outputsArr[j] + `";
+                         position: relative;
+                         left: 30px;
+                     }
+                     `;
+            newNumOutputs++;
+        }
+    }
+    console.log(inputStyles + outputStyles);
+
+    var newElementStyle = `
+  <style type='text/css'>` +
+                          inputStyles + outputStyles + `
+  .drawflow-node.` + groupName +
+                          ` {
+    background: #2c3e50;
+    height: 200px;
+    text-align: center;
+    color: red;
+  }
+  </style>
+  `;
+    $(newElementStyle).appendTo("head");
+}
+
 function moveNodesToModule(groupName, selectedNodes) {
 
     var totalInputs = 0;
@@ -107,6 +171,8 @@ function moveNodesToModule(groupName, selectedNodes) {
     var minPosY = Infinity;
 
     const newConnections = [];
+
+    const newNamesArr = [];
 
     for (var i = 0; i < selectedNodes.length; i++) {
 
@@ -129,6 +195,7 @@ function moveNodesToModule(groupName, selectedNodes) {
         oldToNewNodeMap[oldNode["id"]] = newNodeId;
         newConnections.push({"old_id" : oldNode["id"], "outputs" : newOutputs});
 
+        newNamesArr.push(newName);
         totalInputs += numInputs;
         totalOutputs += numOutputs;
         minPosX = Math.min(minPosX, newPosX);
@@ -138,23 +205,25 @@ function moveNodesToModule(groupName, selectedNodes) {
     moveConnectionsToModule(newConnections);
 
     editor.changeModule("Home");
-
     var newElementDivHtml = `
-    <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="` +
+  <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="` +
                             groupName + `">
-    <i class="fas fa-code"></i><span> ` +
+  <i class="fas fa-code"></i><span> ` +
                             groupName + `</span>
-    </div>
-    `;
+  </div>
+  `;
     $(newElementDivHtml).appendTo("#element_list");
 
     var newGroupNodeHTML = `
-    <div class="dbclickbox" ondblclick="editor.changeModule('` +
+  <div class="dbclickbox" ondblclick="editor.changeModule('` +
                            groupName + `')">` + groupName + `</div>
-    `;
-    dfBoxDivs[groupName] = newGroupNodeHTML;
+  `;
+    dfBoxDivs[groupName] = {};
+    dfBoxDivs[groupName]["html"] = newGroupNodeHTML;
     editor.addNode(groupName, totalInputs, totalOutputs, minPosX, minPosY, groupName, {},
                    newGroupNodeHTML);
+
+    addGroupNodesStyles(groupName, newNamesArr);
 }
 
 $("#group_nodes").change(function(e) {

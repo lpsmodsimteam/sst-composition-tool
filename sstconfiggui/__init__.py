@@ -18,27 +18,27 @@ ELEMENTS = [
     {
         "name": "add",
         "param": {"clock": "1MHz", "link_speed": "1ps", "bits": "16"},
-        "link": {"input": ["opand_din"], "output": ["sum_dout", "of_dout"]},
+        "link": {"input": ["add_opand_din"], "output": ["sum_dout", "add_of_dout"]},
     },
     {
         "name": "sub",
         "param": {"clock": "1MHz", "link_speed": "1ps", "bits": "16"},
-        "link": {"input": ["opand_din"], "output": ["diff_dout", "neg_dout", "of_dout"]},
+        "link": {"input": ["sub_opand_din"], "output": ["diff_dout", "neg_dout", "sub_of_dout"]},
     },
     {
         "name": "mul",
         "param": {"clock": "1MHz", "link_speed": "1ps", "bits": "16"},
-        "link": {"input": ["opand_din"], "output": ["prod_dout", "of_dout"]},
+        "link": {"input": ["mul_opand_din"], "output": ["prod_dout", "mul_of_dout"]},
     },
     {
         "name": "div",
         "param": {"clock": "1MHz", "link_speed": "1ps", "bits": "16"},
-        "link": {"input": ["opand_din"], "output": ["div_dout", "of_dout"]},
+        "link": {"input": ["div_opand_din"], "output": ["div_dout", "div_of_dout"]},
     },
     {
         "name": "reg",
         "param": {"clock": "1MHz", "link_speed": "1ps", "bits": "16"},
-        "link": {"input": ["reg_din"], "output": ["reg_dout", "of_dout"]},
+        "link": {"input": ["reg_din"], "output": ["reg_dout", "reg_of_dout"]},
     },
 ]
 
@@ -65,18 +65,13 @@ def create_app(test_config=None):
                 element=element_name, input_tag=input_tags
             )
             DF_BOX_DIVS[element_name]["link"] = element["link"]
-            print()
             node_styles += "\n".join(
-                [
-                    NODE_INPUT_STYLE_TEMPL.format(class_name=element_name, index=i + 1, value=j)
-                    for i, j in enumerate(element["link"]["input"])
-                ]
+                NODE_INPUT_STYLE_TEMPL.format(class_name=element_name, index=i + 1, value=j)
+                for i, j in enumerate(element["link"]["input"])
             )
             node_styles += "\n".join(
-                [
-                    NODE_OUTPUT_STYLE_TEMPL.format(class_name=element_name, index=i + 1, value=j)
-                    for i, j in enumerate(element["link"]["output"])
-                ]
+                NODE_OUTPUT_STYLE_TEMPL.format(class_name=element_name, index=i + 1, value=j)
+                for i, j in enumerate(element["link"]["output"])
             )
 
             element_divs += ELEMENT_DIV_TEMPL.format(element_name)
