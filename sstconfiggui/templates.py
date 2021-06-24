@@ -21,3 +21,21 @@ ELEMENT_DIV_TEMPL = """
 """
 
 DF_BOX_DIVS = {}
+
+NODE_INPUT_STYLE_TEMPL = """
+.drawflow-node.{class_name} .inputs .input:nth-child({index}):before {{
+    display: block;
+    content: "{value}";
+    position: relative;
+    right: 30px;
+}}
+"""
+
+NODE_OUTPUT_STYLE_TEMPL = """
+.drawflow-node.{class_name} .outputs .output:nth-child({index}):before {{
+    display: block;
+    content: "{value}";
+    position: relative;
+    left: 30px;
+}}
+"""
