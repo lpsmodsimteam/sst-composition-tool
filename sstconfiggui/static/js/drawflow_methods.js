@@ -142,8 +142,8 @@ function addGroupNodesConnectionLabels(groupName, newNamesArr, io) {
   content: "` + ioArr[j] +
                         `";
   position: relative;
-  ` + (io === "input" ? "right" : "left") +
-                        `: ` + (io === "input" ? "120" : "30") + `px;
+  ` + (io === "input" ? "right: 120" : "left: 30") +
+                        `px;
 }
                    `;
             newNumIos++;
