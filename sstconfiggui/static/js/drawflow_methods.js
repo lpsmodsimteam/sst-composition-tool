@@ -7,6 +7,69 @@ for (var i = 0; i < elements.length; i++) {
     elements[i].addEventListener("touchstart", drag, false);
 }
 
+/* ---------------------- EVENTS ---------------------- */
+
+/* ---------------------- NODE EVENTS ---------------------- */
+editor.on("nodeCreated", function(id) {
+    console.log("Node created " + id);
+    newNodeId = parseInt(id);
+    oldToNewNodeMap[id] = newNodeId;
+})
+
+editor.on("nodeRemoved", function(id) {
+    // removedNodes = parseInt(id);
+    console.log("Node removed " + id);
+})
+
+editor.on("contextmenu", function(id) {
+    // removedNodes = parseInt(id);
+    console.log("yo what " + id);
+})
+
+editor.on("nodeSelected", function(id) {
+    console.log(id);
+    if ($("#group_nodes").is(":checked") && !selectedNodes.includes(id)) {
+        selectedNodes.push(id);
+        $("#group_nodes_msg").text("Nodes selected " + selectedNodes);
+    }
+});
+/* ---------------------- NODE EVENTS ---------------------- */
+
+$("#group_nodes").change(function(e) {
+    e.preventDefault();
+
+    if ($("#group_nodes").is(":checked")) {
+
+        $("#group_nodes_msg").text("In grouping mode");
+
+    } else if (selectedNodes.length) {
+
+        var groupName = $("#group_nodes_name").val();
+
+        if (groupName) {
+
+            $("#group_nodes_msg").text("Created: " + groupName);
+            editor.addModule(groupName);
+            editor.changeModule(groupName);
+            var newModuleDivHtml = "<li onclick=\"editor.changeModule('" + groupName +
+                                   "'); changeModule(event);\">" + groupName + "</li>";
+            $(newModuleDivHtml).appendTo("#hierarchy");
+            moveNodesToModule(groupName, selectedNodes);
+
+            // reset variables and states
+            selectedNodes.length = 0;
+            groupedNum++;
+            $("#group_nodes_name").val('group_name_' + groupedNum);
+        }
+    }
+})
+
+$("#export_button").click(function(e) {
+    e.preventDefault();
+    $.post("/export_drawflow_data", {drawflow_data : JSON.stringify(editor.export())});
+});
+/* ---------------------- EVENTS ---------------------- */
+
 function allowDrop(ev) { ev.preventDefault(); }
 
 function drag(ev) { ev.dataTransfer.setData("node", ev.target.getAttribute("data-node")); }
@@ -51,37 +114,6 @@ function changeMode(option) {
     }
 }
 
-/* ---------------------- NODE EVENTS ---------------------- */
-editor.on("nodeCreated", function(id) {
-    console.log("Node created " + id);
-    newNodeId = parseInt(id);
-    oldToNewNodeMap[id] = newNodeId;
-})
-
-editor.on("nodeRemoved", function(id) {
-    // removedNodes = parseInt(id);
-    console.log("Node removed " + id);
-})
-
-editor.on("contextmenu", function(id) {
-    // removedNodes = parseInt(id);
-    console.log("yo what " + id);
-})
-
-editor.on("nodeSelected", function(id) {
-    console.log(id);
-    if ($("#group_nodes").is(":checked") && !selectedNodes.includes(id)) {
-        selectedNodes.push(id);
-        $("#group_nodes_msg").text("Nodes selected " + selectedNodes);
-    }
-});
-/* ---------------------- NODE EVENTS ---------------------- */
-
-$("#export_button").click(function(e) {
-    e.preventDefault();
-    $.post("/export_drawflow_data", {drawflow_data : JSON.stringify(editor.export())});
-});
-
 function moveConnectionsToModule(newConnections) {
 
     for (const i in newConnections) {
@@ -100,64 +132,46 @@ function moveConnectionsToModule(newConnections) {
     }
 }
 
+function addGroupNodesConnectionLabels(groupName, newNamesArr, io) {
+    var ioStyles = "";
+    var newNumIos = 0;
+    for (const i in newNamesArr) {
+
+        const ioArr = dfBoxDivs[newNamesArr[i]]["link"][io];
+        for (var j = 0; j < ioArr.length; j++) {
+
+            dfBoxDivs[groupName]["link"][io].push(ioArr[j]);
+            ioStyles += `
+.drawflow-node.` + groupName +
+                        ` .` + io + `s .` + io + `:nth-child(` + (newNumIos + 1) + `):before {
+  display: block;
+  content: "` + ioArr[j] +
+                        `";
+  position: relative;
+  ` + (io === "input" ? "right" : "left") +
+                        `: 30px;
+}
+                   `;
+            newNumIos++;
+        }
+    }
+    return ioStyles;
+}
+
 function addGroupNodesStyles(groupName, newNamesArr) {
 
     dfBoxDivs[groupName]["link"] = {"input" : [], "output" : []};
+    const inputStyles = addGroupNodesConnectionLabels(groupName, newNamesArr, "input");
+    const outputStyles = addGroupNodesConnectionLabels(groupName, newNamesArr, "output");
 
-    var inputStyles = "";
-    var newNumInputs = 0;
-    for (const i in newNamesArr) {
-        const inputsArr = dfBoxDivs[newNamesArr[i]]["link"]["input"];
-        for (var j = 0; j < inputsArr.length; j++) {
-
-            dfBoxDivs[groupName]["link"]["input"].push(inputsArr[j]);
-            inputStyles += `
-                         .drawflow-node.` +
-                           groupName + ` .inputs .input:nth-child(` + (newNumInputs + 1) +
-                           `):before {
-                         display: block;
-                         content: "` +
-                           inputsArr[j] + `";
-                         position: relative;
-                         right: 30px;
-                     }
-                     `;
-            newNumInputs++;
-        }
-    }
-
-    var outputStyles = "";
-    var newNumOutputs = 0;
-    for (const i in newNamesArr) {
-        const outputsArr = dfBoxDivs[newNamesArr[i]]["link"]["output"];
-        for (var j = 0; j < outputsArr.length; j++) {
-            dfBoxDivs[groupName]["link"]["output"].push(outputsArr[j]);
-            outputStyles += `
-                         .drawflow-node.` +
-                            groupName + ` .outputs .output:nth-child(` + (newNumOutputs + 1) +
-                            `):before {
-                         display: block;
-                         content: "` +
-                            outputsArr[j] + `";
-                         position: relative;
-                         left: 30px;
-                     }
-                     `;
-            newNumOutputs++;
-        }
-    }
-    console.log(inputStyles + outputStyles);
-
-    var newElementStyle = `
-  <style type='text/css'>` +
-                          inputStyles + outputStyles + `
-  .drawflow-node.` + groupName +
+    var newElementStyle = `<style type='text/css'>` + inputStyles + outputStyles + `
+.drawflow-node.` + groupName +
                           ` {
-    background: #2c3e50;
-    height: 200px;
-    text-align: center;
-    color: red;
-  }
+  background: #2c3e50;
+  height: 200px;
+  text-align: center;
+  color: red;
+}
   </style>
   `;
     $(newElementStyle).appendTo("head");
@@ -225,32 +239,3 @@ function moveNodesToModule(groupName, selectedNodes) {
 
     addGroupNodesStyles(groupName, newNamesArr);
 }
-
-$("#group_nodes").change(function(e) {
-    e.preventDefault();
-
-    if ($("#group_nodes").is(":checked")) {
-
-        $("#group_nodes_msg").text("In grouping mode");
-
-    } else if (selectedNodes.length) {
-
-        var groupName = $("#group_nodes_name").val();
-
-        if (groupName) {
-
-            $("#group_nodes_msg").text("Created: " + groupName);
-            editor.addModule(groupName);
-            editor.changeModule(groupName);
-            var newModuleDivHtml = "<li onclick=\"editor.changeModule('" + groupName +
-                                   "'); changeModule(event);\">" + groupName + "</li>";
-            $(newModuleDivHtml).appendTo("#hierarchy");
-            moveNodesToModule(groupName, selectedNodes);
-
-            // reset variables and states
-            selectedNodes.length = 0;
-            groupedNum++;
-            $("#group_nodes_name").val('group_name_' + groupedNum);
-        }
-    }
-})
