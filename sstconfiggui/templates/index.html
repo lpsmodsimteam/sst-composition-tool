@@ -29,7 +29,7 @@
     </header>
     <div class="wrapper">
       <div id="element_list" class="col">
-        {{ element_divs|safe }}
+        {{element_divs | safe}}
       </div>
       <div class="col-right">
         <div class="menu">
@@ -67,10 +67,10 @@
       editor.start();
 
       var groupedNum = 0;
+      const groupNamesSet = new Set();
       const selectedNodes = [];
       const oldToNewNodeMap = {};
       var newNodeId = 0;
-
     </script>
 
     <script src="{{ url_for('static', filename='js/drawflow_methods.js') }}"></script>

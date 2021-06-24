@@ -1,12 +1,3 @@
-/* DRAG EVENTS */
-/* Mouse and Touch Actions */
-var elements = $(".drag-drawflow");
-
-for (var i = 0; i < elements.length; i++) {
-    elements[i].addEventListener("touchend", drop, false);
-    elements[i].addEventListener("touchstart", drag, false);
-}
-
 /* ---------------------- EVENTS ---------------------- */
 
 /* ---------------------- NODE EVENTS ---------------------- */
@@ -46,7 +37,9 @@ $("#group_nodes").change(function(e) {
 
         var groupName = $("#group_nodes_name").val();
 
-        if (groupName) {
+        if (groupName && !groupNamesSet.has(groupName)) {
+
+            groupNamesSet.add(groupName);
 
             $("#group_nodes_msg").text("Created: " + groupName);
             editor.addModule(groupName);
@@ -118,9 +111,10 @@ function moveConnectionsToModule(newConnections) {
 
     for (const i in newConnections) {
 
-        for (const j in newConnections[i]["outputs"]) {
-            var newOutputs = newConnections[i]["outputs"][j]["connections"];
+        const outputList = newConnections[i]["outputs"];
+        for (const j in outputList) {
 
+            var newOutputs = outputList[j]["connections"];
             if (newOutputs.length) {
                 for (const k in newOutputs) {
                     editor.addConnection(oldToNewNodeMap[newConnections[i]["old_id"]],
@@ -149,7 +143,7 @@ function addGroupNodesConnectionLabels(groupName, newNamesArr, io) {
                         `";
   position: relative;
   ` + (io === "input" ? "right" : "left") +
-                        `: 30px;
+                        `: ` + (io === "input" ? "120" : "30") + `px;
 }
                    `;
             newNumIos++;
@@ -170,7 +164,7 @@ function addGroupNodesStyles(groupName, newNamesArr) {
   background: #2c3e50;
   height: 200px;
   text-align: center;
-  color: red;
+  color: #1abc9c;
 }
   </style>
   `;
@@ -221,7 +215,7 @@ function moveNodesToModule(groupName, selectedNodes) {
     editor.changeModule("Home");
     var newElementDivHtml = `
   <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="` +
-                            groupName + `">
+                            groupName + `" style="background: #2c3e50; color: #1abc9c;">
   <i class="fas fa-code"></i><span> ` +
                             groupName + `</span>
   </div>

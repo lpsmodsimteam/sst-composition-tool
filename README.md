@@ -1,1 +1,1 @@
-# sst-config-gui
+# SST Hierarchical Composition Tool

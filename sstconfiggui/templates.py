@@ -24,18 +24,18 @@ DF_BOX_DIVS = {}
 
 NODE_INPUT_STYLE_TEMPL = """
 .drawflow-node.{class_name} .inputs .input:nth-child({index}):before {{
-    display: block;
-    content: "{value}";
-    position: relative;
-    right: 30px;
+  display: block;
+  content: "{value}";
+  position: relative;
+  right: 120px;
 }}
 """
 
 NODE_OUTPUT_STYLE_TEMPL = """
 .drawflow-node.{class_name} .outputs .output:nth-child({index}):before {{
-    display: block;
-    content: "{value}";
-    position: relative;
-    left: 30px;
+  display: block;
+  content: "{value}";
+  position: relative;
+  left: 30px;
 }}
 """
