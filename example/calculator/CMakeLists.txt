@@ -5,6 +5,9 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# add compiler warnings
+add_compile_options(-Wall -Wextra -Wpedantic)
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 execute_process(
     COMMAND which sst-config
@@ -45,5 +48,5 @@ macro(_sst_compile_link _name)
     endif ()
 endmacro()
 
-add_executable(lib${CMAKE_PROJECT_NAME}.so add.cpp calculator.cpp)
+add_executable(lib${CMAKE_PROJECT_NAME}.so fulladder.cpp ripplecarryadder.cpp)
 _sst_compile_link(lib${CMAKE_PROJECT_NAME}.so)
