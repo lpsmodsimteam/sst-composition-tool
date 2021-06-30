@@ -39,16 +39,16 @@ public:
                            {"cout", "Overflow", {"sst.Interfaces.StringEvent"}})
 
 private:
-    std::string m_clock;
+    std::string clock;
     SST::Link *opand1_link, *opand2_link, *cin_link, *sum_link, *cout_link;
 
     std::string opand1, opand2, cin;
     // SST parameters
-    SST::Output m_output;
+    SST::Output output;
 };
 
 FullAdder::FullAdder(SST::ComponentId_t id, SST::Params& params)
-    : SST::Component(id), m_clock(params.find<std::string>("clock", "")),
+    : SST::Component(id), clock(params.find<std::string>("clock", "")),
       opand1_link(configureLink(
           "opand1", new SST::Event::Handler<FullAdder>(this, &FullAdder::handle_opand1))),
       opand2_link(configureLink(
@@ -57,27 +57,26 @@ FullAdder::FullAdder(SST::ComponentId_t id, SST::Params& params)
           configureLink("cin", new SST::Event::Handler<FullAdder>(this, &FullAdder::handle_cin))),
       sum_link(configureLink("sum")), cout_link(configureLink("cout")), opand1(""), opand2(""),
       cin("") {
-    m_output.init("\033[34m" + getName() + "\033[0m -> ", 1, 0, SST::Output::STDOUT);
+    output.init("\033[34m" + getName() + "\033[0m -> ", 1, 0, SST::Output::STDOUT);
 
     if (!(opand1_link && opand2_link && sum_link && cout_link)) {
-        m_output.fatal(CALL_INFO, -1, "Failed to configure port\n");
+        output.fatal(CALL_INFO, -1, "Failed to configure port\n");
     }
 
-    registerClock(m_clock, new SST::Clock::Handler<FullAdder>(this, &FullAdder::tick));
+    registerClock(clock, new SST::Clock::Handler<FullAdder>(this, &FullAdder::tick));
 }
 
 void FullAdder::setup() {
-    m_output.verbose(CALL_INFO, 1, 0, "Component is being set up.\n");
+    output.verbose(CALL_INFO, 1, 0, "Component is being set up.\n");
 }
 
 void FullAdder::finish() {
-    m_output.verbose(CALL_INFO, 1, 0, "Destroying %s...\n", getName().c_str());
+    output.verbose(CALL_INFO, 1, 0, "Destroying %s...\n", getName().c_str());
 }
 
 void FullAdder::handle_opand1(SST::Event* ev) {
     auto* se = dynamic_cast<SST::Interfaces::StringEvent*>(ev);
     if (se) {
-        m_output.verbose(CALL_INFO, 1, 0, "OPAND1 %s\n", se->getString().c_str());
         opand1 = se->getString();
     }
     delete ev;
@@ -86,7 +85,6 @@ void FullAdder::handle_opand1(SST::Event* ev) {
 void FullAdder::handle_opand2(SST::Event* ev) {
     auto* se = dynamic_cast<SST::Interfaces::StringEvent*>(ev);
     if (se) {
-        m_output.verbose(CALL_INFO, 1, 0, "OPAND2 %s\n", se->getString().c_str());
         opand2 = se->getString();
     }
     delete ev;
@@ -95,7 +93,6 @@ void FullAdder::handle_opand2(SST::Event* ev) {
 void FullAdder::handle_cin(SST::Event* ev) {
     auto* se = dynamic_cast<SST::Interfaces::StringEvent*>(ev);
     if (se) {
-        m_output.verbose(CALL_INFO, 1, 0, "CIN %s\n", se->getString().c_str());
         cin = se->getString();
     }
     delete ev;

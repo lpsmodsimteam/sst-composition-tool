@@ -111,14 +111,14 @@ public:
         {"add_cout_3", "Carry-out of Full Adder 3", {"sst.Interfaces.StringEvent"}}, )
 
 private:
-    std::string m_clock;
+    std::string clock;
 
-    int num_bits_;
+    int num_bits;
 
-    std::string opand1_[4], opand2_[4], cin_[4], sum_[4], cout_[4];
+    std::string opand1[4], opand2[4], cin[4], sum[4], cout[4];
 
     // SST parameters
-    SST::Output m_output;
+    SST::Output output;
 
     SST::Link *as_cin_0_link, *as_cout_3_link, *as_opand1_links[4], *as_opand2_links[4],
         *as_sum_links[4], *add_opand1_links[4], *add_opand2_links[4], *add_cin_links[4],
@@ -126,11 +126,11 @@ private:
 };
 
 RippleCarryAdder::RippleCarryAdder(SST::ComponentId_t id, SST::Params& params)
-    : SST::Component(id), m_clock(params.find<std::string>("clock", "")),
-      num_bits_(4), opand1_{"X", "X", "X", "X"}, opand2_{"X", "X", "X", "X"},
-      cin_{"X", "X", "X", "X"}, sum_{"X", "X", "X", "X"}, cout_{"X", "X", "X", "X"} {
+    : SST::Component(id), clock(params.find<std::string>("clock", "")),
+      num_bits(4), opand1{"X", "X", "X", "X"}, opand2{"X", "X", "X", "X"}, cin{"X", "X", "X", "X"},
+      sum{"X", "X", "X", "X"}, cout{"X", "X", "X", "X"} {
 
-    for (int i = 0; i < num_bits_; i++) {
+    for (int i = 0; i < num_bits; i++) {
         add_opand1_links[i] = configureLink("add_opand1_" + std::to_string(i));
         add_opand2_links[i] = configureLink("add_opand2_" + std::to_string(i));
         add_cin_links[i] = configureLink("add_cin_" + std::to_string(i));
@@ -198,59 +198,58 @@ RippleCarryAdder::RippleCarryAdder(SST::ComponentId_t id, SST::Params& params)
         "add_cout_3",
         new SST::Event::Handler<RippleCarryAdder>(this, &RippleCarryAdder::handle_add_cout_3));
 
-    m_output.init("\033[34mparent-" + getName() + "\033[0m -> ", 1, 0, SST::Output::STDOUT);
+    output.init("\033[34mparent-" + getName() + "\033[0m -> ", 1, 0, SST::Output::STDOUT);
 
     if (!as_cin_0_link) {
-        m_output.fatal(CALL_INFO, -1, "Failed to configure port\n");
+        output.fatal(CALL_INFO, -1, "Failed to configure port\n");
     }
     if (!as_cout_3_link) {
-        m_output.fatal(CALL_INFO, -1, "Failed to configure port\n");
+        output.fatal(CALL_INFO, -1, "Failed to configure port\n");
     }
-    for (int i = 0; i < num_bits_; i++) {
+    for (int i = 0; i < num_bits; i++) {
         if (!as_opand1_links[i]) {
-            m_output.fatal(CALL_INFO, -1, "Failed to configure port\n");
+            output.fatal(CALL_INFO, -1, "Failed to configure port\n");
         }
     }
-    for (int i = 0; i < num_bits_; i++) {
+    for (int i = 0; i < num_bits; i++) {
         if (!as_opand2_links[i]) {
-            m_output.fatal(CALL_INFO, -1, "Failed to configure port\n");
+            output.fatal(CALL_INFO, -1, "Failed to configure port\n");
         }
     }
-    for (int i = 0; i < num_bits_; i++) {
+    for (int i = 0; i < num_bits; i++) {
         if (!as_sum_links[i]) {
-            m_output.fatal(CALL_INFO, -1, "Failed to configure port\n");
+            output.fatal(CALL_INFO, -1, "Failed to configure port\n");
         }
     }
 
-    for (int i = 0; i < num_bits_; i++) {
+    for (int i = 0; i < num_bits; i++) {
         if (!add_opand1_links[i]) {
-            m_output.fatal(CALL_INFO, -1, "Failed to configure port\n");
+            output.fatal(CALL_INFO, -1, "Failed to configure port\n");
         }
     }
-    for (int i = 0; i < num_bits_; i++) {
+    for (int i = 0; i < num_bits; i++) {
         if (!add_opand2_links[i]) {
-            m_output.fatal(CALL_INFO, -1, "Failed to configure port\n");
+            output.fatal(CALL_INFO, -1, "Failed to configure port\n");
         }
     }
-    for (int i = 0; i < num_bits_; i++) {
+    for (int i = 0; i < num_bits; i++) {
         if (!add_cin_links[i]) {
-            m_output.fatal(CALL_INFO, -1, "Failed to configure port\n");
+            output.fatal(CALL_INFO, -1, "Failed to configure port\n");
         }
     }
 
-    for (int i = 0; i < num_bits_; i++) {
+    for (int i = 0; i < num_bits; i++) {
         if (!add_sum_links[i]) {
-            m_output.fatal(CALL_INFO, -1, "Failed to configure port\n");
+            output.fatal(CALL_INFO, -1, "Failed to configure port\n");
         }
     }
-    for (int i = 0; i < num_bits_; i++) {
+    for (int i = 0; i < num_bits; i++) {
         if (!add_cout_links[i]) {
-            m_output.fatal(CALL_INFO, -1, "Failed to configure port\n");
+            output.fatal(CALL_INFO, -1, "Failed to configure port\n");
         }
     }
 
-    registerClock(m_clock,
-                  new SST::Clock::Handler<RippleCarryAdder>(this, &RippleCarryAdder::tick));
+    registerClock(clock, new SST::Clock::Handler<RippleCarryAdder>(this, &RippleCarryAdder::tick));
 
     // Tell SST to wait until we authorize it to exit
     registerAsPrimaryComponent();
@@ -258,34 +257,34 @@ RippleCarryAdder::RippleCarryAdder(SST::ComponentId_t id, SST::Params& params)
 }
 
 void RippleCarryAdder::setup() {
-    m_output.verbose(CALL_INFO, 1, 0, "Component is being set up.\n");
+    output.verbose(CALL_INFO, 1, 0, "Component is being set up.\n");
 }
 
 void RippleCarryAdder::finish() {
-    m_output.verbose(CALL_INFO, 1, 0, "Destroying %s...\n", getName().c_str());
+    output.verbose(CALL_INFO, 1, 0, "Destroying %s...\n", getName().c_str());
     std::cout << "OPAND1: ";
     for (int i = 3; i > -1; i--) {
-        std::cout << opand1_[i];
+        std::cout << opand1[i];
     }
 
     std::cout << "\nOPAND2: ";
     for (int i = 3; i > -1; i--) {
-        std::cout << opand2_[i];
+        std::cout << opand2[i];
     }
 
     std::cout << "\nCIN:    ";
     for (int i = 3; i > -1; i--) {
-        std::cout << cin_[i];
+        std::cout << cin[i];
     }
 
     std::cout << "\nSUM:    ";
     for (int i = 3; i > -1; i--) {
-        std::cout << sum_[i];
+        std::cout << sum[i];
     }
 
     std::cout << "\nCOUT:   ";
     for (int i = 3; i > -1; i--) {
-        std::cout << cout_[i];
+        std::cout << cout[i];
     }
     std::cout << '\n';
 }
@@ -293,8 +292,8 @@ void RippleCarryAdder::finish() {
 void RippleCarryAdder::handle_as_cin_0(SST::Event* ev) {
     auto* se = dynamic_cast<SST::Interfaces::StringEvent*>(ev);
     if (se) {
-        cin_[0] = se->getString();
-        add_cin_links[0]->send(new SST::Interfaces::StringEvent(cin_[0]));
+        cin[0] = se->getString();
+        add_cin_links[0]->send(new SST::Interfaces::StringEvent(cin[0]));
     }
     delete ev;
 }
@@ -302,8 +301,8 @@ void RippleCarryAdder::handle_as_cin_0(SST::Event* ev) {
 void RippleCarryAdder::handle_as_opand1_0(SST::Event* ev) {
     auto* se = dynamic_cast<SST::Interfaces::StringEvent*>(ev);
     if (se) {
-        opand1_[0] = se->getString();
-        add_opand1_links[0]->send(new SST::Interfaces::StringEvent(opand1_[0]));
+        opand1[0] = se->getString();
+        add_opand1_links[0]->send(new SST::Interfaces::StringEvent(opand1[0]));
     }
     delete ev;
 }
@@ -311,8 +310,8 @@ void RippleCarryAdder::handle_as_opand1_0(SST::Event* ev) {
 void RippleCarryAdder::handle_as_opand2_0(SST::Event* ev) {
     auto* se = dynamic_cast<SST::Interfaces::StringEvent*>(ev);
     if (se) {
-        opand2_[0] = se->getString();
-        add_opand2_links[0]->send(new SST::Interfaces::StringEvent(opand2_[0]));
+        opand2[0] = se->getString();
+        add_opand2_links[0]->send(new SST::Interfaces::StringEvent(opand2[0]));
     }
     delete ev;
 }
@@ -320,8 +319,8 @@ void RippleCarryAdder::handle_as_opand2_0(SST::Event* ev) {
 void RippleCarryAdder::handle_add_cout_0(SST::Event* ev) {
     auto* se = dynamic_cast<SST::Interfaces::StringEvent*>(ev);
     if (se) {
-        cout_[0] = se->getString();
-        add_cin_links[1]->send(new SST::Interfaces::StringEvent(cout_[0]));
+        cout[0] = se->getString();
+        add_cin_links[1]->send(new SST::Interfaces::StringEvent(cout[0]));
     }
     delete ev;
 }
@@ -329,8 +328,8 @@ void RippleCarryAdder::handle_add_cout_0(SST::Event* ev) {
 void RippleCarryAdder::handle_add_sum_0(SST::Event* ev) {
     auto* se = dynamic_cast<SST::Interfaces::StringEvent*>(ev);
     if (se) {
-        sum_[0] = se->getString();
-        as_sum_links[0]->send(new SST::Interfaces::StringEvent(sum_[0]));
+        sum[0] = se->getString();
+        as_sum_links[0]->send(new SST::Interfaces::StringEvent(sum[0]));
     }
     delete ev;
 }
@@ -338,8 +337,8 @@ void RippleCarryAdder::handle_add_sum_0(SST::Event* ev) {
 void RippleCarryAdder::handle_as_opand1_1(SST::Event* ev) {
     auto* se = dynamic_cast<SST::Interfaces::StringEvent*>(ev);
     if (se) {
-        opand1_[1] = se->getString();
-        add_opand1_links[1]->send(new SST::Interfaces::StringEvent(opand1_[1]));
+        opand1[1] = se->getString();
+        add_opand1_links[1]->send(new SST::Interfaces::StringEvent(opand1[1]));
     }
     delete ev;
 }
@@ -347,8 +346,8 @@ void RippleCarryAdder::handle_as_opand1_1(SST::Event* ev) {
 void RippleCarryAdder::handle_as_opand2_1(SST::Event* ev) {
     auto* se = dynamic_cast<SST::Interfaces::StringEvent*>(ev);
     if (se) {
-        opand2_[1] = se->getString();
-        add_opand2_links[1]->send(new SST::Interfaces::StringEvent(opand2_[1]));
+        opand2[1] = se->getString();
+        add_opand2_links[1]->send(new SST::Interfaces::StringEvent(opand2[1]));
     }
     delete ev;
 }
@@ -356,9 +355,9 @@ void RippleCarryAdder::handle_as_opand2_1(SST::Event* ev) {
 void RippleCarryAdder::handle_add_cout_1(SST::Event* ev) {
     auto* se = dynamic_cast<SST::Interfaces::StringEvent*>(ev);
     if (se) {
-        cout_[1] = se->getString();
-        cin_[1] = cout_[0];
-        add_cin_links[2]->send(new SST::Interfaces::StringEvent(cout_[1]));
+        cout[1] = se->getString();
+        cin[1] = cout[0];
+        add_cin_links[2]->send(new SST::Interfaces::StringEvent(cout[1]));
     }
     delete ev;
 }
@@ -366,8 +365,8 @@ void RippleCarryAdder::handle_add_cout_1(SST::Event* ev) {
 void RippleCarryAdder::handle_add_sum_1(SST::Event* ev) {
     auto* se = dynamic_cast<SST::Interfaces::StringEvent*>(ev);
     if (se) {
-        sum_[1] = se->getString();
-        as_sum_links[1]->send(new SST::Interfaces::StringEvent(sum_[1]));
+        sum[1] = se->getString();
+        as_sum_links[1]->send(new SST::Interfaces::StringEvent(sum[1]));
     }
     delete ev;
 }
@@ -375,8 +374,8 @@ void RippleCarryAdder::handle_add_sum_1(SST::Event* ev) {
 void RippleCarryAdder::handle_as_opand1_2(SST::Event* ev) {
     auto* se = dynamic_cast<SST::Interfaces::StringEvent*>(ev);
     if (se) {
-        opand1_[2] = se->getString();
-        add_opand1_links[2]->send(new SST::Interfaces::StringEvent(opand1_[2]));
+        opand1[2] = se->getString();
+        add_opand1_links[2]->send(new SST::Interfaces::StringEvent(opand1[2]));
     }
     delete ev;
 }
@@ -384,8 +383,8 @@ void RippleCarryAdder::handle_as_opand1_2(SST::Event* ev) {
 void RippleCarryAdder::handle_as_opand2_2(SST::Event* ev) {
     auto* se = dynamic_cast<SST::Interfaces::StringEvent*>(ev);
     if (se) {
-        opand2_[2] = se->getString();
-        add_opand2_links[2]->send(new SST::Interfaces::StringEvent(opand2_[2]));
+        opand2[2] = se->getString();
+        add_opand2_links[2]->send(new SST::Interfaces::StringEvent(opand2[2]));
     }
     delete ev;
 }
@@ -393,9 +392,9 @@ void RippleCarryAdder::handle_as_opand2_2(SST::Event* ev) {
 void RippleCarryAdder::handle_add_cout_2(SST::Event* ev) {
     auto* se = dynamic_cast<SST::Interfaces::StringEvent*>(ev);
     if (se) {
-        cout_[2] = se->getString();
-        cin_[2] = cout_[1];
-        add_cin_links[3]->send(new SST::Interfaces::StringEvent(cout_[2]));
+        cout[2] = se->getString();
+        cin[2] = cout[1];
+        add_cin_links[3]->send(new SST::Interfaces::StringEvent(cout[2]));
     }
     delete ev;
 }
@@ -403,8 +402,8 @@ void RippleCarryAdder::handle_add_cout_2(SST::Event* ev) {
 void RippleCarryAdder::handle_add_sum_2(SST::Event* ev) {
     auto* se = dynamic_cast<SST::Interfaces::StringEvent*>(ev);
     if (se) {
-        sum_[2] = se->getString();
-        as_sum_links[2]->send(new SST::Interfaces::StringEvent(sum_[2]));
+        sum[2] = se->getString();
+        as_sum_links[2]->send(new SST::Interfaces::StringEvent(sum[2]));
     }
     delete ev;
 }
@@ -412,8 +411,8 @@ void RippleCarryAdder::handle_add_sum_2(SST::Event* ev) {
 void RippleCarryAdder::handle_as_opand1_3(SST::Event* ev) {
     auto* se = dynamic_cast<SST::Interfaces::StringEvent*>(ev);
     if (se) {
-        opand1_[3] = se->getString();
-        add_opand1_links[3]->send(new SST::Interfaces::StringEvent(opand1_[3]));
+        opand1[3] = se->getString();
+        add_opand1_links[3]->send(new SST::Interfaces::StringEvent(opand1[3]));
     }
     delete ev;
 }
@@ -421,8 +420,8 @@ void RippleCarryAdder::handle_as_opand1_3(SST::Event* ev) {
 void RippleCarryAdder::handle_as_opand2_3(SST::Event* ev) {
     auto* se = dynamic_cast<SST::Interfaces::StringEvent*>(ev);
     if (se) {
-        opand2_[3] = se->getString();
-        add_opand2_links[3]->send(new SST::Interfaces::StringEvent(opand2_[3]));
+        opand2[3] = se->getString();
+        add_opand2_links[3]->send(new SST::Interfaces::StringEvent(opand2[3]));
     }
     delete ev;
 }
@@ -430,9 +429,9 @@ void RippleCarryAdder::handle_as_opand2_3(SST::Event* ev) {
 void RippleCarryAdder::handle_add_cout_3(SST::Event* ev) {
     auto* se = dynamic_cast<SST::Interfaces::StringEvent*>(ev);
     if (se) {
-        cout_[3] = se->getString();
-        cin_[3] = cout_[2];
-        as_cout_3_link->send(new SST::Interfaces::StringEvent(cout_[3]));
+        cout[3] = se->getString();
+        cin[3] = cout[2];
+        as_cout_3_link->send(new SST::Interfaces::StringEvent(cout[3]));
     }
     delete ev;
 }
@@ -440,8 +439,8 @@ void RippleCarryAdder::handle_add_cout_3(SST::Event* ev) {
 void RippleCarryAdder::handle_add_sum_3(SST::Event* ev) {
     auto* se = dynamic_cast<SST::Interfaces::StringEvent*>(ev);
     if (se) {
-        sum_[3] = se->getString();
-        as_sum_links[3]->send(new SST::Interfaces::StringEvent(sum_[3]));
+        sum[3] = se->getString();
+        as_sum_links[3]->send(new SST::Interfaces::StringEvent(sum[3]));
     }
     delete ev;
 }
