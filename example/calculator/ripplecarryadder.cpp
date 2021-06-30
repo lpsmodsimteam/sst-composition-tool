@@ -130,11 +130,20 @@ RippleCarryAdder::RippleCarryAdder(SST::ComponentId_t id, SST::Params& params)
       num_bits(4), opand1{"X", "X", "X", "X"}, opand2{"X", "X", "X", "X"}, cin{"X", "X", "X", "X"},
       sum{"X", "X", "X", "X"}, cout{"X", "X", "X", "X"} {
 
-    for (int i = 0; i < num_bits; i++) {
-        add_opand1_links[i] = configureLink("add_opand1_" + std::to_string(i));
-        add_opand2_links[i] = configureLink("add_opand2_" + std::to_string(i));
-        add_cin_links[i] = configureLink("add_cin_" + std::to_string(i));
-    }
+    add_opand1_links[0] = configureLink("add_opand1_0");
+    add_opand1_links[1] = configureLink("add_opand1_1");
+    add_opand1_links[2] = configureLink("add_opand1_2");
+    add_opand1_links[3] = configureLink("add_opand1_3");
+
+    add_opand2_links[0] = configureLink("add_opand2_0");
+    add_opand2_links[1] = configureLink("add_opand2_1");
+    add_opand2_links[2] = configureLink("add_opand2_2");
+    add_opand2_links[3] = configureLink("add_opand2_3");
+
+    add_cin_links[0] = configureLink("add_cin_0");
+    add_cin_links[1] = configureLink("add_cin_1");
+    add_cin_links[2] = configureLink("add_cin_2");
+    add_cin_links[3] = configureLink("add_cin_3");
 
     as_sum_links[0] = configureLink("as_sum_0");
     as_sum_links[1] = configureLink("as_sum_1");

@@ -63,30 +63,36 @@ public:
         {"as_cout_3", "Operand 1 of Adder-Subtractor", {"sst.Interfaces.StringEvent"}}, )
 
 private:
-    std::string clock;
-
-    int control, num_bits_;
-
-    int opand2[4];
-    std::string opand1[4], sum[4], cout_3;
-
     // SST parameters
-    SST::Output output;
+    std::string clock;
+    int control;
 
+    // SST links
     SST::Link *as_opand1_links[4], *as_opand2_links[4], *as_cin_0_link, *as_cout_3_link,
         *as_sum_links[4];
+
+    // other attributes
+    int num_bits, opand2[4];
+    std::string opand1[4], sum[4], cout_3;
+    SST::Output output;
 };
 
 AdderSubtractor::AdderSubtractor(SST::ComponentId_t id, SST::Params& params)
     : SST::Component(id), clock(params.find<std::string>("clock", "")),
       control(params.find<int>("control", 0)),
-      num_bits_(4), opand2{0, 1, 0, 1}, opand1{"1", "1", "0", "1"}, sum{"X", "X", "X", "X"},
+      num_bits(4), opand2{0, 1, 0, 1}, opand1{"1", "1", "0", "1"}, sum{"X", "X", "X", "X"},
       cout_3("X") {
 
-    for (int i = 0; i < num_bits_; i++) {
-        as_opand1_links[i] = configureLink("as_opand1_" + std::to_string(i));
-        as_opand2_links[i] = configureLink("as_opand2_" + std::to_string(i));
-    }
+    as_opand1_links[0] = configureLink("as_opand1_0");
+    as_opand1_links[1] = configureLink("as_opand1_1");
+    as_opand1_links[2] = configureLink("as_opand1_2");
+    as_opand1_links[3] = configureLink("as_opand1_3");
+
+    as_opand2_links[0] = configureLink("as_opand2_0");
+    as_opand2_links[1] = configureLink("as_opand2_1");
+    as_opand2_links[2] = configureLink("as_opand2_2");
+    as_opand2_links[3] = configureLink("as_opand2_3");
+
     as_cin_0_link = configureLink("as_cin_0");
 
     as_sum_links[0] = configureLink(
@@ -113,17 +119,17 @@ AdderSubtractor::AdderSubtractor(SST::ComponentId_t id, SST::Params& params)
     if (!as_cout_3_link) {
         output.fatal(CALL_INFO, -1, "Failed to configure port\n");
     }
-    for (int i = 0; i < num_bits_; i++) {
+    for (int i = 0; i < num_bits; i++) {
         if (!as_opand1_links[i]) {
             output.fatal(CALL_INFO, -1, "Failed to configure port\n");
         }
     }
-    for (int i = 0; i < num_bits_; i++) {
+    for (int i = 0; i < num_bits; i++) {
         if (!as_opand2_links[i]) {
             output.fatal(CALL_INFO, -1, "Failed to configure port\n");
         }
     }
-    for (int i = 0; i < num_bits_; i++) {
+    for (int i = 0; i < num_bits; i++) {
         if (!as_sum_links[i]) {
             output.fatal(CALL_INFO, -1, "Failed to configure port\n");
         }

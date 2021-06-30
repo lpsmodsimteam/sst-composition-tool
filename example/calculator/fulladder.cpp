@@ -39,24 +39,30 @@ public:
                            {"cout", "Overflow", {"sst.Interfaces.StringEvent"}})
 
 private:
+    // SST parameters
     std::string clock;
+
+    // SST links
     SST::Link *opand1_link, *opand2_link, *cin_link, *sum_link, *cout_link;
 
+    // other attributes
     std::string opand1, opand2, cin;
-    // SST parameters
     SST::Output output;
 };
 
 FullAdder::FullAdder(SST::ComponentId_t id, SST::Params& params)
-    : SST::Component(id), clock(params.find<std::string>("clock", "")),
-      opand1_link(configureLink(
-          "opand1", new SST::Event::Handler<FullAdder>(this, &FullAdder::handle_opand1))),
-      opand2_link(configureLink(
-          "opand2", new SST::Event::Handler<FullAdder>(this, &FullAdder::handle_opand2))),
-      cin_link(
-          configureLink("cin", new SST::Event::Handler<FullAdder>(this, &FullAdder::handle_cin))),
-      sum_link(configureLink("sum")), cout_link(configureLink("cout")), opand1(""), opand2(""),
+    : SST::Component(id), clock(params.find<std::string>("clock", "")), opand1(""), opand2(""),
       cin("") {
+
+    opand1_link = configureLink(
+        "opand1", new SST::Event::Handler<FullAdder>(this, &FullAdder::handle_opand1));
+    opand2_link = configureLink(
+        "opand2", new SST::Event::Handler<FullAdder>(this, &FullAdder::handle_opand2));
+    cin_link =
+        configureLink("cin", new SST::Event::Handler<FullAdder>(this, &FullAdder::handle_cin));
+    sum_link = configureLink("sum");
+    cout_link = configureLink("cout");
+
     output.init("\033[34m" + getName() + "\033[0m -> ", 1, 0, SST::Output::STDOUT);
 
     if (!(opand1_link && opand2_link && sum_link && cout_link)) {
