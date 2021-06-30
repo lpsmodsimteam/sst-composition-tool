@@ -1,11 +1,14 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# -*- coasg: utf-8 -*-
 
 import sst
 
 sst.setProgramOption("stopAtCycle", "5s")
 CLOCK = "1Hz"
 LINK_DELAY = "1ps"
+
+addersubtractor = sst.Component("addersubtractor driver", "calculator.addersubtractor")
+addersubtractor.addParams({"clock": CLOCK})
 
 ripplecarryadder = sst.Component("ripplecarryadder driver", "calculator.ripplecarryadder")
 ripplecarryadder.addParams({"clock": CLOCK})
@@ -21,6 +24,50 @@ full_add_2.addParams({"clock": CLOCK})
 
 full_add_3 = sst.Component("Full Adder 3", "calculator.fulladder")
 full_add_3.addParams({"clock": CLOCK})
+
+sst.Link("as_opand1_0").connect(
+    (addersubtractor, "as_opand1_0", LINK_DELAY), (ripplecarryadder, "as_opand1_0", LINK_DELAY)
+)
+sst.Link("as_opand1_1").connect(
+    (addersubtractor, "as_opand1_1", LINK_DELAY), (ripplecarryadder, "as_opand1_1", LINK_DELAY)
+)
+sst.Link("as_opand1_2").connect(
+    (addersubtractor, "as_opand1_2", LINK_DELAY), (ripplecarryadder, "as_opand1_2", LINK_DELAY)
+)
+sst.Link("as_opand1_3").connect(
+    (addersubtractor, "as_opand1_3", LINK_DELAY), (ripplecarryadder, "as_opand1_3", LINK_DELAY)
+)
+sst.Link("as_opand2_0").connect(
+    (addersubtractor, "as_opand2_0", LINK_DELAY), (ripplecarryadder, "as_opand2_0", LINK_DELAY)
+)
+sst.Link("as_opand2_1").connect(
+    (addersubtractor, "as_opand2_1", LINK_DELAY), (ripplecarryadder, "as_opand2_1", LINK_DELAY)
+)
+sst.Link("as_opand2_2").connect(
+    (addersubtractor, "as_opand2_2", LINK_DELAY), (ripplecarryadder, "as_opand2_2", LINK_DELAY)
+)
+sst.Link("as_opand2_3").connect(
+    (addersubtractor, "as_opand2_3", LINK_DELAY), (ripplecarryadder, "as_opand2_3", LINK_DELAY)
+)
+sst.Link("as_sum_0").connect(
+    (addersubtractor, "as_sum_0", LINK_DELAY), (ripplecarryadder, "as_sum_0", LINK_DELAY)
+)
+sst.Link("as_sum_1").connect(
+    (addersubtractor, "as_sum_1", LINK_DELAY), (ripplecarryadder, "as_sum_1", LINK_DELAY)
+)
+sst.Link("as_sum_2").connect(
+    (addersubtractor, "as_sum_2", LINK_DELAY), (ripplecarryadder, "as_sum_2", LINK_DELAY)
+)
+sst.Link("as_sum_3").connect(
+    (addersubtractor, "as_sum_3", LINK_DELAY), (ripplecarryadder, "as_sum_3", LINK_DELAY)
+)
+sst.Link("as_cin_0").connect(
+    (addersubtractor, "as_cin_0", LINK_DELAY), (ripplecarryadder, "as_cin_0", LINK_DELAY)
+)
+sst.Link("as_cout_3").connect(
+    (addersubtractor, "as_cout_3", LINK_DELAY), (ripplecarryadder, "as_cout_3", LINK_DELAY)
+)
+
 
 sst.Link("add_opand1_0").connect(
     (full_add_0, "opand1", LINK_DELAY), (ripplecarryadder, "add_opand1_0", LINK_DELAY)

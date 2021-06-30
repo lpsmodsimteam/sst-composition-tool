@@ -48,5 +48,5 @@ macro(_sst_compile_link _name)
     endif ()
 endmacro()
 
-add_executable(lib${CMAKE_PROJECT_NAME}.so fulladder.cpp ripplecarryadder.cpp)
+add_executable(lib${CMAKE_PROJECT_NAME}.so fulladder.cpp ripplecarryadder.cpp addsub.cpp)
 _sst_compile_link(lib${CMAKE_PROJECT_NAME}.so)
