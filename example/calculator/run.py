@@ -7,11 +7,14 @@ sst.setProgramOption("stopAtCycle", "5s")
 CLOCK = "1Hz"
 LINK_DELAY = "1ps"
 
-addersubtractor = sst.Component("addersubtractor driver", "calculator.addersubtractor")
-addersubtractor.addParams({"clock": CLOCK, "control": 0})
+addersubtractor = sst.Component("addersubtractor", "calculator.addersubtractor")
+addersubtractor.addParams({"clock": CLOCK, "control": 1})
 
-ripplecarryadder = sst.Component("ripplecarryadder driver", "calculator.ripplecarryadder")
+ripplecarryadder = sst.Component("ripplecarryadder", "calculator.ripplecarryadder")
 ripplecarryadder.addParams({"clock": CLOCK})
+
+bintodec = sst.Component("bintodec", "calculator.bintodec")
+bintodec.addParams({"clock": CLOCK})
 
 full_add_0 = sst.Component("Full Adder 0", "calculator.fulladder")
 full_add_0.addParams({"clock": CLOCK})
@@ -24,6 +27,24 @@ full_add_2.addParams({"clock": CLOCK})
 
 full_add_3 = sst.Component("Full Adder 3", "calculator.fulladder")
 full_add_3.addParams({"clock": CLOCK})
+
+
+sst.Link("b2d_sum_0").connect(
+    (addersubtractor, "b2d_sum_0", LINK_DELAY), (bintodec, "sum_0", LINK_DELAY)
+)
+sst.Link("b2d_sum_1").connect(
+    (addersubtractor, "b2d_sum_1", LINK_DELAY), (bintodec, "sum_1", LINK_DELAY)
+)
+sst.Link("b2d_sum_2").connect(
+    (addersubtractor, "b2d_sum_2", LINK_DELAY), (bintodec, "sum_2", LINK_DELAY)
+)
+sst.Link("b2d_sum_3").connect(
+    (addersubtractor, "b2d_sum_3", LINK_DELAY), (bintodec, "sum_3", LINK_DELAY)
+)
+sst.Link("b2d_cout").connect(
+    (addersubtractor, "b2d_cout_3", LINK_DELAY), (bintodec, "cout", LINK_DELAY)
+)
+
 
 sst.Link("as_opand1_0").connect(
     (addersubtractor, "as_opand1_0", LINK_DELAY), (ripplecarryadder, "as_opand1_0", LINK_DELAY)

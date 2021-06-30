@@ -34,9 +34,9 @@ public:
     // Port name, description, event type
     SST_ELI_DOCUMENT_PORTS({"opand1", "Operand 1", {"sst.Interfaces.StringEvent"}},
                            {"opand2", "Operand 2", {"sst.Interfaces.StringEvent"}},
-                           {"cin", "Operand 2", {"sst.Interfaces.StringEvent"}},
+                           {"cin", "Carry-in", {"sst.Interfaces.StringEvent"}},
                            {"sum", "Sum", {"sst.Interfaces.StringEvent"}},
-                           {"cout", "Overflow", {"sst.Interfaces.StringEvent"}})
+                           {"cout", "Carry-out", {"sst.Interfaces.StringEvent"}})
 
 private:
     // SST parameters

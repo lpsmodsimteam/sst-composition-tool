@@ -111,18 +111,18 @@ public:
         {"add_cout_3", "Carry-out of Full Adder 3", {"sst.Interfaces.StringEvent"}}, )
 
 private:
+    // SST parameters
     std::string clock;
 
-    int num_bits;
-
-    std::string opand1[4], opand2[4], cin[4], sum[4], cout[4];
-
-    // SST parameters
-    SST::Output output;
-
+    // SST links
     SST::Link *as_cin_0_link, *as_cout_3_link, *as_opand1_links[4], *as_opand2_links[4],
         *as_sum_links[4], *add_opand1_links[4], *add_opand2_links[4], *add_cin_links[4],
         *add_sum_links[4], *add_cout_links[4];
+
+    // other attributes
+    int num_bits;
+    std::string opand1[4], opand2[4], cin[4], sum[4], cout[4];
+    SST::Output output;
 };
 
 RippleCarryAdder::RippleCarryAdder(SST::ComponentId_t id, SST::Params& params)
@@ -149,6 +149,7 @@ RippleCarryAdder::RippleCarryAdder(SST::ComponentId_t id, SST::Params& params)
     as_sum_links[1] = configureLink("as_sum_1");
     as_sum_links[2] = configureLink("as_sum_2");
     as_sum_links[3] = configureLink("as_sum_3");
+
     as_cout_3_link = configureLink("as_cout_3");
 
     as_opand1_links[0] = configureLink(
