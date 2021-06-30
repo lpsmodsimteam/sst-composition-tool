@@ -8,7 +8,9 @@ CLOCK = "1Hz"
 LINK_DELAY = "1ps"
 
 addersubtractor = sst.Component("addersubtractor", "calculator.addersubtractor")
-addersubtractor.addParams({"clock": CLOCK, "control": 1})
+addersubtractor.addParams(
+    {"clock": CLOCK, "control": 0, "opand1": [1, 1, 0, 1], "opand2": [0, 1, 0, 1]}
+)
 
 ripplecarryadder = sst.Component("ripplecarryadder", "calculator.ripplecarryadder")
 ripplecarryadder.addParams({"clock": CLOCK})

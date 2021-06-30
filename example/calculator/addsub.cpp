@@ -73,22 +73,25 @@ private:
     // SST parameters
     std::string clock;
     int control;
+    std::vector<std::string> opand1;
+    std::vector<int> opand2;
 
     // SST links
     SST::Link *as_opand1_links[4], *as_opand2_links[4], *as_cin_0_link, *as_cout_3_link,
         *as_sum_links[4], *b2d_sum_links[4], *b2d_cout_3_link;
 
     // other attributes
-    int num_bits, opand2[4];
-    std::string opand1[4], sum[4], cout_3;
+    int num_bits;
+    std::string sum[4], cout_3;
     SST::Output output;
 };
 
 AdderSubtractor::AdderSubtractor(SST::ComponentId_t id, SST::Params& params)
     : SST::Component(id), clock(params.find<std::string>("clock", "")),
-      control(params.find<int>("control", 0)),
-      num_bits(4), opand2{0, 1, 0, 1}, opand1{"1", "1", "0", "1"}, sum{"X", "X", "X", "X"},
-      cout_3("X") {
+      control(params.find<int>("control", 0)), num_bits(4), sum{"X", "X", "X", "X"}, cout_3("X") {
+
+    params.find_array<std::string>("opand1", opand1);
+    params.find_array<int>("opand2", opand2);
 
     as_opand1_links[0] = configureLink("as_opand1_0");
     as_opand1_links[1] = configureLink("as_opand1_1");
