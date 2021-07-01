@@ -65,9 +65,7 @@ public:
         {"b2d_sum_0", "Sum (0) of Adder-Subtractor", {"sst.Interfaces.StringEvent"}},
         {"b2d_sum_1", "Sum (1) of Adder-Subtractor", {"sst.Interfaces.StringEvent"}},
         {"b2d_sum_2", "Sum (2) of Adder-Subtractor", {"sst.Interfaces.StringEvent"}},
-        {"b2d_sum_3", "Sum (3) of Adder-Subtractor", {"sst.Interfaces.StringEvent"}},
-
-        {"b2d_cout_3", "Operand 1 of Adder-Subtractor", {"sst.Interfaces.StringEvent"}}, )
+        {"b2d_sum_3", "Sum (3) of Adder-Subtractor", {"sst.Interfaces.StringEvent"}}, )
 
 private:
     // SST parameters
@@ -78,7 +76,7 @@ private:
 
     // SST links
     SST::Link *as_opand1_links[4], *as_opand2_links[4], *as_cin_0_link, *as_cout_3_link,
-        *as_sum_links[4], *b2d_sum_links[4], *b2d_cout_3_link;
+        *as_sum_links[4], *b2d_sum_links[4];
 
     // other attributes
     int num_bits;
@@ -125,7 +123,6 @@ AdderSubtractor::AdderSubtractor(SST::ComponentId_t id, SST::Params& params)
     b2d_sum_links[1] = configureLink("b2d_sum_1");
     b2d_sum_links[2] = configureLink("b2d_sum_2");
     b2d_sum_links[3] = configureLink("b2d_sum_3");
-    b2d_cout_3_link = configureLink("b2d_cout_3");
 
     output.init("\033[34mparent-" + getName() + "\033[0m -> ", 1, 0, SST::Output::STDOUT);
 
@@ -133,9 +130,6 @@ AdderSubtractor::AdderSubtractor(SST::ComponentId_t id, SST::Params& params)
         output.fatal(CALL_INFO, -1, "Failed to configure port\n");
     }
     if (!as_cout_3_link) {
-        output.fatal(CALL_INFO, -1, "Failed to configure port\n");
-    }
-    if (!b2d_cout_3_link) {
         output.fatal(CALL_INFO, -1, "Failed to configure port\n");
     }
     for (int i = 0; i < num_bits; i++) {
@@ -232,7 +226,6 @@ void AdderSubtractor::handle_as_cout_3(SST::Event* ev) {
     auto* se = dynamic_cast<SST::Interfaces::StringEvent*>(ev);
     if (se) {
         cout_3 = se->getString();
-        b2d_cout_3_link->send(new SST::Interfaces::StringEvent(cout_3));
     }
     delete ev;
 }

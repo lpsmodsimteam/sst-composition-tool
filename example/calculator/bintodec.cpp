@@ -25,8 +25,6 @@ public:
 
     void handle_sum_3(SST::Event*);
 
-    void handle_cout(SST::Event*);
-
     bool tick(SST::Cycle_t);
 
     // Register the component
@@ -41,25 +39,24 @@ public:
     SST_ELI_DOCUMENT_PORTS({"sum_0", "Sum (0)", {"sst.Interfaces.StringEvent"}},
                            {"sum_1", "Sum (1)", {"sst.Interfaces.StringEvent"}},
                            {"sum_2", "Sum (2)", {"sst.Interfaces.StringEvent"}},
-                           {"sum_3", "Sum (3)", {"sst.Interfaces.StringEvent"}},
-                           {"cout", "Carry-out", {"sst.Interfaces.StringEvent"}})
+                           {"sum_3", "Sum (3)", {"sst.Interfaces.StringEvent"}}, )
 
 private:
     // SST parameters
     std::string clock;
 
     // SST links
-    SST::Link *sum_links[4], *cout_link;
+    SST::Link* sum_links[4];
 
     // other attributes
     int num_bits, decimal_result;
-    std::string sum[4], cout;
+    std::string sum[4];
     SST::Output output;
 };
 
 BinToDec::BinToDec(SST::ComponentId_t id, SST::Params& params)
     : SST::Component(id), clock(params.find<std::string>("clock", "")), num_bits(4),
-      decimal_result(0), sum{"X", "X", "X", "X"}, cout("") {
+      decimal_result(0), sum{"X", "X", "X", "X"} {
 
     sum_links[0] =
         configureLink("sum_0", new SST::Event::Handler<BinToDec>(this, &BinToDec::handle_sum_0));
@@ -69,8 +66,6 @@ BinToDec::BinToDec(SST::ComponentId_t id, SST::Params& params)
         configureLink("sum_2", new SST::Event::Handler<BinToDec>(this, &BinToDec::handle_sum_2));
     sum_links[3] =
         configureLink("sum_3", new SST::Event::Handler<BinToDec>(this, &BinToDec::handle_sum_3));
-    cout_link =
-        configureLink("cout", new SST::Event::Handler<BinToDec>(this, &BinToDec::handle_cout));
 
     output.init("\033[34m" + getName() + "\033[0m -> ", 1, 0, SST::Output::STDOUT);
 
@@ -78,9 +73,6 @@ BinToDec::BinToDec(SST::ComponentId_t id, SST::Params& params)
         if (!sum_links[i]) {
             output.fatal(CALL_INFO, -1, "Failed to configure port\n");
         }
-    }
-    if (!cout_link) {
-        output.fatal(CALL_INFO, -1, "Failed to configure port\n");
     }
 
     registerClock(clock, new SST::Clock::Handler<BinToDec>(this, &BinToDec::tick));
@@ -134,14 +126,6 @@ void BinToDec::handle_sum_3(SST::Event* ev) {
     auto* se = dynamic_cast<SST::Interfaces::StringEvent*>(ev);
     if (se) {
         sum[3] = se->getString();
-    }
-    delete ev;
-}
-
-void BinToDec::handle_cout(SST::Event* ev) {
-    auto* se = dynamic_cast<SST::Interfaces::StringEvent*>(ev);
-    if (se) {
-        cout = se->getString();
     }
     delete ev;
 }

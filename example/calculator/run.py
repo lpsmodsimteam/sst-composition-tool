@@ -43,10 +43,6 @@ sst.Link("b2d_sum_2").connect(
 sst.Link("b2d_sum_3").connect(
     (addersubtractor, "b2d_sum_3", LINK_DELAY), (bintodec, "sum_3", LINK_DELAY)
 )
-sst.Link("b2d_cout").connect(
-    (addersubtractor, "b2d_cout_3", LINK_DELAY), (bintodec, "cout", LINK_DELAY)
-)
-
 
 sst.Link("as_opand1_0").connect(
     (addersubtractor, "as_opand1_0", LINK_DELAY), (ripplecarryadder, "as_opand1_0", LINK_DELAY)
