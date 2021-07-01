@@ -18,11 +18,11 @@ editor.on("contextmenu", function(id) {
 })
 
 editor.on("nodeSelected", function(id) {
-    console.log(id);
     if ($("#group_nodes").is(":checked") && !selectedNodes.includes(id)) {
         selectedNodes.push(id);
         $("#group_nodes_msg").text("Nodes selected " + selectedNodes);
     }
+    // generateIODropdown(id, editor.getNodeFromId(id)["name"], "input");
 });
 /* ---------------------- NODE EVENTS ---------------------- */
 
@@ -152,6 +152,27 @@ function addGroupNodesConnectionLabels(groupName, newNamesArr, io) {
     return ioStyles;
 }
 
+function updateIO(cb, elementName, io, ioName) {
+    console.log(cb, elementName, io, ioName);
+    if (!cb.checked) {
+    }
+}
+
+function generateIODropdown(id, elementName, io) {
+
+    const ioList = dfBoxDivs[elementName]["link"][io];
+
+    var checkboxes = $("#element_inputs");
+    var options = '';
+    for (var val in ioList) {
+        options += '<input type="checkbox" onclick="updateIO(this, \'' + elementName + '\', \'' +
+                   io + '\', \'' + ioList[val] + '\');" name="' + ioList[val] + '" checked/>' +
+                   ioList[val] + '<br />';
+    }
+    console.log(options);
+    checkboxes.html(options);
+}
+
 function addGroupNodesStyles(groupName, newNamesArr) {
 
     dfBoxDivs[groupName]["link"] = {"input" : [], "output" : []};
@@ -162,7 +183,6 @@ function addGroupNodesStyles(groupName, newNamesArr) {
 .drawflow-node.` + groupName +
                           ` {
   background: #2c3e50;
-  height: 200px;
   text-align: center;
   color: #1abc9c;
 }

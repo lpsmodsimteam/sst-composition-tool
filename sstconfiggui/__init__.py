@@ -16,29 +16,123 @@ from .templates import (
 
 ELEMENTS = [
     {
-        "name": "add",
-        "param": {"clock": "1MHz", "link_speed": "1ps", "bits": "16"},
-        "link": {"input": ["add_opand_din"], "output": ["sum_dout", "add_of_dout"]},
+        "name": "addsub",
+        "param": {
+            "clock": "1MHz",
+            "link_speed": "1ps",
+            "control": 0,
+            "opand1": [1, 1, 0, 1],
+            "opand2": [0, 1, 0, 1],
+        },
+        "link": {
+            "input": [
+                # adder-subtractor ports
+                "as_sum_0",
+                "as_sum_1",
+                "as_sum_2",
+                "as_sum_3",
+                "as_cout_3",
+            ],
+            "output": [
+                # adder-subtractor ports
+                "as_opand1_0",
+                "as_opand1_1",
+                "as_opand1_2",
+                "as_opand1_3",
+                "as_opand2_0",
+                "as_opand2_1",
+                "as_opand2_2",
+                "as_opand2_3",
+                # bintodec ports
+                "b2d_sum_0",
+                "b2d_sum_1",
+                "b2d_sum_2",
+                "b2d_sum_3",
+                "b2d_cout_3",
+            ],
+        },
     },
     {
-        "name": "sub",
-        "param": {"clock": "1MHz", "link_speed": "1ps", "bits": "16"},
-        "link": {"input": ["sub_opand_din"], "output": ["diff_dout", "neg_dout", "sub_of_dout"]},
+        "name": "ripplecarryadder",
+        "param": {
+            "clock": "1MHz",
+            "link_speed": "1ps",
+        },
+        "link": {
+            "input": [
+                # full adder ports
+                "as_opand1_0",
+                "as_opand1_1",
+                "as_opand1_2",
+                "as_opand1_3",
+                "as_opand2_0",
+                "as_opand2_1",
+                "as_opand2_2",
+                "as_opand2_3",
+                "as_cin_0",
+                # adder-subtractor ports
+                "add_sum_0",
+                "add_sum_1",
+                "add_sum_2",
+                "add_sum_3",
+                "add_cout_0",
+                "add_cout_1",
+                "add_cout_2",
+                "add_cout_3",
+            ],
+            "output": [
+                # full adder ports
+                "add_opand1_0",
+                "add_opand1_1",
+                "add_opand1_2",
+                "add_opand1_3",
+                "add_opand2_0",
+                "add_opand2_1",
+                "add_opand2_2",
+                "add_opand2_3",
+                "add_cin_0",
+                "add_cin_1",
+                "add_cin_2",
+                "add_cin_3",
+                # adder-subtractor ports
+                "as_sum_0",
+                "as_sum_1",
+                "as_sum_2",
+                "as_sum_3",
+                "as_cout_3",
+            ],
+        },
     },
     {
-        "name": "mul",
-        "param": {"clock": "1MHz", "link_speed": "1ps", "bits": "16"},
-        "link": {"input": ["mul_opand_din"], "output": ["prod_dout", "mul_of_dout"]},
+        "name": "fulladder",
+        "param": {
+            "clock": "1MHz",
+            "link_speed": "1ps",
+        },
+        "link": {
+            "input": [
+                "opand1",
+                "opand2",
+                "cin",
+            ],
+            "output": ["sum", "cout"],
+        },
     },
     {
-        "name": "div",
-        "param": {"clock": "1MHz", "link_speed": "1ps", "bits": "16"},
-        "link": {"input": ["div_opand_din"], "output": ["div_dout", "div_of_dout"]},
-    },
-    {
-        "name": "reg",
-        "param": {"clock": "1MHz", "link_speed": "1ps", "bits": "16"},
-        "link": {"input": ["reg_din"], "output": ["reg_dout", "reg_of_dout"]},
+        "name": "bintodec",
+        "param": {
+            "clock": "1MHz",
+            "link_speed": "1ps",
+        },
+        "link": {
+            "input": [
+                "sum_0",
+                "sum_1",
+                "sum_2",
+                "sum_3",
+            ],
+            "output": [],
+        },
     },
 ]
 
@@ -89,6 +183,8 @@ def create_app(test_config=None):
         from pprint import pprint
 
         data = json.loads(request.form["drawflow_data"])["drawflow"]
+        # with open("out.json", "w") as dump_file:
+        #     json.dump(data, dump_file, indent=4)
         pprint(data)
         return ""
 

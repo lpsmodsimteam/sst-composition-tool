@@ -1,0 +1,230 @@
+{
+    "Home": {
+        "data": {
+            "9": {
+                "id": 9,
+                "name": "rca",
+                "data": {},
+                "class": "rca",
+                "html": "\n  <div class=\"dbclickbox\" ondblclick=\"editor.changeModule('rca')\">rca</div>\n  ",
+                "typenode": false,
+                "inputs": {
+                    "input_1": {
+                        "connections": []
+                    },
+                    "input_2": {
+                        "connections": []
+                    },
+                    "input_3": {
+                        "connections": []
+                    },
+                    "input_4": {
+                        "connections": []
+                    },
+                    "input_5": {
+                        "connections": []
+                    },
+                    "input_6": {
+                        "connections": []
+                    },
+                    "input_7": {
+                        "connections": []
+                    },
+                    "input_8": {
+                        "connections": []
+                    },
+                    "input_9": {
+                        "connections": []
+                    },
+                    "input_10": {
+                        "connections": []
+                    },
+                    "input_11": {
+                        "connections": []
+                    },
+                    "input_12": {
+                        "connections": []
+                    }
+                },
+                "outputs": {
+                    "output_1": {
+                        "connections": []
+                    },
+                    "output_2": {
+                        "connections": []
+                    },
+                    "output_3": {
+                        "connections": []
+                    },
+                    "output_4": {
+                        "connections": []
+                    },
+                    "output_5": {
+                        "connections": []
+                    },
+                    "output_6": {
+                        "connections": []
+                    },
+                    "output_7": {
+                        "connections": []
+                    },
+                    "output_8": {
+                        "connections": []
+                    }
+                },
+                "pos_x": -4.078125,
+                "pos_y": 98
+            }
+        }
+    },
+    "rca": {
+        "data": {
+            "5": {
+                "id": 5,
+                "name": "fulladder",
+                "data": {},
+                "class": "fulladder",
+                "html": "\n<div>\n  <div class=\"title-box\">\n    <i class=\"fas fa-code\"></i> fulladder\n  </div>\n  <div class=\"box\">\n    <input type=\"text\" df-clock placeholder=\"clock\"><input type=\"text\" df-link_speed placeholder=\"link_speed\">\n  </div>\n</div>\n",
+                "typenode": false,
+                "inputs": {
+                    "input_1": {
+                        "connections": []
+                    },
+                    "input_2": {
+                        "connections": []
+                    },
+                    "input_3": {
+                        "connections": []
+                    }
+                },
+                "outputs": {
+                    "output_1": {
+                        "connections": []
+                    },
+                    "output_2": {
+                        "connections": [
+                            {
+                                "node": "6",
+                                "output": "input_3"
+                            }
+                        ]
+                    }
+                },
+                "pos_x": -4.078125,
+                "pos_y": 98
+            },
+            "6": {
+                "id": 6,
+                "name": "fulladder",
+                "data": {},
+                "class": "fulladder",
+                "html": "\n<div>\n  <div class=\"title-box\">\n    <i class=\"fas fa-code\"></i> fulladder\n  </div>\n  <div class=\"box\">\n    <input type=\"text\" df-clock placeholder=\"clock\"><input type=\"text\" df-link_speed placeholder=\"link_speed\">\n  </div>\n</div>\n",
+                "typenode": false,
+                "inputs": {
+                    "input_1": {
+                        "connections": []
+                    },
+                    "input_2": {
+                        "connections": []
+                    },
+                    "input_3": {
+                        "connections": [
+                            {
+                                "node": "5",
+                                "input": "output_2"
+                            }
+                        ]
+                    }
+                },
+                "outputs": {
+                    "output_1": {
+                        "connections": []
+                    },
+                    "output_2": {
+                        "connections": [
+                            {
+                                "node": "7",
+                                "output": "input_3"
+                            }
+                        ]
+                    }
+                },
+                "pos_x": 413,
+                "pos_y": 197
+            },
+            "7": {
+                "id": 7,
+                "name": "fulladder",
+                "data": {},
+                "class": "fulladder",
+                "html": "\n<div>\n  <div class=\"title-box\">\n    <i class=\"fas fa-code\"></i> fulladder\n  </div>\n  <div class=\"box\">\n    <input type=\"text\" df-clock placeholder=\"clock\"><input type=\"text\" df-link_speed placeholder=\"link_speed\">\n  </div>\n</div>\n",
+                "typenode": false,
+                "inputs": {
+                    "input_1": {
+                        "connections": []
+                    },
+                    "input_2": {
+                        "connections": []
+                    },
+                    "input_3": {
+                        "connections": [
+                            {
+                                "node": "6",
+                                "input": "output_2"
+                            }
+                        ]
+                    }
+                },
+                "outputs": {
+                    "output_1": {
+                        "connections": []
+                    },
+                    "output_2": {
+                        "connections": [
+                            {
+                                "node": "8",
+                                "output": "input_3"
+                            }
+                        ]
+                    }
+                },
+                "pos_x": 761,
+                "pos_y": 345
+            },
+            "8": {
+                "id": 8,
+                "name": "fulladder",
+                "data": {},
+                "class": "fulladder",
+                "html": "\n<div>\n  <div class=\"title-box\">\n    <i class=\"fas fa-code\"></i> fulladder\n  </div>\n  <div class=\"box\">\n    <input type=\"text\" df-clock placeholder=\"clock\"><input type=\"text\" df-link_speed placeholder=\"link_speed\">\n  </div>\n</div>\n",
+                "typenode": false,
+                "inputs": {
+                    "input_1": {
+                        "connections": []
+                    },
+                    "input_2": {
+                        "connections": []
+                    },
+                    "input_3": {
+                        "connections": [
+                            {
+                                "node": "7",
+                                "input": "output_2"
+                            }
+                        ]
+                    }
+                },
+                "outputs": {
+                    "output_1": {
+                        "connections": []
+                    },
+                    "output_2": {
+                        "connections": []
+                    }
+                },
+                "pos_x": 1074.921875,
+                "pos_y": 608
+            }
+        }
+    }
+}
