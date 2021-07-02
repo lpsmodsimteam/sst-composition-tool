@@ -24,8 +24,8 @@ ELEMENTS = [
             "opand1": [1, 1, 0, 1],
             "opand2": [0, 1, 0, 1],
         },
-        "link": {
-            "input": [
+        "links": {
+            "inputs": [
                 # adder-subtractor ports
                 "as_sum_0",
                 "as_sum_1",
@@ -33,7 +33,7 @@ ELEMENTS = [
                 "as_sum_3",
                 "as_cout_3",
             ],
-            "output": [
+            "outputs": [
                 # adder-subtractor ports
                 "as_opand1_0",
                 "as_opand1_1",
@@ -58,8 +58,8 @@ ELEMENTS = [
             "clock": "1MHz",
             "link_speed": "1ps",
         },
-        "link": {
-            "input": [
+        "links": {
+            "inputs": [
                 # full adder ports
                 "as_opand1_0",
                 "as_opand1_1",
@@ -80,7 +80,7 @@ ELEMENTS = [
                 "add_cout_2",
                 "add_cout_3",
             ],
-            "output": [
+            "outputs": [
                 # full adder ports
                 "add_opand1_0",
                 "add_opand1_1",
@@ -109,13 +109,13 @@ ELEMENTS = [
             "clock": "1MHz",
             "link_speed": "1ps",
         },
-        "link": {
-            "input": [
+        "links": {
+            "inputs": [
                 "opand1",
                 "opand2",
                 "cin",
             ],
-            "output": ["sum", "cout"],
+            "outputs": ["sum", "cout"],
         },
     },
     {
@@ -124,14 +124,14 @@ ELEMENTS = [
             "clock": "1MHz",
             "link_speed": "1ps",
         },
-        "link": {
-            "input": [
+        "links": {
+            "inputs": [
                 "sum_0",
                 "sum_1",
                 "sum_2",
                 "sum_3",
             ],
-            "output": [],
+            "outputs": [],
         },
     },
 ]
@@ -158,14 +158,14 @@ def create_app(test_config=None):
             DF_BOX_DIVS[element_name]["html"] = DF_BOX_DIVS_TEMPL.format(
                 element=element_name, input_tag=input_tags
             )
-            DF_BOX_DIVS[element_name]["link"] = element["link"]
+            DF_BOX_DIVS[element_name]["links"] = element["links"]
             node_styles += "\n".join(
                 NODE_INPUT_STYLE_TEMPL.format(class_name=element_name, index=i + 1, value=j)
-                for i, j in enumerate(element["link"]["input"])
+                for i, j in enumerate(element["links"]["inputs"])
             )
             node_styles += "\n".join(
                 NODE_OUTPUT_STYLE_TEMPL.format(class_name=element_name, index=i + 1, value=j)
-                for i, j in enumerate(element["link"]["output"])
+                for i, j in enumerate(element["links"]["outputs"])
             )
 
             element_divs += ELEMENT_DIV_TEMPL.format(element_name)
@@ -183,9 +183,43 @@ def create_app(test_config=None):
         from pprint import pprint
 
         data = json.loads(request.form["drawflow_data"])["drawflow"]
+        pprint(data)
+        new_data = []
+        for module in data.values():
+            for element_list in module.values():
+                for element in element_list.values():
+                    new_inputs = []
+                    new_outputs = []
+                    for i in ELEMENTS:
+                        if i["name"] == element["name"]:
+                            for input_num, (input_name, input_conns) in zip(
+                                i["links"]["inputs"], element["inputs"].items()
+                            ):
+                                print(element["id"], input_num, input_name, input_conns)
+                            for output_num, (output_name, output_conns) in zip(
+                                i["links"]["outputs"], element["outputs"].items()
+                            ):
+                                for conn in output_conns["connections"]:
+                                    print(
+                                        (element["id"], conn["node"]),
+                                        element_list[conn["node"]]["name"],
+                                        output_num,
+                                        i["links"]["inputs"][int(conn["outputs"][-1]) - 1],
+                                    )
+                                print(element["id"], output_num, output_name, output_conns)
+
+                    new_data.append(
+                        {
+                            "id": element["id"],
+                            "name": element["name"],
+                            "inputs": element["inputs"],
+                            "outputs": element["outputs"],
+                        }
+                    )
+
+        # pprint(new_data)
         # with open("out.json", "w") as dump_file:
         #     json.dump(data, dump_file, indent=4)
-        pprint(data)
         return ""
 
     return app

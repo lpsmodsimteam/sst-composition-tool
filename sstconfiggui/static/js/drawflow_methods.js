@@ -22,7 +22,7 @@ editor.on("nodeSelected", function(id) {
         selectedNodes.push(id);
         $("#group_nodes_msg").text("Nodes selected " + selectedNodes);
     }
-    // generateIODropdown(id, editor.getNodeFromId(id)["name"], "input");
+    // generateIODropdown(id, editor.getNodeFromId(id)["name"], "inputs");
 });
 /* ---------------------- NODE EVENTS ---------------------- */
 
@@ -55,7 +55,7 @@ $("#group_nodes").change(function(e) {
             $("#group_nodes_name").val('group_name_' + groupedNum);
         }
     }
-})
+});
 
 $("#export_button").click(function(e) {
     e.preventDefault();
@@ -84,9 +84,9 @@ function addNodeToDrawFlow(name, pos_x, pos_y) {
         pos_y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)) -
         (editor.precanvas.getBoundingClientRect().y *
          (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)));
-    editor.addNode(name, dfBoxDivs[name]["link"]["input"].length,
-                   dfBoxDivs[name]["link"]["output"].length, pos_x, pos_y, name, {},
-                   dfBoxDivs[name]["html"]);
+    editor.addNode(name, dfBoxDivs[name]["links"]["inputs"].length,
+                   dfBoxDivs[name]["links"]["outputs"].length, pos_x, pos_y, name,
+                   {"links" : dfBoxDivs[name]["links"]}, dfBoxDivs[name]["html"]);
 }
 
 function changeModule(event) {
@@ -116,6 +116,7 @@ function moveConnectionsToModule(newConnections) {
 
             var newOutputs = outputList[j]["connections"];
             if (newOutputs.length) {
+                console.log(newOutputs);
                 for (const k in newOutputs) {
                     editor.addConnection(oldToNewNodeMap[newConnections[i]["old_id"]],
                                          oldToNewNodeMap[newOutputs[k]["node"]], j,
@@ -131,10 +132,10 @@ function addGroupNodesConnectionLabels(groupName, newNamesArr, io) {
     var newNumIos = 0;
     for (const i in newNamesArr) {
 
-        const ioArr = dfBoxDivs[newNamesArr[i]]["link"][io];
+        const ioArr = dfBoxDivs[newNamesArr[i]]["links"][io];
         for (var j = 0; j < ioArr.length; j++) {
 
-            dfBoxDivs[groupName]["link"][io].push(ioArr[j]);
+            dfBoxDivs[groupName]["links"][io].push(ioArr[j]);
             ioStyles += `
 .drawflow-node.` + groupName +
                         ` .` + io + `s .` + io + `:nth-child(` + (newNumIos + 1) + `):before {
@@ -142,7 +143,7 @@ function addGroupNodesConnectionLabels(groupName, newNamesArr, io) {
   content: "` + ioArr[j] +
                         `";
   position: relative;
-  ` + (io === "input" ? "right: 120" : "left: 30") +
+  ` + (io === "inputs" ? "right: 120" : "left: 30") +
                         `px;
 }
                    `;
@@ -160,7 +161,7 @@ function updateIO(cb, elementName, io, ioName) {
 
 function generateIODropdown(id, elementName, io) {
 
-    const ioList = dfBoxDivs[elementName]["link"][io];
+    const ioList = dfBoxDivs[elementName]["links"][io];
 
     var checkboxes = $("#element_inputs");
     var options = '';
@@ -175,9 +176,9 @@ function generateIODropdown(id, elementName, io) {
 
 function addGroupNodesStyles(groupName, newNamesArr) {
 
-    dfBoxDivs[groupName]["link"] = {"input" : [], "output" : []};
-    const inputStyles = addGroupNodesConnectionLabels(groupName, newNamesArr, "input");
-    const outputStyles = addGroupNodesConnectionLabels(groupName, newNamesArr, "output");
+    dfBoxDivs[groupName]["links"] = {"inputs" : [], "outputs" : []};
+    const inputStyles = addGroupNodesConnectionLabels(groupName, newNamesArr, "inputs");
+    const outputStyles = addGroupNodesConnectionLabels(groupName, newNamesArr, "outputs");
 
     var newElementStyle = `<style type='text/css'>` + inputStyles + outputStyles + `
 .drawflow-node.` + groupName +
@@ -197,6 +198,8 @@ function moveNodesToModule(groupName, selectedNodes) {
     var totalOutputs = 0;
     var minPosX = Infinity;
     var minPosY = Infinity;
+
+    var newDataList = {"inputs" : [], "outputs" : []};
 
     const newConnections = [];
 
@@ -228,8 +231,11 @@ function moveNodesToModule(groupName, selectedNodes) {
         totalOutputs += numOutputs;
         minPosX = Math.min(minPosX, newPosX);
         minPosY = Math.min(minPosY, newPosY);
+        newDataList["inputs"] = newDataList["inputs"].concat(newData["links"]["inputs"]);
+        newDataList["outputs"] = newDataList["outputs"].concat(newData["links"]["outputs"]);
     }
 
+    console.log(newDataList);
     moveConnectionsToModule(newConnections);
 
     editor.changeModule("Home");
@@ -248,8 +254,8 @@ function moveNodesToModule(groupName, selectedNodes) {
   `;
     dfBoxDivs[groupName] = {};
     dfBoxDivs[groupName]["html"] = newGroupNodeHTML;
-    editor.addNode(groupName, totalInputs, totalOutputs, minPosX, minPosY, groupName, {},
-                   newGroupNodeHTML);
+    editor.addNode(groupName, totalInputs, totalOutputs, minPosX, minPosY, groupName,
+                   {"links" : newDataList}, newGroupNodeHTML);
 
     addGroupNodesStyles(groupName, newNamesArr);
 }
