@@ -190,13 +190,33 @@ def create_app(test_config=None):
         with open("out.json", "w") as dump_file:
             json.dump(data, dump_file, indent=4)
 
+        def get_element_count(module, element_name):
+
+            count = 0
+            for i in module:
+                if i.split("__")[0] == element_name:
+                    count += 1
+
+            return element_name + "__" + str(count)
+
+        num_elements = 0
         for module_name, module in data.items():
             compositions[module_name] = []
             for element_list in module.values():
-                for element in element_list.values():
-                    compositions[module_name].append((element["name"], element["id"]))
+                for i, element in enumerate(element_list.values()):
+                    new_data.append({})
+                    compositions[module_name].append(
+                        get_element_count(compositions[module_name], element["name"])
+                    )
                     output_names = element["data"]["links"]["outputs"]
                     output_conns = element["outputs"].values()
+
+                    new_data[num_elements]["module"] = module_name
+                    new_data[num_elements]["name"] = compositions[module_name][i]
+                    new_data[num_elements]["id"] = element["id"]
+
+                    print((module_name, compositions[module_name][i]))
+                    num_elements += 1
                     for output_name, output_conn in zip(output_names, output_conns):
                         for conn in output_conn["connections"]:
                             print((element["id"], conn["node"]))
@@ -240,7 +260,7 @@ def create_app(test_config=None):
                 #         }
                 #     )
 
-        print(compositions)
+        pprint(new_data)
         return ""
 
     return app
