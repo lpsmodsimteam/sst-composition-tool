@@ -159,6 +159,7 @@ def create_app(test_config=None):
                 element=element_name, input_tag=input_tags
             )
             DF_BOX_DIVS[element_name]["links"] = element["links"]
+            DF_BOX_DIVS[element_name]["param"] = element["param"]
             node_styles += "\n".join(
                 NODE_INPUT_STYLE_TEMPL.format(class_name=element_name, index=i + 1, value=j)
                 for i, j in enumerate(element["links"]["inputs"])
@@ -183,43 +184,63 @@ def create_app(test_config=None):
         from pprint import pprint
 
         data = json.loads(request.form["drawflow_data"])["drawflow"]
-        pprint(data)
         new_data = []
-        for module in data.values():
+        compositions = {}
+        connections = []
+        with open("out.json", "w") as dump_file:
+            json.dump(data, dump_file, indent=4)
+
+        for module_name, module in data.items():
+            compositions[module_name] = []
             for element_list in module.values():
                 for element in element_list.values():
-                    new_inputs = []
-                    new_outputs = []
-                    for i in ELEMENTS:
-                        if i["name"] == element["name"]:
-                            for input_num, (input_name, input_conns) in zip(
-                                i["links"]["inputs"], element["inputs"].items()
-                            ):
-                                print(element["id"], input_num, input_name, input_conns)
-                            for output_num, (output_name, output_conns) in zip(
-                                i["links"]["outputs"], element["outputs"].items()
-                            ):
-                                for conn in output_conns["connections"]:
-                                    print(
-                                        (element["id"], conn["node"]),
-                                        element_list[conn["node"]]["name"],
-                                        output_num,
-                                        i["links"]["inputs"][int(conn["outputs"][-1]) - 1],
-                                    )
-                                print(element["id"], output_num, output_name, output_conns)
+                    compositions[module_name].append((element["name"], element["id"]))
+                    output_names = element["data"]["links"]["outputs"]
+                    output_conns = element["outputs"].values()
+                    for output_name, output_conn in zip(output_names, output_conns):
+                        for conn in output_conn["connections"]:
+                            print((element["id"], conn["node"]))
+                            print(
+                                (
+                                    output_name,
+                                    element["data"]["links"]["inputs"][int(conn["output"][-1]) - 1],
+                                )
+                            )
+                            # print(
+                            #     input_num,
+                            #     (input_name, input_conns),
+                            #     conn["node"],
+                            #     element_list[conn["node"]]["name"],
+                            #     element["data"]["links"]["outputs"][int(conn["input"][-1]) - 1],
+                            # )
 
-                    new_data.append(
-                        {
-                            "id": element["id"],
-                            "name": element["name"],
-                            "inputs": element["inputs"],
-                            "outputs": element["outputs"],
-                        }
-                    )
+                #     new_inputs = []
+                #     new_outputs = []
+                #     for i in ELEMENTS:
+                #         if i["name"] == element["name"]:
+                #                 print(element["id"], input_num, input_name, input_conns)
+                #             for output_num, (output_name, output_conns) in zip(
+                #                 i["links"]["outputs"], element["outputs"].items()
+                #             ):
+                #                 for conn in output_conns["connections"]:
+                #                     print(
+                #                         (element["id"], conn["node"]),
+                #                         element_list[conn["node"]]["name"],
+                #                         output_num,
+                #                         i["links"]["inputs"][int(conn["outputs"][-1]) - 1],
+                #                     )
+                #                 print(element["id"], output_num, output_name, output_conns)
 
-        # pprint(new_data)
-        # with open("out.json", "w") as dump_file:
-        #     json.dump(data, dump_file, indent=4)
+                #     new_data.append(
+                #         {
+                #             "id": element["id"],
+                #             "name": element["name"],
+                #             "inputs": element["inputs"],
+                #             "outputs": element["outputs"],
+                #         }
+                #     )
+
+        print(compositions)
         return ""
 
     return app

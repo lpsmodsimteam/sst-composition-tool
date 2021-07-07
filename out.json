@@ -4,6 +4,63 @@
             "9": {
                 "id": 9,
                 "name": "rca",
+                "data": {
+                    "links": {
+                        "inputs": [
+                            "opand1__5",
+                            "opand2__5",
+                            "cin__5",
+                            "opand1__6",
+                            "opand2__6",
+                            "cin__6",
+                            "opand1__7",
+                            "opand2__7",
+                            "cin__7",
+                            "opand1__8",
+                            "opand2__8",
+                            "cin__8"
+                        ],
+                        "outputs": [
+                            "sum__5",
+                            "cout__5",
+                            "sum__6",
+                            "cout__6",
+                            "sum__7",
+                            "cout__7",
+                            "sum__8",
+                            "cout__8"
+                        ]
+                    },
+                    "param": [
+                        {
+                            "fulladder": {
+                                "clock": "1MHz",
+                                "link_speed": "1ps"
+                            }
+                        },
+                        {
+                            "fulladder": {
+                                "clock": "1MHz",
+                                "link_speed": "1ps"
+                            }
+                        },
+                        {
+                            "fulladder": {
+                                "clock": "1MHz",
+                                "link_speed": "1ps"
+                            }
+                        },
+                        {
+                            "fulladder": {
+                                "clock": "1MHz",
+                                "link_speed": "1ps"
+                            }
+                        }
+                    ]
+                },
+                "class": "rca",
+                "html": "\n  <div class=\"dbclickbox\" ondblclick=\"editor.changeModule('rca')\">rca</div>\n  ",
+                "typenode": false,
                 "inputs": {
                     "input_1": {
                         "connections": []
@@ -72,11 +129,70 @@
                             }
                         ]
                     }
-                }
+                },
+                "pos_x": 70,
+                "pos_y": 137
             },
             "10": {
                 "id": 10,
                 "name": "rca",
+                "data": {
+                    "links": {
+                        "inputs": [
+                            "opand1",
+                            "opand2",
+                            "cin",
+                            "opand1",
+                            "opand2",
+                            "cin",
+                            "opand1",
+                            "opand2",
+                            "cin",
+                            "opand1",
+                            "opand2",
+                            "cin"
+                        ],
+                        "outputs": [
+                            "sum",
+                            "cout",
+                            "sum",
+                            "cout",
+                            "sum",
+                            "cout",
+                            "sum",
+                            "cout"
+                        ]
+                    },
+                    "param": [
+                        {
+                            "fulladder": {
+                                "clock": "1MHz",
+                                "link_speed": "1ps"
+                            }
+                        },
+                        {
+                            "fulladder": {
+                                "clock": "1MHz",
+                                "link_speed": "1ps"
+                            }
+                        },
+                        {
+                            "fulladder": {
+                                "clock": "1MHz",
+                                "link_speed": "1ps"
+                            }
+                        },
+                        {
+                            "fulladder": {
+                                "clock": "1MHz",
+                                "link_speed": "1ps"
+                            }
+                        }
+                    ]
+                },
+                "class": "rca",
+                "html": "\n  <div class=\"dbclickbox\" ondblclick=\"editor.changeModule('rca')\">rca</div>\n  ",
+                "typenode": false,
                 "inputs": {
                     "input_1": {
                         "connections": []
@@ -145,7 +261,9 @@
                     "output_8": {
                         "connections": []
                     }
-                }
+                },
+                "pos_x": 445.921875,
+                "pos_y": 295
             }
         }
     },
@@ -154,6 +272,26 @@
             "5": {
                 "id": 5,
                 "name": "fulladder",
+                "data": {
+                    "links": {
+                        "inputs": [
+                            "opand1",
+                            "opand2",
+                            "cin"
+                        ],
+                        "outputs": [
+                            "sum",
+                            "cout"
+                        ]
+                    },
+                    "param": {
+                        "clock": "1MHz",
+                        "link_speed": "1ps"
+                    }
+                },
+                "class": "fulladder",
+                "html": "\n<div>\n  <div class=\"title-box\">\n    <i class=\"fas fa-code\"></i> fulladder\n  </div>\n  <div class=\"box\">\n    <input type=\"text\" df-clock placeholder=\"clock\"><input type=\"text\" df-link_speed placeholder=\"link_speed\">\n  </div>\n</div>\n",
+                "typenode": false,
                 "inputs": {
                     "input_1": {
                         "connections": []
@@ -177,11 +315,33 @@
                             }
                         ]
                     }
-                }
+                },
+                "pos_x": -89.078125,
+                "pos_y": 150
             },
             "6": {
                 "id": 6,
                 "name": "fulladder",
+                "data": {
+                    "links": {
+                        "inputs": [
+                            "opand1",
+                            "opand2",
+                            "cin"
+                        ],
+                        "outputs": [
+                            "sum",
+                            "cout"
+                        ]
+                    },
+                    "param": {
+                        "clock": "1MHz",
+                        "link_speed": "1ps"
+                    }
+                },
+                "class": "fulladder",
+                "html": "\n<div>\n  <div class=\"title-box\">\n    <i class=\"fas fa-code\"></i> fulladder\n  </div>\n  <div class=\"box\">\n    <input type=\"text\" df-clock placeholder=\"clock\"><input type=\"text\" df-link_speed placeholder=\"link_speed\">\n  </div>\n</div>\n",
+                "typenode": false,
                 "inputs": {
                     "input_1": {
                         "connections": []
@@ -210,11 +370,33 @@
                             }
                         ]
                     }
-                }
+                },
+                "pos_x": 280.921875,
+                "pos_y": 208
             },
             "7": {
                 "id": 7,
                 "name": "fulladder",
+                "data": {
+                    "links": {
+                        "inputs": [
+                            "opand1",
+                            "opand2",
+                            "cin"
+                        ],
+                        "outputs": [
+                            "sum",
+                            "cout"
+                        ]
+                    },
+                    "param": {
+                        "clock": "1MHz",
+                        "link_speed": "1ps"
+                    }
+                },
+                "class": "fulladder",
+                "html": "\n<div>\n  <div class=\"title-box\">\n    <i class=\"fas fa-code\"></i> fulladder\n  </div>\n  <div class=\"box\">\n    <input type=\"text\" df-clock placeholder=\"clock\"><input type=\"text\" df-link_speed placeholder=\"link_speed\">\n  </div>\n</div>\n",
+                "typenode": false,
                 "inputs": {
                     "input_1": {
                         "connections": []
@@ -243,11 +425,33 @@
                             }
                         ]
                     }
-                }
+                },
+                "pos_x": 544,
+                "pos_y": 405
             },
             "8": {
                 "id": 8,
                 "name": "fulladder",
+                "data": {
+                    "links": {
+                        "inputs": [
+                            "opand1",
+                            "opand2",
+                            "cin"
+                        ],
+                        "outputs": [
+                            "sum",
+                            "cout"
+                        ]
+                    },
+                    "param": {
+                        "clock": "1MHz",
+                        "link_speed": "1ps"
+                    }
+                },
+                "class": "fulladder",
+                "html": "\n<div>\n  <div class=\"title-box\">\n    <i class=\"fas fa-code\"></i> fulladder\n  </div>\n  <div class=\"box\">\n    <input type=\"text\" df-clock placeholder=\"clock\"><input type=\"text\" df-link_speed placeholder=\"link_speed\">\n  </div>\n</div>\n",
+                "typenode": false,
                 "inputs": {
                     "input_1": {
                         "connections": []
@@ -271,7 +475,9 @@
                     "output_2": {
                         "connections": []
                     }
-                }
+                },
+                "pos_x": 975.921875,
+                "pos_y": 340
             }
         }
     }

@@ -2,19 +2,19 @@
 
 /* ---------------------- NODE EVENTS ---------------------- */
 editor.on("nodeCreated", function(id) {
-    console.log("Node created " + id);
+    // console.log("Node created " + id);
     newNodeId = parseInt(id);
-    oldToNewNodeMap[id] = newNodeId;
+    nodeHistory[id] = newNodeId;
 })
 
 editor.on("nodeRemoved", function(id) {
     // removedNodes = parseInt(id);
-    console.log("Node removed " + id);
+    // console.log("Node removed " + id);
 })
 
 editor.on("contextmenu", function(id) {
     // removedNodes = parseInt(id);
-    console.log("yo what " + id);
+    // console.log("yo what " + id);
 })
 
 editor.on("nodeSelected", function(id) {
@@ -84,9 +84,11 @@ function addNodeToDrawFlow(name, pos_x, pos_y) {
         pos_y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)) -
         (editor.precanvas.getBoundingClientRect().y *
          (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)));
+    // console.log("after", dfBoxDivs[name]["links"]);
     editor.addNode(name, dfBoxDivs[name]["links"]["inputs"].length,
                    dfBoxDivs[name]["links"]["outputs"].length, pos_x, pos_y, name,
-                   {"links" : dfBoxDivs[name]["links"]}, dfBoxDivs[name]["html"]);
+                   {"links" : dfBoxDivs[name]["links"], "param" : dfBoxDivs[name]["param"]},
+                   dfBoxDivs[name]["html"]);
 }
 
 function changeModule(event) {
@@ -107,19 +109,18 @@ function changeMode(option) {
     }
 }
 
-function moveConnectionsToModule(newConnections) {
+function moveConnectionsToModule(newConnectionsArr) {
 
-    for (const i in newConnections) {
+    for (const i in newConnectionsArr) {
 
-        const outputList = newConnections[i]["outputs"];
+        const outputList = newConnectionsArr[i]["outputs"];
         for (const j in outputList) {
 
             var newOutputs = outputList[j]["connections"];
             if (newOutputs.length) {
-                console.log(newOutputs);
                 for (const k in newOutputs) {
-                    editor.addConnection(oldToNewNodeMap[newConnections[i]["old_id"]],
-                                         oldToNewNodeMap[newOutputs[k]["node"]], j,
+                    editor.addConnection(nodeHistory[newConnectionsArr[i]["old_id"]],
+                                         nodeHistory[newOutputs[k]["node"]], j,
                                          newOutputs[k]["output"]);
                 }
             }
@@ -133,12 +134,14 @@ function addGroupNodesConnectionLabels(groupName, newNamesArr, io) {
     for (const i in newNamesArr) {
 
         const ioArr = dfBoxDivs[newNamesArr[i]]["links"][io];
+        // console.log(ioArr);
         for (var j = 0; j < ioArr.length; j++) {
 
             dfBoxDivs[groupName]["links"][io].push(ioArr[j]);
             ioStyles += `
 .drawflow-node.` + groupName +
-                        ` .` + io + `s .` + io + `:nth-child(` + (newNumIos + 1) + `):before {
+                        ` .` + io + ` .` + io.substring(0, io.length - 1) + `:nth-child(` +
+                        (newNumIos + 1) + `):before {
   display: block;
   content: "` + ioArr[j] +
                         `";
@@ -154,7 +157,7 @@ function addGroupNodesConnectionLabels(groupName, newNamesArr, io) {
 }
 
 function updateIO(cb, elementName, io, ioName) {
-    console.log(cb, elementName, io, ioName);
+    // console.log(cb, elementName, io, ioName);
     if (!cb.checked) {
     }
 }
@@ -170,7 +173,7 @@ function generateIODropdown(id, elementName, io) {
                    io + '\', \'' + ioList[val] + '\');" name="' + ioList[val] + '" checked/>' +
                    ioList[val] + '<br />';
     }
-    console.log(options);
+    // console.log(options);
     checkboxes.html(options);
 }
 
@@ -194,15 +197,22 @@ function addGroupNodesStyles(groupName, newNamesArr) {
 
 function moveNodesToModule(groupName, selectedNodes) {
 
+    function mapNewLinks(arr, nodeId) {
+        return arr.map(function(e) {
+            e += "__" + nodeId;
+            return e;
+        });
+    }
+
     var totalInputs = 0;
     var totalOutputs = 0;
     var minPosX = Infinity;
     var minPosY = Infinity;
 
-    var newDataList = {"inputs" : [], "outputs" : []};
+    var newLinks = {"inputs" : [], "outputs" : []};
+    var newParams = [];
 
-    const newConnections = [];
-
+    const newConnectionsArr = [];
     const newNamesArr = [];
 
     for (var i = 0; i < selectedNodes.length; i++) {
@@ -223,20 +233,23 @@ function moveNodesToModule(groupName, selectedNodes) {
 
         editor.removeNodeId("node-" + oldNode["id"]);
         editor.addNode(newName, numInputs, numOutputs, newPosX, newPosY, newName, newData, newHTML);
-        oldToNewNodeMap[oldNode["id"]] = newNodeId;
-        newConnections.push({"old_id" : oldNode["id"], "outputs" : newOutputs});
+        nodeHistory[oldNode["id"]] = newNodeId;
+        newConnectionsArr.push({"old_id" : oldNode["id"], "outputs" : newOutputs});
 
         newNamesArr.push(newName);
         totalInputs += numInputs;
         totalOutputs += numOutputs;
         minPosX = Math.min(minPosX, newPosX);
         minPosY = Math.min(minPosY, newPosY);
-        newDataList["inputs"] = newDataList["inputs"].concat(newData["links"]["inputs"]);
-        newDataList["outputs"] = newDataList["outputs"].concat(newData["links"]["outputs"]);
+
+        newLinks["inputs"] =
+            newLinks["inputs"].concat(mapNewLinks(newData["links"]["inputs"], newNodeId));
+        newLinks["outputs"] =
+            newLinks["outputs"].concat(mapNewLinks(newData["links"]["outputs"], newNodeId));
+        newParams.push({[newName] : newData["param"]});
     }
 
-    console.log(newDataList);
-    moveConnectionsToModule(newConnections);
+    moveConnectionsToModule(newConnectionsArr);
 
     editor.changeModule("Home");
     var newElementDivHtml = `
@@ -254,8 +267,11 @@ function moveNodesToModule(groupName, selectedNodes) {
   `;
     dfBoxDivs[groupName] = {};
     dfBoxDivs[groupName]["html"] = newGroupNodeHTML;
+    dfBoxDivs[groupName]["links"] = newLinks;
+    dfBoxDivs[groupName]["param"] = newParams;
+    // console.log("before", dfBoxDivs[groupName]["links"]);
     editor.addNode(groupName, totalInputs, totalOutputs, minPosX, minPosY, groupName,
-                   {"links" : newDataList}, newGroupNodeHTML);
+                   {"links" : newLinks, "param" : newParams}, newGroupNodeHTML);
 
     addGroupNodesStyles(groupName, newNamesArr);
 }
