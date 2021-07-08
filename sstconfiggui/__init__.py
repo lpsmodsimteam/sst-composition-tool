@@ -137,6 +137,91 @@ ELEMENTS = [
 ]
 
 
+class GraphDataProcessor(object):
+    def __init__(self, data) -> None:
+
+        self.raw_data = data
+        self.processed_data = []
+        self.compositions = []
+
+    def __get_element_count(self, element_name):
+
+        count = -1
+        for i in self.compositions:
+            count += i["elements"].count(element_name)
+
+        return str(count)
+
+    @staticmethod
+    def __get_name_by_id(links_list, node_id):
+
+        for i in links_list:
+            if i["id"] == node_id:
+                return i["name"]
+
+    def unroll_modules(self):
+
+        pass
+
+    def dump_raw_data(self):
+
+        with open("out.json", "w") as dump_file:
+            json.dump(self.raw_data, dump_file, indent=4)
+
+    def flatten(self):
+
+        num_elements = 0
+        num_modules = 0
+        for module_name, module in self.raw_data.items():
+
+            self.compositions.append({"module": module_name})
+            self.compositions[num_modules]["elements"] = []
+
+            for element_list in module.values():
+
+                for element in element_list.values():
+
+                    self.compositions[num_modules]["elements"].append(element["name"])
+                    self.processed_data.append({})
+
+                    self.processed_data[num_elements]["module"] = module_name
+                    self.processed_data[num_elements]["name"] = (
+                        element["name"] + "__" + self.__get_element_count(element["name"])
+                    )
+                    self.processed_data[num_elements]["id"] = element["id"]
+                    self.processed_data[num_elements]["links"] = []
+
+                    output_names = element["data"]["links"]["outputs"]
+                    output_conns = element["outputs"].values()
+
+                    for output_name, output_conn in zip(output_names, output_conns):
+                        for conn in output_conn["connections"]:
+                            self.processed_data[num_elements]["links"].append(
+                                {
+                                    "from_port": output_name,
+                                    "to_id": int(conn["node"]),
+                                    "to_port": element["data"]["links"]["inputs"][
+                                        int(conn["output"][-1]) - 1
+                                    ],
+                                }
+                            )
+                    num_elements += 1
+                num_modules += 1
+
+        for element in self.processed_data:
+            # print(element)
+            for link in element["links"]:
+                print(
+                    f"""sst.Link('{link["from_port"]}_{element["id"]}').connect(
+            ({element["name"]}, "{link["from_port"]}", LINK_DELAY),
+            ({self.__get_name_by_id(self.processed_data, link["to_id"])}, "{link["to_port"]}", LINK_DELAY)
+        )"""
+                )
+        from pprint import pprint
+
+        pprint(self.processed_data)
+
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
@@ -184,83 +269,9 @@ def create_app(test_config=None):
         from pprint import pprint
 
         data = json.loads(request.form["drawflow_data"])["drawflow"]
-        new_data = []
-        compositions = {}
-        connections = []
-        with open("out.json", "w") as dump_file:
-            json.dump(data, dump_file, indent=4)
+        graph_data_processor = GraphDataProcessor(data)
+        graph_data_processor.flatten()
 
-        def get_element_count(module, element_name):
-
-            count = 0
-            for i in module:
-                if i.split("__")[0] == element_name:
-                    count += 1
-
-            return element_name + "__" + str(count)
-
-        num_elements = 0
-        for module_name, module in data.items():
-            compositions[module_name] = []
-            for element_list in module.values():
-                for i, element in enumerate(element_list.values()):
-                    new_data.append({})
-                    compositions[module_name].append(
-                        get_element_count(compositions[module_name], element["name"])
-                    )
-                    output_names = element["data"]["links"]["outputs"]
-                    output_conns = element["outputs"].values()
-
-                    new_data[num_elements]["module"] = module_name
-                    new_data[num_elements]["name"] = compositions[module_name][i]
-                    new_data[num_elements]["id"] = element["id"]
-
-                    print((module_name, compositions[module_name][i]))
-                    num_elements += 1
-                    for output_name, output_conn in zip(output_names, output_conns):
-                        for conn in output_conn["connections"]:
-                            print((element["id"], conn["node"]))
-                            print(
-                                (
-                                    output_name,
-                                    element["data"]["links"]["inputs"][int(conn["output"][-1]) - 1],
-                                )
-                            )
-                            # print(
-                            #     input_num,
-                            #     (input_name, input_conns),
-                            #     conn["node"],
-                            #     element_list[conn["node"]]["name"],
-                            #     element["data"]["links"]["outputs"][int(conn["input"][-1]) - 1],
-                            # )
-
-                #     new_inputs = []
-                #     new_outputs = []
-                #     for i in ELEMENTS:
-                #         if i["name"] == element["name"]:
-                #                 print(element["id"], input_num, input_name, input_conns)
-                #             for output_num, (output_name, output_conns) in zip(
-                #                 i["links"]["outputs"], element["outputs"].items()
-                #             ):
-                #                 for conn in output_conns["connections"]:
-                #                     print(
-                #                         (element["id"], conn["node"]),
-                #                         element_list[conn["node"]]["name"],
-                #                         output_num,
-                #                         i["links"]["inputs"][int(conn["outputs"][-1]) - 1],
-                #                     )
-                #                 print(element["id"], output_num, output_name, output_conns)
-
-                #     new_data.append(
-                #         {
-                #             "id": element["id"],
-                #             "name": element["name"],
-                #             "inputs": element["inputs"],
-                #             "outputs": element["outputs"],
-                #         }
-                #     )
-
-        pprint(new_data)
         return ""
 
     return app
