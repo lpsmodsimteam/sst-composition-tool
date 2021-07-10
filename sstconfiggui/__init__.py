@@ -14,7 +14,7 @@ from .templates import (
     NODE_OUTPUT_STYLE_TEMPL,
     ELEMENTS,
 )
-from .graphdataprocessor import GraphDataProcessor
+from .elementtree import ElementTree
 
 
 def create_app(test_config=None):
@@ -41,11 +41,15 @@ def create_app(test_config=None):
             DF_BOX_DIVS[element_name]["links"] = element["links"]
             DF_BOX_DIVS[element_name]["param"] = element["param"]
             node_styles += "\n".join(
-                NODE_INPUT_STYLE_TEMPL.format(class_name=element_name, index=i + 1, value=j)
+                NODE_INPUT_STYLE_TEMPL.format(
+                    class_name=element_name, index=i + 1, value=j
+                )
                 for i, j in enumerate(element["links"]["inputs"])
             )
             node_styles += "\n".join(
-                NODE_OUTPUT_STYLE_TEMPL.format(class_name=element_name, index=i + 1, value=j)
+                NODE_OUTPUT_STYLE_TEMPL.format(
+                    class_name=element_name, index=i + 1, value=j
+                )
                 for i, j in enumerate(element["links"]["outputs"])
             )
 
@@ -61,12 +65,11 @@ def create_app(test_config=None):
     @app.route("/export_drawflow_data", methods=["POST"])
     def export_data():
 
-        from pprint import pprint
-
         data = json.loads(request.form["drawflow_data"])["drawflow"]
-        gdp = GraphDataProcessor(data)
+        gdp = ElementTree(data)
         gdp.flatten()
         gdp.unroll_modules()
+        gdp.convert_to_config()
 
         return ""
 
