@@ -77,7 +77,7 @@ class ElementTree(object):
 
                     element_count = self.__get_element_count(element["name"])
                     elements_ptr[num_elements].set_name(
-                        self.__get_element_count(element["name"], element_count)
+                        self.__get_element_name(element["name"], element_count)
                     )
 
                     elements_ptr[num_elements].set_node_id(element["id"])

@@ -20,19 +20,19 @@ class CompressedNode:
         self.links = links
         self.module = module
 
-    def set_class_name(self, class_name):
+    def set_class_name(self, class_name) -> None:
         self.class_name = class_name
 
-    def set_node_id(self, node_id):
+    def set_node_id(self, node_id) -> None:
         self.node_id = node_id
 
-    def set_links(self, links):
+    def set_links(self, links) -> None:
         self.links = links
 
-    def set_module(self, module):
+    def set_module(self, module) -> None:
         self.module = module
 
-    def set_name(self, name):
+    def set_name(self, name) -> None:
         self.name = name
 
     def __repr__(self) -> str:
