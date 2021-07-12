@@ -10,13 +10,11 @@ from .compressedtree import CompressedNode, CompressedTree
 class ElementTree(object):
     def __init__(self, data) -> None:
 
-        # self.tree = treelib.Tree()
         self.raw_data = data
         self.processed_data = []
         self.compositions = []
 
         self.num_elements = 0
-        self.num_modules = 0
 
         self.node_delim = "#"
         self.module_delim = "%"
@@ -26,10 +24,14 @@ class ElementTree(object):
         count = -1
         for module in self.compositions:
             for element in module["elements"]:
-                if element_name == element["class"]:
+                if element_name == element.class_name:
                     count += 1
 
-        return str(count)
+        return count
+
+    def __get_element_name(self, element_name, count) -> str:
+
+        return element_name + self.node_delim + str(count)
 
     @staticmethod
     def __get_name_by_id(links_list, node_id) -> str:
@@ -44,7 +46,7 @@ class ElementTree(object):
         output_conns = element["outputs"].values()
         for output_name, output_conn in zip(output_names, output_conns):
             for conn in output_conn["connections"]:
-                self.compositions[num_module]["elements"][num_element]["links"].append(
+                self.compositions[num_module]["elements"][num_element].links.append(
                     {
                         "from_port": output_name,
                         "to_id": int(conn["node"]),
@@ -56,75 +58,71 @@ class ElementTree(object):
 
     def flatten(self) -> None:
 
+        num_modules = 0
         for module_name, module in self.raw_data.items():
 
-            self.compositions.append({"module": module_name})
-            self.compositions[self.num_modules]["elements"] = []
+            self.compositions.append(
+                {"module": CompressedNode(class_name=module_name, name=module_name)}
+            )
+            self.compositions[num_modules]["elements"] = []
+            elements_ptr = self.compositions[num_modules]["elements"]
 
             for element_list in module.values():
 
                 for num_elements, element in enumerate(element_list.values()):
 
-                    self.compositions[self.num_modules]["elements"].append(
-                        {"class": element["name"]}
+                    elements_ptr.append(CompressedNode(class_name=element["name"]))
+
+                    elements_ptr[num_elements].set_module(module_name)
+
+                    element_count = self.__get_element_count(element["name"])
+                    elements_ptr[num_elements].set_name(
+                        self.__get_element_count(element["name"], element_count)
                     )
 
-                    # self.processed_data.append({})
-                    self.compositions[self.num_modules]["elements"][num_elements][
-                        "module"
-                    ] = module_name
-                    self.compositions[self.num_modules]["elements"][num_elements][
-                        "class"
-                    ] = element["name"]
-                    self.compositions[self.num_modules]["elements"][num_elements][
-                        "name"
-                    ] = (
-                        element["name"]
-                        + self.node_delim
-                        + self.__get_element_count(element["name"])
-                    )
-                    self.compositions[self.num_modules]["elements"][num_elements][
-                        "id"
-                    ] = element["id"]
-                    self.compositions[self.num_modules]["elements"][num_elements][
-                        "links"
-                    ] = []
+                    elements_ptr[num_elements].set_node_id(element["id"])
 
-                    self.__copy_connections(element, self.num_modules, num_elements)
+                    elements_ptr[num_elements].set_links([])
 
-                self.num_modules += 1
+                    self.__copy_connections(element, num_modules, num_elements)
+
+                num_modules += 1
+
+    def generate_tree(self):
 
         pprint(self.compositions)
-        # pprint(self.processed_data)
+        ctree = CompressedTree(self.compositions)
+        ctree.decompress()
+        pprint(ctree.tree)
 
-    def unroll_modules(self) -> None:
+    # def unroll_modules(self) -> None:
 
-        # pprint(self.processed_data)
+    #     # pprint(self.processed_data)
 
-        unrolled_data = []
-        mod_ctr = 0
-        max_depth = 1
+    #     unrolled_data = []
+    #     mod_ctr = 0
+    #     max_depth = 1
 
-        for module in self.compositions:
-            for element in module["elements"]:
-                for module_again in self.compositions:
-                    if element == module_again["module"]:
-                        print(module_again["module"], "is a module")
+    #     for module in self.compositions:
+    #         for element in module["elements"]:
+    #             for module_again in self.compositions:
+    #                 if element == module_again["module"]:
+    #                     print(module_again["module"], "is a module")
 
-                        for link_data in self.processed_data:
-                            if link_data["module"] == module_again["module"]:
-                                link_data_copy = link_data.copy()
-                                link_data_copy["name"] = (
-                                    link_data_copy["name"]
-                                    + self.module_delim
-                                    + module_again["module"]
-                                    + self.node_delim
-                                    + str(mod_ctr)
-                                )
-                                unrolled_data.append(link_data_copy)
-                        mod_ctr += 1
+    #                     for link_data in self.processed_data:
+    #                         if link_data["module"] == module_again["module"]:
+    #                             link_data_copy = link_data.copy()
+    #                             link_data_copy["name"] = (
+    #                                 link_data_copy["name"]
+    #                                 + self.module_delim
+    #                                 + module_again["module"]
+    #                                 + self.node_delim
+    #                                 + str(mod_ctr)
+    #                             )
+    #                             unrolled_data.append(link_data_copy)
+    #                     mod_ctr += 1
 
-        pprint(unrolled_data)
+    #     pprint(unrolled_data)
 
     def dump_raw_data(self):
 
