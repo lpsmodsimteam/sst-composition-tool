@@ -4,10 +4,13 @@
 import json
 from pprint import pprint
 
+from .compressedtree import CompressedNode, CompressedTree
+
 
 class ElementTree(object):
     def __init__(self, data) -> None:
 
+        self.tree = treelib.Tree()
         self.raw_data = data
         self.processed_data = []
         self.compositions = []
@@ -66,6 +69,7 @@ class ElementTree(object):
 
                     self.processed_data.append({})
                     self.processed_data[self.num_elements]["module"] = module_name
+                    self.processed_data[self.num_elements]["class"] = element["name"]
                     self.processed_data[self.num_elements]["name"] = (
                         element["name"]
                         + self.node_delim
@@ -79,6 +83,22 @@ class ElementTree(object):
                     self.num_elements += 1
 
                 self.num_modules += 1
+
+    # def unroll_modules(self) -> None:
+
+    #     unrolled_data = []
+    #     mod_ctr = 0
+    #     max_depth = 1
+
+    #     self.tree.create_node("Home", "Home")
+    #     for element in self.processed_data:
+    #         # self.tree.create_node(
+    #         #     element["name"], element["name"], parent=element["module"]
+    #         # )
+    #         print(element)
+
+    #     self.tree.show()
+    #     print(self.compositions)
 
     def unroll_modules(self) -> None:
 

@@ -69,7 +69,7 @@ def create_app(test_config=None):
         gdp = ElementTree(data)
         gdp.flatten()
         gdp.unroll_modules()
-        gdp.convert_to_config()
+        # gdp.convert_to_config()
 
         return ""
 
