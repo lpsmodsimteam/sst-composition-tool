@@ -68,7 +68,7 @@ def create_app(test_config=None):
         data = json.loads(request.form["drawflow_data"])["drawflow"]
         gdp = ElementTree(data)
         gdp.flatten()
-        gdp.unroll_modules()
+        # gdp.unroll_modules()
         # gdp.convert_to_config()
 
         return ""

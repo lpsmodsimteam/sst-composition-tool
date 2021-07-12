@@ -10,7 +10,7 @@ from .compressedtree import CompressedNode, CompressedTree
 class ElementTree(object):
     def __init__(self, data) -> None:
 
-        self.tree = treelib.Tree()
+        # self.tree = treelib.Tree()
         self.raw_data = data
         self.processed_data = []
         self.compositions = []
@@ -24,8 +24,10 @@ class ElementTree(object):
     def __get_element_count(self, element_name) -> str:
 
         count = -1
-        for i in self.compositions:
-            count += i["elements"].count(element_name)
+        for module in self.compositions:
+            for element in module["elements"]:
+                if element_name == element["class"]:
+                    count += 1
 
         return str(count)
 
@@ -36,13 +38,13 @@ class ElementTree(object):
             if i["id"] == node_id:
                 return i["name"]
 
-    def __copy_connections(self, element) -> None:
+    def __copy_connections(self, element, num_module, num_element) -> None:
 
         output_names = element["data"]["links"]["outputs"]
         output_conns = element["outputs"].values()
         for output_name, output_conn in zip(output_names, output_conns):
             for conn in output_conn["connections"]:
-                self.processed_data[self.num_elements]["links"].append(
+                self.compositions[num_module]["elements"][num_element]["links"].append(
                     {
                         "from_port": output_name,
                         "to_id": int(conn["node"]),
@@ -61,44 +63,39 @@ class ElementTree(object):
 
             for element_list in module.values():
 
-                for element in element_list.values():
+                for num_elements, element in enumerate(element_list.values()):
 
                     self.compositions[self.num_modules]["elements"].append(
-                        element["name"]
+                        {"class": element["name"]}
                     )
 
-                    self.processed_data.append({})
-                    self.processed_data[self.num_elements]["module"] = module_name
-                    self.processed_data[self.num_elements]["class"] = element["name"]
-                    self.processed_data[self.num_elements]["name"] = (
+                    # self.processed_data.append({})
+                    self.compositions[self.num_modules]["elements"][num_elements][
+                        "module"
+                    ] = module_name
+                    self.compositions[self.num_modules]["elements"][num_elements][
+                        "class"
+                    ] = element["name"]
+                    self.compositions[self.num_modules]["elements"][num_elements][
+                        "name"
+                    ] = (
                         element["name"]
                         + self.node_delim
                         + self.__get_element_count(element["name"])
                     )
-                    self.processed_data[self.num_elements]["id"] = element["id"]
-                    self.processed_data[self.num_elements]["links"] = []
+                    self.compositions[self.num_modules]["elements"][num_elements][
+                        "id"
+                    ] = element["id"]
+                    self.compositions[self.num_modules]["elements"][num_elements][
+                        "links"
+                    ] = []
 
-                    self.__copy_connections(element)
-
-                    self.num_elements += 1
+                    self.__copy_connections(element, self.num_modules, num_elements)
 
                 self.num_modules += 1
 
-    # def unroll_modules(self) -> None:
-
-    #     unrolled_data = []
-    #     mod_ctr = 0
-    #     max_depth = 1
-
-    #     self.tree.create_node("Home", "Home")
-    #     for element in self.processed_data:
-    #         # self.tree.create_node(
-    #         #     element["name"], element["name"], parent=element["module"]
-    #         # )
-    #         print(element)
-
-    #     self.tree.show()
-    #     print(self.compositions)
+        pprint(self.compositions)
+        # pprint(self.processed_data)
 
     def unroll_modules(self) -> None:
 
