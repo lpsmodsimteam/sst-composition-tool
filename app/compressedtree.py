@@ -39,8 +39,15 @@ class CompressedNode:
         return f"{self.name} ({id(self)})"
 
     def __eq__(self, other) -> bool:
+
         if isinstance(other, CompressedNode):
             return self.class_name == other.class_name
+
+        elif isinstance(other, str):
+            return self.class_name == other
+
+        elif isinstance(other, int):
+            return self.id == other
 
     def __hash__(self) -> int:
         return hash(self.class_name)
@@ -59,18 +66,13 @@ class CompressedTree:
         self.parent_key = parent_key
         self.children_key = children_key
         self.root_key = root_key
-        for k in self.composition:
-            if k[self.parent_key].class_name == self.root_key:
-                self.root = k[self.parent_key]
+        for k in self.composition.keys():
+            if k == self.root_key:
+                self.root = k
+                break
 
         self.leaves = []
         self.tree = {}
-
-    def __chain(self) -> None:
-
-        self.composition = {
-            e[self.parent_key]: e[self.children_key] for e in self.composition
-        }
 
     def __get_children(self, node) -> list:
 
@@ -93,7 +95,6 @@ class CompressedTree:
         return {node: [self.__decompress(n) for n in self.__get_children(node)]}
 
     def decompress(self) -> dict:
-        self.__chain()
         self.tree = self.__decompress(self.root)
 
     def get_tree(self) -> dict:
@@ -203,4 +204,4 @@ if __name__ == "__main__":
 
     tree_obj = CompressedTree(example_comp)
     tree_obj.decompress()
-    pprint(tree_obj.tree)
+    pprint(tree_obj.get_leaves())
