@@ -76,6 +76,7 @@ class ComponentTree:
 
         self.__leaves = []  # <list(ComponentNode)>
         self.__tree = {}  # <dict(ComponentNode: list(ComponentNode))>
+        self.__max_depth = 0
 
     def __get_children(self, node: ComponentNode) -> list:
 
@@ -104,17 +105,28 @@ class ComponentTree:
 
         return self.__tree
 
-    def __get_leaves(self, subtree: ComponentNode) -> None:
+    def find_node_by_id(self, subtree, node_id):
+
+        for key, value in subtree.items():
+            if key.node_id == node_id:
+                return key
+
+            for node in value:
+                self.__get_leaves(node, node_id)
+
+    def __get_leaves(self, subtree: dict, depth: int = 0) -> None:
         for key, value in subtree.items():
             if not value:
                 self.__leaves.append(key)
+                self.__max_depth = max(self.__max_depth, depth)
 
             for node in value:
-                self.__get_leaves(node)
+                self.__get_leaves(node, depth + 1)
 
     def get_leaves(self) -> list:
 
         self.__get_leaves(self.__tree)
+        print("max depth", self.__max_depth)
         return self.__leaves
 
 
@@ -153,7 +165,7 @@ if __name__ == "__main__":
             ComponentNode(
                 class_name="two",
                 node_id=8,
-                links=[{"from_port": "cout__4", "to_id": 7, "to_port": "cin__3"}],
+                links=[{"from_port": "cout#4", "to_id": 7, "to_port": "cin#3"}],
                 module="four",
                 name="two#1",
             ),
@@ -169,14 +181,14 @@ if __name__ == "__main__":
             ComponentNode(
                 class_name="four",
                 node_id=12,
-                links=[{"from_port": "cout__4__8", "to_id": 11, "to_port": "cin__7"}],
+                links=[{"from_port": "cout#4#8", "to_id": 11, "to_port": "cin#7"}],
                 module="eight",
                 name="four#1",
             ),
             ComponentNode(
                 class_name="two",
                 node_id=8,
-                links=[{"from_port": "cout__4", "to_id": 7, "to_port": "cin__3"}],
+                links=[{"from_port": "cout#4", "to_id": 7, "to_port": "cin#3"}],
                 module="four",
                 name="two#1",
             ),

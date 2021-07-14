@@ -7,7 +7,7 @@ from pprint import pprint
 from .componenttree import ComponentNode, ComponentTree
 
 
-class ElementTree:
+class CompositionParser:
     def __init__(self, data: dict) -> None:
 
         self.__raw_data = data

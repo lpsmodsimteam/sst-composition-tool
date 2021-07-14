@@ -14,7 +14,7 @@ from .templates import (
     NODE_OUTPUT_STYLE_TEMPL,
     ELEMENTS,
 )
-from .elementtree import ElementTree
+from .compositionparser import CompositionParser
 
 
 def create_app(test_config=None):
@@ -66,7 +66,7 @@ def create_app(test_config=None):
     def export_data():
 
         data = json.loads(request.form["drawflow_data"])["drawflow"]
-        gdp = ElementTree(data)
+        gdp = CompositionParser(data)
         gdp.filter()
         gdp.generate_tree()
         gdp.dump_raw_data()
