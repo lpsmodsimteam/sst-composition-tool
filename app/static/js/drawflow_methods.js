@@ -199,7 +199,7 @@ function moveNodesToModule(groupName, selectedNodes) {
 
     function mapNewLinks(arr, nodeId) {
         return arr.map(function(e) {
-            e += "__" + nodeId;
+            e += "#" + nodeId;
             return e;
         });
     }
