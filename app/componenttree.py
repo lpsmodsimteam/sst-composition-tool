@@ -39,7 +39,7 @@ class ComponentNode:
         rep = ""
         if self.links:
             rep = f""" | {self.links[0]["from_port"]}/{self.links[0]["to_id"]}/{self.links[0]["to_port"]}"""
-        return f"{self.class_name} ({self.node_id})" + rep
+        return f"{self.name} ({self.node_id}+{id(self)})" + rep
 
     def __eq__(self, other) -> bool:
 
@@ -59,28 +59,75 @@ class ComponentNode:
 class ComponentTree:
     def __init__(
         self,
-        composition,
-        parent_key="module",
-        children_key="elements",
+        composition=None,
         root_key="Home",
     ) -> None:
 
-        self.composition = composition
-        self.parent_key = parent_key
-        self.children_key = children_key
+        self.__composition = composition
         self.root_key = root_key
-        for k in self.composition.keys():
-            if k == self.root_key:
-                self.root = k
-                break
+        if self.__composition:
+            for module in self.__composition.keys():
+                if module == self.root_key:
+                    self.root = module
+                    break
+        else:
+            self.__composition = {}
+            self.root = None
+
+        self.__node_delim = "#"
+        self.__module_delim = "%"
 
         self.__leaves = []  # <list(ComponentNode)>
         self.__tree = {}  # <dict(ComponentNode: list(ComponentNode))>
         self.__max_depth = 0
 
+    def __get_element_name(self, element_name: str, count: int) -> str:
+
+        return f"{element_name}{self.__node_delim}{count}"
+
+    def find_module_by_name(self, element_name):
+
+        for module in self.__composition.keys():
+            if module == element_name:
+                return module
+
+    def __get_element_count(self, element_name: str) -> int:
+
+        count = -1
+        for module in self.__composition.keys():
+            count += self.__composition[module].count(element_name)
+
+        return count
+
+    def add_module(self, module_name: str):
+
+        module_node = ComponentNode(class_name=module_name, name=module_name)
+        self.__composition[module_node] = []
+
+    def add_element(
+        self,
+        module_name: str,
+        element_name: str,
+        element_ix: int,
+        element_id: str,
+        element_links: str,
+    ):
+
+        module_node = self.find_module_by_name(module_name)
+
+        # append a new CompressedNode object with CompressedNode.class_name
+        self.__composition[module_node].append(ComponentNode(class_name=element_name))
+        current_node = self.__composition[module_node][element_ix]
+
+        current_node.set_module(module_name)
+        element_count = self.__get_element_count(element_name)
+        current_node.set_name(self.__get_element_name(element_name, element_count))
+        current_node.set_node_id(element_id)
+        current_node.set_links(element_links)
+
     def __get_children(self, node: ComponentNode) -> list:
 
-        for parent in self.composition:
+        for parent in self.__composition:
             if parent == node:
                 return [
                     ComponentNode(
@@ -90,7 +137,7 @@ class ComponentTree:
                         links=i.links,
                         module=i.module,
                     )
-                    for i in self.composition[parent]
+                    for i in self.__composition[parent]
                 ]
 
         return []
@@ -98,7 +145,17 @@ class ComponentTree:
     def __decompress(self, node: ComponentNode) -> dict:
         return {node: [self.__decompress(n) for n in self.__get_children(node)]}
 
+    def __set_root(self):
+
+        if not self.root:
+            for module in self.__composition.keys():
+                if module == self.root_key:
+                    self.root = module
+                    break
+
     def decompress(self) -> dict:
+
+        self.__set_root()
         self.__tree = self.__decompress(self.root)
 
     def get_tree(self) -> dict:
@@ -115,6 +172,7 @@ class ComponentTree:
                 self.__get_leaves(node, node_id)
 
     def __get_leaves(self, subtree: dict, depth: int = 0) -> None:
+
         for key, value in subtree.items():
             if not value:
                 self.__leaves.append(key)

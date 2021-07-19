@@ -11,26 +11,16 @@ class CompositionParser:
     def __init__(self, data: dict) -> None:
 
         self.__raw_data = data
-        self.__compositions = {}
+        self.ctree = ComponentTree()
 
-        self.__node_delim = "#"
-        self.__module_delim = "%"
-
-    def __get_element_count(self, module_node: ComponentNode, element_name: str) -> int:
-
-        return self.__compositions[module_node].count(element_name) - 1
-
-    def __get_element_name(self, element_name: str, count: int) -> str:
-
-        return element_name + self.__node_delim + str(count)
-
-    def __copy_connections(self, module_node: ComponentNode, element: dict) -> None:
+    def __copy_connections(self, element: dict) -> None:
 
         output_names = element["data"]["links"]["outputs"]
         output_conns = element["outputs"].values()
+        links = []
         for output_name, output_conn in zip(output_names, output_conns):
             for conn in output_conn["connections"]:
-                module_node.links.append(
+                links.append(
                     {
                         "from_port": output_name,
                         "to_id": int(conn["node"]),
@@ -40,48 +30,32 @@ class CompositionParser:
                     }
                 )
 
+        return links
+
     def filter(self) -> None:
 
         for module_name, module in self.__raw_data.items():
 
-            # make a new key of type <CompressedNode: list>
-            module_node = ComponentNode(class_name=module_name, name=module_name)
-            self.__compositions[module_node] = []
+            self.ctree.add_module(module_name)
 
             for element_list in module.values():
 
-                for num_elements, element in enumerate(element_list.values()):
+                for element_ix, element in enumerate(element_list.values()):
 
                     # append a new CompressedNode object with CompressedNode.class_name
-                    self.__compositions[module_node].append(
-                        ComponentNode(class_name=element["name"])
+                    self.ctree.add_element(
+                        module_name,
+                        element["name"],
+                        element_ix,
+                        element["id"],
+                        self.__copy_connections(element),
                     )
-                    current_node = self.__compositions[module_node][num_elements]
-
-                    # assign CompressedNode.module_name
-                    current_node.set_module(module_name)
-
-                    # assign CompressedNode.name
-                    element_count = self.__get_element_count(
-                        module_node, element["name"]
-                    )
-                    current_node.set_name(
-                        self.__get_element_name(element["name"], element_count)
-                    )
-
-                    # assign CompressedNode.node_id
-                    current_node.set_node_id(element["id"])
-
-                    # assign CompressedNode.links
-                    current_node.set_links([])
-                    self.__copy_connections(current_node, element)
 
     def generate_tree(self):
 
-        pprint(self.__compositions)
-        ctree = ComponentTree(self.__compositions)
-        ctree.decompress()
-        pprint(ctree.get_tree())
+        self.ctree.decompress()
+        pprint(self.ctree.get_tree())
+        pprint(self.ctree.get_leaves())
 
     def dump_raw_data(self):
 
