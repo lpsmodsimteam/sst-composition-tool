@@ -7,11 +7,11 @@ from pprint import pprint
 class ComponentNode:
     def __init__(
         self,
-        class_name=None,
-        node_id=0,
-        name=None,
-        links=None,
-        module=None,
+        class_name: str = None,
+        node_id: int = 0,
+        name: str = None,
+        links: list = None,
+        module: str = None,
     ) -> None:
 
         self.class_name = class_name
@@ -36,10 +36,11 @@ class ComponentNode:
         self.name = name
 
     def __repr__(self) -> str:
+        # debugging method
         rep = ""
         if self.links:
             rep = f""" | {self.links[0]["from_port"]}/{self.links[0]["to_id"]}/{self.links[0]["to_port"]}"""
-        return f"{self.name} ({self.node_id}+{id(self)})" + rep
+        return f"{self.name} ({self.node_id})" + rep
 
     def __eq__(self, other) -> bool:
 
@@ -50,18 +51,14 @@ class ComponentNode:
             return self.class_name == other
 
         elif isinstance(other, int):
-            return self.id == other
+            return self.node_id == other
 
     def __hash__(self) -> int:
         return hash(self.class_name)
 
 
 class ComponentTree:
-    def __init__(
-        self,
-        composition=None,
-        root_key="Home",
-    ) -> None:
+    def __init__(self, composition: dict = None, root_key: str = "Home") -> None:
 
         self.__composition = composition
         self.root_key = root_key
@@ -79,13 +76,13 @@ class ComponentTree:
 
         self.__leaves = []  # <list(ComponentNode)>
         self.__tree = {}  # <dict(ComponentNode: list(ComponentNode))>
-        self.__max_depth = 0
+        self.__max_depth: int = 0
 
     def __get_element_name(self, element_name: str, count: int) -> str:
 
         return f"{element_name}{self.__node_delim}{count}"
 
-    def find_module_by_name(self, element_name):
+    def find_module_by_name(self, element_name: str):
 
         for module in self.__composition.keys():
             if module == element_name:
@@ -125,7 +122,7 @@ class ComponentTree:
         current_node.set_node_id(element_id)
         current_node.set_links(element_links)
 
-    def __get_children(self, node: ComponentNode) -> list:
+    def __get_elements_from_module(self, node: ComponentNode) -> list:
 
         for parent in self.__composition:
             if parent == node:
@@ -143,7 +140,9 @@ class ComponentTree:
         return []
 
     def __decompress(self, node: ComponentNode) -> dict:
-        return {node: [self.__decompress(n) for n in self.__get_children(node)]}
+        return {
+            node: [self.__decompress(n) for n in self.__get_elements_from_module(node)]
+        }
 
     def __set_root(self):
 
@@ -162,14 +161,15 @@ class ComponentTree:
 
         return self.__tree
 
-    def find_node_by_id(self, subtree, node_id):
+    def find_element_by_id(self, subtree, node_id):
 
+        found_elements = []
         for key, value in subtree.items():
             if key.node_id == node_id:
                 return key
 
             for node in value:
-                self.__get_leaves(node, node_id)
+                self.find_element_by_id(node, node_id)
 
     def __get_leaves(self, subtree: dict, depth: int = 0) -> None:
 

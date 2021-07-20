@@ -2,9 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import json
-from pprint import pprint
 
-from .componenttree import ComponentNode, ComponentTree
+from .componenttree import ComponentTree
 
 
 class CompositionParser:
@@ -51,15 +50,14 @@ class CompositionParser:
                         self.__copy_connections(element),
                     )
 
-    def generate_tree(self):
+    def generate_tree(self) -> ComponentTree:
 
         self.ctree.decompress()
-        pprint(self.ctree.get_tree())
-        pprint(self.ctree.get_leaves())
+        return self.ctree
 
-    def dump_raw_data(self):
+    def dump_raw_data(self, file_name="dump.json"):
 
-        with open("out.json", "w") as dump_file:
+        with open(file_name, "w") as dump_file:
             json.dump(self.__raw_data, dump_file, indent=4)
 
     # @staticmethod
