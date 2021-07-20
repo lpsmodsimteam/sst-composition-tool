@@ -39,7 +39,11 @@ class ComponentNode:
         # debugging method
         rep = ""
         if self.links:
-            rep = f""" | {self.links[0]["from_port"]}/{self.links[0]["to_id"]}/{self.links[0]["to_port"]}"""
+            rep += " | "
+            for link in self.links:
+                rep += f"""{link["from_port"]}/{link["to_id"]}/{link["to_port"]}"""
+                if len(self.links) > 1:
+                    rep += ",\n"
         return f"{self.name} ({self.node_id})" + rep
 
     def __eq__(self, other) -> bool:
@@ -161,15 +165,22 @@ class ComponentTree:
 
         return self.__tree
 
-    def find_element_by_id(self, subtree, node_id):
+    def __find_element_by_id(
+        self, subtree: dict, found_elements: list, node_id: int
+    ) -> None:
 
-        found_elements = []
         for key, value in subtree.items():
             if key.node_id == node_id:
-                return key
+                found_elements.append(key)
 
             for node in value:
-                self.find_element_by_id(node, node_id)
+                self.__find_element_by_id(node, found_elements, node_id)
+
+    def find_element_by_id(self, node_id: int) -> list:
+
+        found_elements = []
+        self.__find_element_by_id(self.__tree, found_elements, node_id)
+        return found_elements
 
     def __get_leaves(self, subtree: dict, depth: int = 0) -> None:
 
