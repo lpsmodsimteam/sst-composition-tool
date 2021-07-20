@@ -165,22 +165,20 @@ class ComponentTree:
 
         return self.__tree
 
-    def __find_element_by_id(
-        self, subtree: dict, found_elements: list, node_id: int
-    ) -> None:
+    def __find_element_by_id(self, subtree: dict, node_id: int) -> ComponentNode:
 
         for key, value in subtree.items():
             if key.node_id == node_id:
-                found_elements.append(key)
+                return key
 
             for node in value:
-                self.__find_element_by_id(node, found_elements, node_id)
+                found = self.__find_element_by_id(node, node_id)
+                if found:
+                    return found
 
-    def find_element_by_id(self, node_id: int) -> list:
+    def find_element_by_id(self, node_id: int) -> ComponentNode:
 
-        found_elements = []
-        self.__find_element_by_id(self.__tree, found_elements, node_id)
-        return found_elements
+        return self.__find_element_by_id(self.__tree, node_id)
 
     def __get_leaves(self, subtree: dict, depth: int = 0) -> None:
 

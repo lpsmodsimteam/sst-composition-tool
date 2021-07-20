@@ -17,6 +17,6 @@ if __name__ == "__main__":
     comp_parser.filter()
     ctree = comp_parser.generate_tree()
     pprint(ctree.get_tree())
-    pprint(ctree.get_leaves())
-
-    pprint(ctree.find_element_by_id(3))
+    leaves = ctree.get_leaves()
+    for leaf in leaves:
+        print(ctree.find_element_by_id(leaf.node_id))
