@@ -2,7 +2,6 @@
 
 /* ---------------------- NODE EVENTS ---------------------- */
 editor.on("nodeCreated", function(id) {
-    // console.log("Node created " + id);
     newNodeId = parseInt(id);
     nodeHistory[id] = newNodeId;
 })
@@ -14,7 +13,6 @@ editor.on("nodeRemoved", function(id) {
 
 editor.on("contextmenu", function(id) {
     // removedNodes = parseInt(id);
-    // console.log("yo what " + id);
 })
 
 editor.on("nodeSelected", function(id) {
@@ -84,7 +82,6 @@ function addNodeToDrawFlow(name, pos_x, pos_y) {
         pos_y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)) -
         (editor.precanvas.getBoundingClientRect().y *
          (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)));
-    // console.log("after", dfBoxDivs[name]["links"]);
     editor.addNode(name, dfBoxDivs[name]["links"]["inputs"].length,
                    dfBoxDivs[name]["links"]["outputs"].length, pos_x, pos_y, name,
                    {"links" : dfBoxDivs[name]["links"], "param" : dfBoxDivs[name]["param"]},
@@ -134,10 +131,8 @@ function addGroupNodesConnectionLabels(groupName, newNamesArr, io) {
     for (const i in newNamesArr) {
 
         const ioArr = dfBoxDivs[newNamesArr[i]]["links"][io];
-        // console.log(ioArr);
         for (var j = 0; j < ioArr.length; j++) {
 
-            dfBoxDivs[groupName]["links"][io].push(ioArr[j]);
             ioStyles += `
 .drawflow-node.` + groupName +
                         ` .` + io + ` .` + io.substring(0, io.length - 1) + `:nth-child(` +
@@ -173,13 +168,11 @@ function generateIODropdown(id, elementName, io) {
                    io + '\', \'' + ioList[val] + '\');" name="' + ioList[val] + '" checked/>' +
                    ioList[val] + '<br />';
     }
-    // console.log(options);
     checkboxes.html(options);
 }
 
 function addGroupNodesStyles(groupName, newNamesArr) {
 
-    dfBoxDivs[groupName]["links"] = {"inputs" : [], "outputs" : []};
     const inputStyles = addGroupNodesConnectionLabels(groupName, newNamesArr, "inputs");
     const outputStyles = addGroupNodesConnectionLabels(groupName, newNamesArr, "outputs");
 
@@ -269,7 +262,6 @@ function moveNodesToModule(groupName, selectedNodes) {
     dfBoxDivs[groupName]["html"] = newGroupNodeHTML;
     dfBoxDivs[groupName]["links"] = newLinks;
     dfBoxDivs[groupName]["param"] = newParams;
-    // console.log("before", dfBoxDivs[groupName]["links"]);
     editor.addNode(groupName, totalInputs, totalOutputs, minPosX, minPosY, groupName,
                    {"links" : newLinks, "param" : newParams}, newGroupNodeHTML);
 

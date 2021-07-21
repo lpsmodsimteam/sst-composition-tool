@@ -1,81 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>SST Hierarchical Composition Tool</title>
-    <meta name="description" content="SST Hierarchical Composition Tool">
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/drawflow.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/beautiful.css') }}" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>SST Hierarchical Composition Tool</title>
+  <meta name="description" content="SST Hierarchical Composition Tool">
 
-    <script src="{{ url_for('static', filename='js/drawflow.min.js') }}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-    <script src="https://unpkg.com/micromodal/dist/micromodal.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/drawflow.min.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/beautiful.css') }}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
+    integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
-    <style>
-      {{node_styles | safe}}
-    </style>
-  </head>
+  <script src="{{ url_for('static', filename='js/drawflow.min.js') }}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"
+    integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+  <script src="https://unpkg.com/micromodal/dist/micromodal.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
-  <body>
-    <header>
-      <h2>SST Hierarchical Composition Tool</h2>
-    </header>
-    <div class="wrapper">
-      <div id="element_list" class="col">
-        {{element_divs | safe}}
+  <style>
+    {{node_styles | safe}}
+  </style>
+</head>
+
+<body>
+  <header>
+    <h2>SST Hierarchical Composition Tool</h2>
+  </header>
+  <div class="wrapper">
+    <div id="element_list" class="col">
+      {{element_divs | safe}}
+    </div>
+    <div id="element_inputs">
+    </div>
+    <div class="col-right">
+      <div class="menu">
+        <ul id="hierarchy">
+          <li onclick="editor.changeModule('Home'); changeModule(event);">Home</li>
+        </ul>
       </div>
-      <div id="element_inputs">
-      </div>
-      <div class="col-right">
-        <div class="menu">
-          <ul id="hierarchy">
-            <li onclick="editor.changeModule('Home'); changeModule(event);">Home</li>
-          </ul>
-        </div>
-        <div id="drawflow" ondrop="drop(event)" ondragover="allowDrop(event)">
-          <form method="post">
-            <input id="group_nodes_name" type="text" value="group_name_0">
-            <input id="group_nodes" type="checkbox" placeholder="Group">
-            <div><span id="group_nodes_msg"></span></div>
-            <div class="btn-export" id="export_button">Export</div>
-            <div class="btn-clear" onclick="editor.clearModuleSelected()">Clear</div>
-            <div class="btn-lock">
-              <i id="lock" class="fas fa-lock" onclick="editor.editor_mode='fixed'; changeMode('lock');"></i>
-              <i id="unlock" class="fas fa-lock-open" onclick="editor.editor_mode='edit'; changeMode('unlock');" style="display:none;"></i>
-            </div>
-          </form>
-          <div class="bar-zoom">
-            <i class="fas fa-search-minus" onclick="editor.zoom_out()"></i>
-            <i class="fas fa-search" onclick="editor.zoom_reset()"></i>
-            <i class="fas fa-search-plus" onclick="editor.zoom_in()"></i>
+      <div id="drawflow" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <form method="post">
+          <input id="group_nodes_name" type="text" value="group_name_0">
+          <input id="group_nodes" type="checkbox" placeholder="Group">
+          <div><span id="group_nodes_msg"></span></div>
+          <div class="btn-export" id="export_button">Export</div>
+          <div class="btn-clear" onclick="editor.clearModuleSelected()">Clear</div>
+          <div class="btn-lock">
+            <i id="lock" class="fas fa-lock" onclick="editor.editor_mode='fixed'; changeMode('lock');"></i>
+            <i id="unlock" class="fas fa-lock-open" onclick="editor.editor_mode='edit'; changeMode('unlock');"
+              style="display:none;"></i>
           </div>
+        </form>
+        <div class="bar-zoom">
+          <i class="fas fa-search-minus" onclick="editor.zoom_out()"></i>
+          <i class="fas fa-search" onclick="editor.zoom_reset()"></i>
+          <i class="fas fa-search-plus" onclick="editor.zoom_in()"></i>
         </div>
       </div>
     </div>
+  </div>
 
-    <script type="text/javascript">
-      const dfBoxDivs = JSON.parse({{df_box_divs | tojson}});
+  <script type="text/javascript">
+    var dfBoxDivs = JSON.parse({{ df_box_divs | tojson}});
 
-      var id = document.getElementById("drawflow");
-      const editor = new Drawflow(id);
-      editor.reroute = true;
-      editor.start();
+    var id = document.getElementById("drawflow");
+    const editor = new Drawflow(id);
+    editor.reroute = true;
+    editor.start();
 
-      var groupedNum = 0;
-      const groupNamesSet = new Set();
-      const selectedNodes = [];
-      const nodeHistory = {};
-      var newNodeId = 0;
-    </script>
+    var groupedNum = 0;
+    const groupNamesSet = new Set();
+    const selectedNodes = [];
+    const nodeHistory = {};
+    var newNodeId = 0;
+  </script>
 
-    <script src="{{ url_for('static', filename='js/drawflow_methods.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/drawflow_methods.js') }}"></script>
 
-  </body>
+</body>
+
 </html>

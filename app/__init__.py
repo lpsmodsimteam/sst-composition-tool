@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+from pprint import pprint
 
 from flask import Flask, render_template, request
 
@@ -66,6 +67,7 @@ def create_app(test_config=None):
     def export_data():
 
         data = json.loads(request.form["drawflow_data"])["drawflow"]
+        pprint(data)
         gdp = CompositionParser(data)
         gdp.filter()
         gdp.generate_tree()

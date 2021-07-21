@@ -41,7 +41,7 @@ class ComponentNode:
         if self.links:
             rep += " | "
             for link in self.links:
-                rep += f"""{link["from_port"]}/{link["to_id"]}/{link["to_port"]}"""
+                rep += f'{link["from_port"]}/{link["to_id"]}/{link["to_port"]}'
                 if len(self.links) > 1:
                     rep += ",\n"
         return f"{self.name} ({self.node_id})" + rep
@@ -69,11 +69,11 @@ class ComponentTree:
         if self.__composition:
             for module in self.__composition.keys():
                 if module == self.root_key:
-                    self.root = module
+                    self.__root = module
                     break
         else:
             self.__composition = {}
-            self.root = None
+            self.__root = None
 
         self.__node_delim = "#"
         self.__module_delim = "%"
@@ -81,24 +81,6 @@ class ComponentTree:
         self.__leaves = []  # <list(ComponentNode)>
         self.__tree = {}  # <dict(ComponentNode: list(ComponentNode))>
         self.__max_depth: int = 0
-
-    def __get_element_name(self, element_name: str, count: int) -> str:
-
-        return f"{element_name}{self.__node_delim}{count}"
-
-    def find_module_by_name(self, element_name: str):
-
-        for module in self.__composition.keys():
-            if module == element_name:
-                return module
-
-    def __get_element_count(self, element_name: str) -> int:
-
-        count = -1
-        for module in self.__composition.keys():
-            count += self.__composition[module].count(element_name)
-
-        return count
 
     def add_module(self, module_name: str):
 
@@ -126,6 +108,24 @@ class ComponentTree:
         current_node.set_node_id(element_id)
         current_node.set_links(element_links)
 
+    def find_module_by_name(self, element_name: str):
+
+        for module in self.__composition.keys():
+            if module == element_name:
+                return module
+
+    def __get_element_name(self, element_name: str, count: int) -> str:
+
+        return f"{element_name}{self.__node_delim}{count}"
+
+    def __get_element_count(self, element_name: str) -> int:
+
+        count = -1
+        for module in self.__composition.keys():
+            count += self.__composition[module].count(element_name)
+
+        return count
+
     def __get_elements_from_module(self, node: ComponentNode) -> list:
 
         for parent in self.__composition:
@@ -148,22 +148,10 @@ class ComponentTree:
             node: [self.__decompress(n) for n in self.__get_elements_from_module(node)]
         }
 
-    def __set_root(self):
-
-        if not self.root:
-            for module in self.__composition.keys():
-                if module == self.root_key:
-                    self.root = module
-                    break
-
     def decompress(self) -> dict:
 
-        self.__set_root()
-        self.__tree = self.__decompress(self.root)
-
-    def get_tree(self) -> dict:
-
-        return self.__tree
+        self.__root = self.find_module_by_name(self.root_key)
+        self.__tree = self.__decompress(self.__root)
 
     def __find_element_by_id(self, subtree: dict, node_id: int) -> ComponentNode:
 
@@ -178,7 +166,10 @@ class ComponentTree:
 
     def find_element_by_id(self, node_id: int) -> ComponentNode:
 
-        return self.__find_element_by_id(self.__tree, node_id)
+        if isinstance(node_id, int):
+            return self.__find_element_by_id(self.__tree, node_id)
+
+        raise TypeError("node_id must be of type 'int'")
 
     def __get_leaves(self, subtree: dict, depth: int = 0) -> None:
 
@@ -188,6 +179,15 @@ class ComponentTree:
                 self.__max_depth = max(self.__max_depth, depth)
 
             for node in value:
+                if key.links:
+                    for link in key.links:
+                        print(
+                            key,
+                            link["from_port"],
+                            link["to_port"],
+                            self.resolve_connection(link["from_port"]),
+                        )
+
                 self.__get_leaves(node, depth + 1)
 
     def get_leaves(self) -> list:
@@ -195,6 +195,14 @@ class ComponentTree:
         self.__get_leaves(self.__tree)
         print("max depth", self.__max_depth)
         return self.__leaves
+
+    def resolve_connection(self, connection: str) -> ComponentNode:
+
+        return connection.split(self.__node_delim)
+
+    def get_tree(self) -> dict:
+
+        return self.__tree
 
 
 if __name__ == "__main__":
