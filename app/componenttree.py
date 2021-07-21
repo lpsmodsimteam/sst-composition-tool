@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from pprint import pprint
+from typing import Tuple
 
 
 class ComponentNode:
@@ -38,13 +39,13 @@ class ComponentNode:
     def __repr__(self) -> str:
         # debugging method
         rep = ""
-        if self.links:
-            rep += " | "
-            for link in self.links:
-                rep += f'{link["from_port"]}/{link["to_id"]}/{link["to_port"]}'
-                if len(self.links) > 1:
-                    rep += ",\n"
-        return f"{self.name} ({self.node_id})" + rep
+        # if self.links:
+        #     rep += " | "
+        #     for link in self.links:
+        #         rep += f'{link["from_port"]}/{link["to_id"]}/{link["to_port"]}'
+        #         if len(self.links) > 1:
+        #             rep += ",\n"
+        return f"{self.class_name}({self.node_id})-{id(self)}" + rep
 
     def __eq__(self, other) -> bool:
 
@@ -76,7 +77,7 @@ class ComponentTree:
             self.__root = None
 
         self.__node_delim = "#"
-        self.__module_delim = "%"
+        self.__hierarchy_links = []
 
         self.__leaves = []  # <list(ComponentNode)>
         self.__tree = {}  # <dict(ComponentNode: list(ComponentNode))>
@@ -153,23 +154,26 @@ class ComponentTree:
         self.__root = self.find_module_by_name(self.root_key)
         self.__tree = self.__decompress(self.__root)
 
-    def __find_element_by_id(self, subtree: dict, node_id: int) -> ComponentNode:
+    def __find_element_by_ids(self, subtree: dict, node_id: int) -> ComponentNode:
 
         for key, value in subtree.items():
             if key.node_id == node_id:
-                return key
+                return key, subtree
 
             for node in value:
-                found = self.__find_element_by_id(node, node_id)
+                found = self.__find_element_by_ids(node, node_id)
                 if found:
                     return found
 
-    def find_element_by_id(self, node_id: int) -> ComponentNode:
+    def resolve_connection(self, connection: str) -> Tuple[ComponentNode, str]:
 
-        if isinstance(node_id, int):
-            return self.__find_element_by_id(self.__tree, node_id)
+        connection_name, node_ids = self.parse_connection(connection)
+        subtree = self.__tree
 
-        raise TypeError("node_id must be of type 'int'")
+        while node_ids:
+            node, subtree = self.__find_element_by_ids(subtree, node_ids.pop())
+            if not subtree[node]:
+                return node, connection_name
 
     def __get_leaves(self, subtree: dict, depth: int = 0) -> None:
 
@@ -179,15 +183,6 @@ class ComponentTree:
                 self.__max_depth = max(self.__max_depth, depth)
 
             for node in value:
-                if key.links:
-                    for link in key.links:
-                        print(
-                            key,
-                            link["from_port"],
-                            link["to_port"],
-                            self.resolve_connection(link["from_port"]),
-                        )
-
                 self.__get_leaves(node, depth + 1)
 
     def get_leaves(self) -> list:
@@ -196,13 +191,32 @@ class ComponentTree:
         print("max depth", self.__max_depth)
         return self.__leaves
 
-    def resolve_connection(self, connection: str) -> ComponentNode:
+    def parse_connection(self, connection: str) -> Tuple[str, ComponentNode]:
 
-        return connection.split(self.__node_delim)
+        if isinstance(connection, int):
+            return "", [connection]
+
+        connection_list = connection.split(self.__node_delim)
+        return connection_list[0], [int(i) for i in connection_list[1:]]
 
     def get_tree(self) -> dict:
 
         return self.__tree
+
+    def resolve_hierarchy(self):
+
+        root_module = self.__tree[self.__root]
+        for module in root_module:
+            for k in module.keys():
+                for link in k.links:
+                    from_, from_port = self.resolve_connection(link["from_port"])
+                    to_, to_port = (
+                        self.resolve_connection(link["to_id"])[0],
+                        link["to_port"],
+                    )
+                    self.__hierarchy_links.append(((from_, from_port), (to_, to_port)))
+
+        pprint(self.__hierarchy_links)
 
 
 if __name__ == "__main__":

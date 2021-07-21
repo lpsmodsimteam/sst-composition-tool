@@ -16,10 +16,6 @@ if __name__ == "__main__":
     comp_parser = CompositionParser(composition_data)
     comp_parser.filter()
     ctree = comp_parser.generate_tree()
-    # pprint(ctree.get_tree())
-    leaves = ctree.get_leaves()
-    # for leaf in leaves:
-    #     print(leaf)
-    #     for link in leaf.links:
-    #         print("link", ctree.find_element_by_id(link["to_id"]))
-    #         print("port", ctree.resolve_connection(link["to_port"]))
+    tree = ctree.get_tree()
+    pprint(tree)
+    ctree.resolve_hierarchy()
