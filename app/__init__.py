@@ -71,7 +71,7 @@ def create_app(test_config=None):
         gdp = CompositionParser(data)
         gdp.filter()
         gdp.generate_tree()
-        gdp.dump_raw_data()
+        # gdp.dump_raw_data()
 
         return ""
 

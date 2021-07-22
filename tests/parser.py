@@ -16,6 +16,7 @@ if __name__ == "__main__":
     comp_parser = CompositionParser(composition_data)
     comp_parser.filter()
     ctree = comp_parser.generate_tree()
+    ctree.resolve_hierarchy()
+    ctree.get_hierarchy()
     tree = ctree.get_tree()
     pprint(tree)
-    ctree.resolve_hierarchy()
