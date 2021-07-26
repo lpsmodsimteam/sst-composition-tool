@@ -51,17 +51,27 @@ class HierarchyResolver:
                     if found_module:
                         return found_module
 
-    def resolve_from_port(self, connection: str) -> Tuple[ComponentNode, str]:
+    def resolve_from_port(
+        self, node: ComponentNode, connection: str
+    ) -> Tuple[ComponentNode, str]:
+
+        current_node, _ = self.__find_element_by_id(self.__tree, node.id)
+        current_module = self.get_module_from_element(current_node)
 
         connection_name, node_types_list = self.parse_connection(connection)
 
         if not node_types_list:
             return None, connection
 
+        node_types_list.append(node.type)
+        node_types_list.append(current_module.type)
+        # print(node_types_list, node, end=" ")
+
         subtree = self.__tree
         while node_types_list:
             node, subtree = self.__find_element_by_type(subtree, node_types_list.pop())
             if not subtree[node]:
+                # print(node, connection_name)
                 return node, connection_name
 
     def resolve_to_port(
@@ -75,7 +85,6 @@ class HierarchyResolver:
         )
         sibling_node = self.__find_element_by_type(subtree, to_node_type)
         if sibling_node:
-            # print("found node's sibling", sibling_node)
             sibling_node, subtree = sibling_node
         while not sibling_node:
             current_module = self.get_module_from_element(current_module)
@@ -84,18 +93,15 @@ class HierarchyResolver:
             )
             sibling_node = self.__find_element_by_type(subtree, to_node_type)
             if sibling_node:
-                # print("found node's sibling", sibling_node)
                 sibling_node, subtree = sibling_node
 
         connection_name, node_types_list = self.parse_connection(connection)
-        # print("yo", connection_name, node_types_list)
 
         while node_types_list:
             node, subtree = self.__find_element_by_type(subtree, node_types_list.pop())
             if not subtree[node]:
                 return node, connection_name
         else:
-            # print("hmm")
             return (
                 self.__find_element_by_type(subtree, to_node_type)[0],
                 connection_name,
@@ -110,20 +116,21 @@ class HierarchyResolver:
         connection_list = connection.split(self.__node_delim)
         return connection_list[0], [int(i) for i in connection_list[1:]]
 
-    def resolve_hierarchy(self, subtree=None):
+    def resolve_hierarchy(self):
 
-        if not subtree:
-            subtree = self.__tree
+        self.__resolve_hierarchy(self.__tree)
 
-        for key, value in subtree.items():
+    def __resolve_hierarchy(self, subtree):
+
+        for value in subtree.values():
             if not value:
                 return
             for node in value:
                 for k in node.keys():
                     for link in k.links:
-                        # print(k.type, link)
+
                         from_element, from_port = self.resolve_from_port(
-                            link["from_port"]
+                            k, link["from_port"]
                         )
                         if not from_element:
                             from_element = k
@@ -132,18 +139,11 @@ class HierarchyResolver:
                             link["to_node_type"],
                             link["to_port"],
                         )
-                        # if to_element:
-                        #     to_element = to_element[0]
-                        # else:
-                        #     print("HUH", to_element)
-                        #     self.resolve_to_port(
-                        #         link["to_id"], self.get_module_from_element(k)
-                        #     )
-                        # to_port = link["to_port"]
+
                         self.__hierarchy_links.append(
                             ((from_element, from_port), (to_element, to_port))
                         )
-                self.resolve_hierarchy(node)
+                self.__resolve_hierarchy(node)
 
     def get_hierarchy(self):
 
