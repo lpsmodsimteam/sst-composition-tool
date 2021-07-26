@@ -55,23 +55,27 @@ class HierarchyResolver:
         self, node: ComponentNode, connection: str
     ) -> Tuple[ComponentNode, str]:
 
-        current_node, _ = self.__find_element_by_id(self.__tree, node.id)
-        current_module = self.get_module_from_element(current_node)
-
         connection_name, node_types_list = self.parse_connection(connection)
 
         if not node_types_list:
             return None, connection
 
+        current_node, _ = self.__find_element_by_id(self.__tree, node.id)
+        current_module = self.get_module_from_element(current_node)
+
         node_types_list.append(node.type)
         node_types_list.append(current_module.type)
-        # print(node_types_list, node, end=" ")
+        while current_module.type:
+            current_module = self.get_module_from_element(current_module)
+            node_types_list.append(current_module.type)
+
+        print(node_types_list, node, end=" ")
 
         subtree = self.__tree
         while node_types_list:
             node, subtree = self.__find_element_by_type(subtree, node_types_list.pop())
             if not subtree[node]:
-                # print(node, connection_name)
+                print(node, connection_name)
                 return node, connection_name
 
     def resolve_to_port(
