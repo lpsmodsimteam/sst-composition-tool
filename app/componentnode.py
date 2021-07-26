@@ -36,7 +36,7 @@ class ComponentNode:
         if self.links:
             rep += " | "
             for link in self.links:
-                rep += f'{link["from_port"]}/{link["to_id"]}/{link["to_port"]}'
+                rep += f'{link["from_port"]}/{link["to_node_type"]}/{link["to_port"]}'
                 if len(self.links) > 1:
                     rep += ",\n"
         return f"{self.class_name}({self.type})/{str(self.id)[-5:]}" + rep

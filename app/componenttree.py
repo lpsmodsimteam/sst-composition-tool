@@ -117,4 +117,3 @@ class ComponentTree:
     def get_tree(self) -> dict:
 
         return self.__tree
-

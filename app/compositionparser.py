@@ -29,7 +29,7 @@ class CompositionParser:
                 links.append(
                     {
                         "from_port": output_name,
-                        "to_id": int(to_node_id),
+                        "to_node_type": int(to_node_id),
                         "to_port": to_node_port,
                     }
                 )

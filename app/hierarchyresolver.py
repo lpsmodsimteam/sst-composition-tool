@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from pprint import pprint
 from typing import Tuple
 
@@ -10,14 +13,25 @@ class HierarchyResolver:
         self.__hierarchy_links = []
         self.__node_delim = "#"
 
-    def __find_element_by_types(self, subtree: dict, type: int) -> ComponentNode:
+    def __find_element_by_type(self, subtree: dict, type: int) -> ComponentNode:
 
         for key, value in subtree.items():
             if key.type == type:
                 return key, subtree
 
             for node in value:
-                found = self.__find_element_by_types(node, type)
+                found = self.__find_element_by_type(node, type)
+                if found:
+                    return found
+
+    def __find_element_by_id(self, subtree: dict, id: int) -> ComponentNode:
+
+        for key, value in subtree.items():
+            if key.id == id:
+                return key, subtree
+
+            for node in value:
+                found = self.__find_element_by_id(node, id)
                 if found:
                     return found
 
@@ -37,63 +51,100 @@ class HierarchyResolver:
                     if found_module:
                         return found_module
 
-    def resolve_connection(self, connection: str) -> Tuple[ComponentNode, str]:
+    def resolve_from_port(self, connection: str) -> Tuple[ComponentNode, str]:
 
-        connection_name, node_types = self.parse_connection(connection)
+        connection_name, node_types_list = self.parse_connection(connection)
+
+        if not node_types_list:
+            return None, connection
+
         subtree = self.__tree
-
-        if not node_types:
-            return 0, connection
-
-        while node_types:
-            # print("$$$$$", node_types, subtree)
-            node, subtree = self.__find_element_by_types(subtree, node_types.pop())
+        while node_types_list:
+            node, subtree = self.__find_element_by_type(subtree, node_types_list.pop())
             if not subtree[node]:
-                # print(node, connection_name)
                 return node, connection_name
 
-    def parse_connection(self, connection: str) -> Tuple[str, ComponentNode]:
+    def resolve_to_port(
+        self, node: ComponentNode, to_node_type: int, connection: str
+    ) -> Tuple[ComponentNode, str]:
 
-        if isinstance(connection, int):
-            return "", [connection]
+        current_node, _ = self.__find_element_by_id(self.__tree, node.id)
+        current_module = self.get_module_from_element(current_node)
+        current_module, subtree = self.__find_element_by_id(
+            self.__tree, current_module.id
+        )
+        sibling_node = self.__find_element_by_type(subtree, to_node_type)
+        if sibling_node:
+            # print("found node's sibling", sibling_node)
+            sibling_node, subtree = sibling_node
+        while not sibling_node:
+            current_module = self.get_module_from_element(current_module)
+            current_module, subtree = self.__find_element_by_id(
+                self.__tree, current_module.id
+            )
+            sibling_node = self.__find_element_by_type(subtree, to_node_type)
+            if sibling_node:
+                # print("found node's sibling", sibling_node)
+                sibling_node, subtree = sibling_node
 
+        connection_name, node_types_list = self.parse_connection(connection)
+        # print("yo", connection_name, node_types_list)
+
+        while node_types_list:
+            node, subtree = self.__find_element_by_type(subtree, node_types_list.pop())
+            if not subtree[node]:
+                return node, connection_name
+        else:
+            # print("hmm")
+            return (
+                self.__find_element_by_type(subtree, to_node_type)[0],
+                connection_name,
+            )
+
+    def parse_connection(self, connection) -> Tuple[str, list]:
+        """Parse connection string representing SST Links
+
+        The connection string is split on the node delimter. The first element of the
+        list is the name of the connection, and the rest of the list is its nested types
+        """
         connection_list = connection.split(self.__node_delim)
-        # print(connection_list[0], [int(i) for i in connection_list[1:]])
         return connection_list[0], [int(i) for i in connection_list[1:]]
 
     def resolve_hierarchy(self, subtree=None):
 
-        # pprint(self.__siblings)
         if not subtree:
             subtree = self.__tree
 
-        # root_module = self.__tree[self.__root]
         for key, value in subtree.items():
             if not value:
                 return
             for node in value:
                 for k in node.keys():
                     for link in k.links:
-                        # print(link)
-                        from_element, from_port = self.resolve_connection(
+                        # print(k.type, link)
+                        from_element, from_port = self.resolve_from_port(
                             link["from_port"]
                         )
                         if not from_element:
-                            print(k, self.get_module_from_element(k))
-                            from_element = str(k) + "LOLOOL"
-                        # print(from_element, from_port)
-                        to_element = self.resolve_connection(link["to_id"])
-                        if to_element:
-                            to_element = to_element[0]
-                        to_port = link["to_port"]
-                        print(((from_element, from_port), (to_element, to_port)))
+                            from_element = k
+                        to_element, to_port = self.resolve_to_port(
+                            k,
+                            link["to_node_type"],
+                            link["to_port"],
+                        )
+                        # if to_element:
+                        #     to_element = to_element[0]
+                        # else:
+                        #     print("HUH", to_element)
+                        #     self.resolve_to_port(
+                        #         link["to_id"], self.get_module_from_element(k)
+                        #     )
+                        # to_port = link["to_port"]
                         self.__hierarchy_links.append(
                             ((from_element, from_port), (to_element, to_port))
                         )
-                        # pprint(self.__hierarchy_links)
                 self.resolve_hierarchy(node)
 
     def get_hierarchy(self):
 
         pprint(self.__hierarchy_links)
-        # pprint(self.__siblings)

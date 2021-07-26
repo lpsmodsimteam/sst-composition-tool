@@ -22,5 +22,7 @@ if __name__ == "__main__":
     hr = HierarchyResolver(tree)
     hr.resolve_hierarchy()
     hr.get_hierarchy()
-    # leaves = ctree.get_leaves()[-6]
-    # print(leaves, ctree.get_module_from_element(leaves))
+    # leaves = ctree.get_leaves()[3]
+    # print(leaves, hr.get_module_from_element(leaves))
+    # # 12 {'from_port': 'cout#4#8', 'to_node_type: 13, 'to_port': 'cin#3#7'}
+    # print(hr.resolve_to_port(leaves, 13, "cin#3#7"))
