@@ -5,14 +5,14 @@ class ComponentNode:
         type: int = 0,
         name: str = None,
         links: list = None,
-        module: str = None,
+        parent: str = None,
     ) -> None:
 
         self.class_name = class_name
         self.name = name
         self.type = type
         self.links = links
-        self.module = module
+        self.parent = parent
         self.id = id(self)
 
     def set_class_name(self, class_name: str) -> None:
@@ -24,8 +24,8 @@ class ComponentNode:
     def set_links(self, links: list) -> None:
         self.links = links
 
-    def set_module(self, module: str) -> None:
-        self.module = module
+    def set_parent(self, parent: str) -> None:
+        self.parent = parent
 
     def set_name(self, name: str) -> None:
         self.name = name

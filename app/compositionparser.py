@@ -19,17 +19,17 @@ class CompositionParser:
         links = []
         for output_name, output_conn in zip(output_names, output_conns):
             for conn in output_conn["connections"]:
-                to_node_id = conn["node"]
+                to_node_type = conn["node"]
                 to_node_conn_name = conn["output"]
                 to_node_conn_num = int(to_node_conn_name[-1]) - 1
-                to_node_port = element_list[to_node_id]["data"]["links"]["inputs"][
+                to_node_port = element_list[to_node_type]["data"]["links"]["inputs"][
                     to_node_conn_num
                 ]
 
                 links.append(
                     {
                         "from_port": output_name,
-                        "to_node_type": int(to_node_id),
+                        "to_node_type": int(to_node_type),
                         "to_port": to_node_port,
                     }
                 )
@@ -40,19 +40,19 @@ class CompositionParser:
 
         for module_name, module in self.__raw_data.items():
 
-            self.ctree.add_module(module_name)
+            self.ctree.add_parent(module_name)
 
-            for element_list in module.values():
+            for component_list in module.values():
 
-                for element_ix, element in enumerate(element_list.values()):
+                for component_index, component in enumerate(component_list.values()):
 
                     # append a new CompressedNode object with CompressedNode.class_name
-                    self.ctree.add_element(
+                    self.ctree.add_child(
                         module_name,
-                        element["name"],
-                        element_ix,
-                        element["id"],
-                        self.__copy_connections(element, element_list),
+                        component["name"],
+                        component_index,
+                        component["id"],
+                        self.__copy_connections(component, component_list),
                     )
 
     def generate_tree(self) -> ComponentTree:
@@ -64,24 +64,3 @@ class CompositionParser:
 
         with open(file_name, "w") as dump_file:
             json.dump(self.__raw_data, dump_file, indent=4)
-
-    # @staticmethod
-    # def __get_name_by_id(links_list, node_id) -> str:
-
-    #     for i in links_list:
-    #         if i["id"] == node_id:
-    #             return i["name"]
-
-    # def convert_to_config(self):
-
-    #     for element in self.processed_data:
-    #         # print(element)
-    #         for link in element["links"]:
-    #             print(
-    #                 f"""sst.Link('{link["from_port"]}_{element["id"]}').connect(
-    #         ({element["name"]}, "{link["from_port"]}", LINK_DELAY),
-    #         ({self.__get_name_by_id(self.processed_data, link["to_id"])}, "{link["to_port"]}", LINK_DELAY)
-    #     )"""
-    #             )
-
-    #     pprint(self.processed_data)

@@ -24,51 +24,51 @@ class ComponentTree:
         self.__tree = {}  # <dict(ComponentNode: list(ComponentNode))>
         self.__height = 0
 
-    def add_module(self, module_name: str):
+    def add_parent(self, module_name: str):
 
         module_node = ComponentNode(class_name=module_name, name=module_name)
         self.__composition[module_node] = []
 
-    def add_element(
+    def add_child(
         self,
-        module_name: str,
-        element_name: str,
-        element_ix: int,
-        element_id: str,
-        element_links: str,
+        parent_name: str,
+        node_name: str,
+        node_index: int,
+        node_type: str,
+        node_links: str,
     ):
 
-        module_node = self.find_module_in_composition(module_name)
+        module_node = self.find_module(parent_name)
 
         # append a new ComponentNode object with ComponentNode.class_name
-        self.__composition[module_node].append(ComponentNode(class_name=element_name))
-        current_node = self.__composition[module_node][element_ix]
+        self.__composition[module_node].append(ComponentNode(class_name=node_name))
+        node = self.__composition[module_node][node_index]
 
-        current_node.set_module(module_name)
-        element_count = self.__get_element_count(element_name)
-        current_node.set_name(self.__get_element_name(element_name, element_count))
-        current_node.set_type(element_id)
-        current_node.set_links(element_links)
+        node.set_parent(parent_name)
+        node_count = self.__get_node_count(node_name)
+        node.set_name(self.__get_node_name(node_name, node_count))
+        node.set_type(node_type)
+        node.set_links(node_links)
 
-    def __get_element_name(self, element_name: str, count: int) -> str:
+    def __get_node_name(self, node_name: str, count: int) -> str:
 
-        return f"{element_name}{self.__node_delim}{count}"
+        return f"{node_name}{self.__node_delim}{count}"
 
-    def __get_element_count(self, element_name: str) -> int:
+    def __get_node_count(self, node_name: str) -> int:
 
         count = -1
         for module in self.__composition.keys():
-            count += self.__composition[module].count(element_name)
+            count += self.__composition[module].count(node_name)
 
         return count
 
-    def find_module_in_composition(self, element_name: str):
+    def find_module(self, node_name: str):
 
         for module in self.__composition.keys():
-            if module == element_name:
+            if module == node_name:
                 return module
 
-    def __get_elements_from_module(self, node: ComponentNode) -> list:
+    def __get_children(self, node: ComponentNode) -> list:
 
         for module in self.__composition:
             if module == node:
@@ -78,7 +78,7 @@ class ComponentTree:
                         type=i.type,
                         name=i.name,
                         links=i.links,
-                        module=i.module,
+                        parent=i.parent,
                     )
                     for i in self.__composition[module]
                 ]
@@ -86,13 +86,11 @@ class ComponentTree:
         return []
 
     def __decompress(self, node: ComponentNode) -> dict:
-        return {
-            node: [self.__decompress(n) for n in self.__get_elements_from_module(node)]
-        }
+        return {node: [self.__decompress(n) for n in self.__get_children(node)]}
 
     def decompress(self) -> dict:
 
-        self.__root = self.find_module_in_composition(self.root_key)
+        self.__root = self.find_module(self.root_key)
         self.__tree = self.__decompress(self.__root)
 
     def __get_leaves(self, subtree: dict, depth: int = 0) -> None:
