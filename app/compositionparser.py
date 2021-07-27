@@ -4,6 +4,7 @@
 import json
 
 from .componenttree import ComponentTree
+from .hierarchyresolver import HierarchyResolver
 
 
 class CompositionParser:
@@ -11,6 +12,7 @@ class CompositionParser:
 
         self.__raw_data = data
         self.ctree = ComponentTree()
+        self.resolved_links = []
 
     def __copy_connections(self, component: dict, component_list: dict) -> None:
 
@@ -60,7 +62,18 @@ class CompositionParser:
         self.ctree.decompress()
         return self.ctree
 
-    def dump_raw_data(self, file_name="dump.json"):
+    def dump_raw_data(self, file_name="dump.json") -> None:
 
         with open(file_name, "w") as dump_file:
             json.dump(self.__raw_data, dump_file, indent=4)
+
+    def resolve_hierarchy(self) -> None:
+
+        hr = HierarchyResolver(self.ctree.get_tree())
+        hr.resolve_hierarchy()
+        self.resolved_links = hr.get_links()
+        # pprint(sorted(hr.get_links(), key=lambda x: x[0][0].type))
+
+    def get_resolved_links(self) -> list:
+
+        return self.resolved_links

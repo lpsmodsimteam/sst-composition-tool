@@ -141,6 +141,6 @@ class HierarchyResolver:
                         )
                 self.__resolve_hierarchy(node)
 
-    def get_hierarchy(self) -> list:
+    def get_links(self) -> list:
 
         return self.__hierarchy_links

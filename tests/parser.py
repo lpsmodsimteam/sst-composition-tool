@@ -5,7 +5,6 @@ import json
 from pprint import pprint
 
 from app.compositionparser import CompositionParser
-from app.hierarchyresolver import HierarchyResolver
 
 
 if __name__ == "__main__":
@@ -16,9 +15,7 @@ if __name__ == "__main__":
 
     comp_parser = CompositionParser(composition_data)
     comp_parser.filter()
-    ctree = comp_parser.generate_tree()
-    tree = ctree.get_tree()
-    pprint(tree)
-    hr = HierarchyResolver(tree)
-    hr.resolve_hierarchy()
-    pprint(sorted(hr.get_hierarchy(), key=lambda x: x[0][0].id))
+    comp_parser.generate_tree()
+    comp_parser.resolve_hierarchy()
+    resolved_links = comp_parser.get_resolved_links()
+    pprint(sorted(resolved_links, key=lambda x: x[0][0].type))

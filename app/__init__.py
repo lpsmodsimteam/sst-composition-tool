@@ -68,10 +68,13 @@ def create_app(test_config=None):
 
         data = json.loads(request.form["drawflow_data"])["drawflow"]
         pprint(data)
-        gdp = CompositionParser(data)
-        gdp.filter()
-        gdp.generate_tree()
-        # gdp.dump_raw_data()
+        comp_parser = CompositionParser(data)
+        comp_parser.filter()
+        ctree = comp_parser.generate_tree()
+        comp_parser.resolve_hierarchy()
+        resolved_links = comp_parser.get_resolved_links()
+        pprint(ctree.get_tree())
+        pprint(sorted(resolved_links, key=lambda x: x[0][0].type))
 
         return ""
 
