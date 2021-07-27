@@ -12,17 +12,17 @@ class CompositionParser:
         self.__raw_data = data
         self.ctree = ComponentTree()
 
-    def __copy_connections(self, element: dict, element_list: dict) -> None:
+    def __copy_connections(self, component: dict, component_list: dict) -> None:
 
-        output_names = element["data"]["links"]["outputs"]
-        output_conns = element["outputs"].values()
+        output_names = component["data"]["links"]["outputs"]
+        output_conns = component["outputs"].values()
         links = []
         for output_name, output_conn in zip(output_names, output_conns):
             for conn in output_conn["connections"]:
                 to_node_type = conn["node"]
                 to_node_conn_name = conn["output"]
                 to_node_conn_num = int(to_node_conn_name[-1]) - 1
-                to_node_port = element_list[to_node_type]["data"]["links"]["inputs"][
+                to_node_port = component_list[to_node_type]["data"]["links"]["inputs"][
                     to_node_conn_num
                 ]
 
