@@ -1,9 +1,11 @@
 *.pyc
+__pycache__/
 .venv/
+
 .clang-format
 *.pro.user
 .vscode/
-__pycache__/
+
 .env
 build/
 /run.py

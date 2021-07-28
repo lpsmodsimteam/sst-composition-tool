@@ -35,7 +35,8 @@ class ComponentTree:
         node_name: str,
         node_index: int,
         node_type: str,
-        node_links: str,
+        node_links: list,
+        node_params: dict,
     ):
 
         module_node = self.find_module(parent_name)
@@ -49,6 +50,7 @@ class ComponentTree:
         node.set_name(self.__get_node_name(node_name, node_count))
         node.set_type(node_type)
         node.set_links(node_links)
+        node.set_params(node_params)
 
     def __get_node_name(self, node_name: str, count: int) -> str:
 
@@ -76,9 +78,10 @@ class ComponentTree:
                     ComponentNode(
                         class_name=i.class_name,
                         type=i.type,
+                        parent=i.parent,
                         name=i.name,
                         links=i.links,
-                        parent=i.parent,
+                        params=i.params,
                     )
                     for i in self.__composition[module]
                 ]

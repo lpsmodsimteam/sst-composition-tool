@@ -4,15 +4,17 @@ class ComponentNode:
         class_name: str = None,
         type: int = 0,
         name: str = None,
-        links: list = None,
         parent: str = None,
+        links: list = None,
+        params: dict = None,
     ) -> None:
 
         self.class_name = class_name
-        self.name = name
         self.type = type
-        self.links = links
+        self.name = name
         self.parent = parent
+        self.links = links
+        self.params = params
         self.id = id(self)
 
     def set_class_name(self, class_name: str) -> None:
@@ -21,14 +23,17 @@ class ComponentNode:
     def set_type(self, type: int) -> None:
         self.type = type
 
-    def set_links(self, links: list) -> None:
-        self.links = links
+    def set_name(self, name: str) -> None:
+        self.name = name
 
     def set_parent(self, parent: str) -> None:
         self.parent = parent
 
-    def set_name(self, name: str) -> None:
-        self.name = name
+    def set_links(self, links: list) -> None:
+        self.links = links
+
+    def set_params(self, params: list) -> None:
+        self.params = params
 
     def __repr__(self) -> str:
         # debugging method

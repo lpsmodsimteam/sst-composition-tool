@@ -5,13 +5,14 @@ import json
 
 from .componenttree import ComponentTree
 from .hierarchyresolver import HierarchyResolver
-from .templates import COMPONENT_INIT_TEMPL, COMPONENT_CONN_TEMPL
+from .templates import COMPONENT_INIT_TEMPL, COMPONENT_LINK_TEMPL, COMPONENT_PARAM_TEMPL
 
 
 class CompositionParser:
     def __init__(self, data: dict) -> None:
 
         self.__raw_data = data
+        self.library = "calculator"
         self.ctree = ComponentTree()
         self.resolved_links = []
 
@@ -56,6 +57,7 @@ class CompositionParser:
                         component_index,
                         component["id"],
                         self.__copy_connections(component, component_list),
+                        component["data"]["param"],
                     )
 
     def generate_tree(self) -> ComponentTree:
@@ -86,19 +88,21 @@ class CompositionParser:
         leaves = self.ctree.get_leaves()
         components_str_list = []
         links_str_list = []
-        library = "calculator"
         for leaf in leaves:
             components_str_list.append(
                 COMPONENT_INIT_TEMPL.format(
-                    name=leaf, library=library, class_name=leaf.class_name
+                    name=leaf, library=self.library, class_name=leaf.class_name
                 )
+            )
+            components_str_list.append(
+                COMPONENT_PARAM_TEMPL.format(name=leaf, params=str(leaf.params))
             )
 
         self.resolved_links = sorted(self.resolved_links, key=lambda x: x[0].id)
         for link in self.resolved_links:
             comp1, link1, comp2, link2 = link
             links_str_list.append(
-                COMPONENT_CONN_TEMPL.format(
+                COMPONENT_LINK_TEMPL.format(
                     comp1=comp1, link1=link1, comp2=comp2, link2=link2
                 )
             )
@@ -107,6 +111,6 @@ class CompositionParser:
             config_file.write(
                 config_templ_str.format(
                     init="\n".join(components_str_list),
-                    connect="\n".join(links_str_list),
+                    links="\n".join(links_str_list),
                 )
             )

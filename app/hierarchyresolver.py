@@ -42,14 +42,13 @@ class HierarchyResolver:
 
         for key, value in subtree.items():
             for k in value:
-                for l in k.keys():
 
-                    if node.id == l.id:
-                        return key
+                if node.id == next(iter(k)).id:
+                    return key
 
-                    parent = self.__get_parent(node, k)
-                    if parent:
-                        return parent
+                parent = self.__get_parent(node, k)
+                if parent:
+                    return parent
 
     def get_sibling_subtree(self, node: ComponentNode, sibling_node_type: int) -> dict:
 
@@ -108,7 +107,7 @@ class HierarchyResolver:
     def parse_connection(self, connection: str) -> tuple:
         """Parse connection string representing SST Links
 
-        The connection string is split on the node delimter. The first node of the
+        The connection string is split on the node delimiter. The first node of the
         list is the name of the connection, and the rest of the list is its nested types
         """
         connection_list = connection.split(self.__node_delim)
@@ -124,21 +123,19 @@ class HierarchyResolver:
             if not value:
                 return
             for node in value:
-                for k in node.keys():
-                    for link in k.links:
+                k = next(iter(node))
+                for link in k.links:
 
-                        from_node, from_port = self.resolve_from_port(
-                            k, link["from_port"]
-                        )
-                        to_node, to_port = self.resolve_to_port(
-                            k,
-                            link["to_node_type"],
-                            link["to_port"],
-                        )
+                    from_node, from_port = self.resolve_from_port(k, link["from_port"])
+                    to_node, to_port = self.resolve_to_port(
+                        k,
+                        link["to_node_type"],
+                        link["to_port"],
+                    )
 
-                        self.__hierarchy_links.append(
-                            (*(from_node, from_port), *(to_node, to_port))
-                        )
+                    self.__hierarchy_links.append(
+                        (*(from_node, from_port), *(to_node, to_port))
+                    )
                 self.__resolve_hierarchy(node)
 
     def get_links(self) -> list:
