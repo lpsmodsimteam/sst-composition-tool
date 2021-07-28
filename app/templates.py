@@ -40,8 +40,13 @@ NODE_OUTPUT_STYLE_TEMPL = """
 }}
 """
 
+COMPONENT_INIT_TEMPL = """{name} = sst.Component("{name}", "{library}.{class_name}")"""
+COMPONENT_CONN_TEMPL = """sst.Link("{comp1}-{link1}").connect(
+    ({comp1}, "{link1}", LINK_DELAY), ({comp2}, "{link2}", LINK_DELAY)
+)"""
 
-ELEMENTS = [
+
+EXAMPLE_COMPONENTS = [
     {
         "name": "addsub",
         "param": {

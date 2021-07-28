@@ -14,7 +14,7 @@ from .templates import (
     DF_BOX_DIVS,
     NODE_INPUT_STYLE_TEMPL,
     NODE_OUTPUT_STYLE_TEMPL,
-    ELEMENTS,
+    EXAMPLE_COMPONENTS,
 )
 from .compositionparser import CompositionParser
 
@@ -30,7 +30,7 @@ def create_app():
         element_divs = ""
         node_styles = ""
 
-        for element in ELEMENTS:
+        for element in EXAMPLE_COMPONENTS:
             input_tags = ""
             element_name = element["name"]
 

@@ -137,7 +137,7 @@ class HierarchyResolver:
                         )
 
                         self.__hierarchy_links.append(
-                            ((from_node, from_port), (to_node, to_port))
+                            (*(from_node, from_port), *(to_node, to_port))
                         )
                 self.__resolve_hierarchy(node)
 

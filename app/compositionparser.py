@@ -5,6 +5,7 @@ import json
 
 from .componenttree import ComponentTree
 from .hierarchyresolver import HierarchyResolver
+from .templates import COMPONENT_INIT_TEMPL, COMPONENT_CONN_TEMPL
 
 
 class CompositionParser:
@@ -72,7 +73,6 @@ class CompositionParser:
         hr = HierarchyResolver(self.ctree.get_tree())
         hr.resolve_hierarchy()
         self.resolved_links = hr.get_links()
-        # pprint(sorted(hr.get_links(), key=lambda x: x[0][0].type))
 
     def get_resolved_links(self) -> list:
 
@@ -89,18 +89,18 @@ class CompositionParser:
         library = "calculator"
         for leaf in leaves:
             components_str_list.append(
-                f"""{leaf} = sst.Component("{leaf}", "{library}.{leaf.class_name}")"""
+                COMPONENT_INIT_TEMPL.format(
+                    name=leaf, library=library, class_name=leaf.class_name
+                )
             )
 
-        self.resolved_links = sorted(self.resolved_links, key=lambda x: x[0][0].id)
+        self.resolved_links = sorted(self.resolved_links, key=lambda x: x[0].id)
         for link in self.resolved_links:
-            comp1, comp2 = link
-            comp1, link1 = comp1
-            comp2, link2 = comp2
+            comp1, link1, comp2, link2 = link
             links_str_list.append(
-                f"""sst.Link("{comp1}-{link1}").connect(
-    ({comp1}, "{link1}", LINK_DELAY), ({comp2}, "{link2}", LINK_DELAY)
-)"""
+                COMPONENT_CONN_TEMPL.format(
+                    comp1=comp1, link1=link1, comp2=comp2, link2=link2
+                )
             )
 
         with open(config_file_name, "w") as config_file:
