@@ -3,6 +3,7 @@
 
 import json
 from pprint import pprint
+from pathlib import Path
 
 from flask import Flask, render_template, request
 
@@ -18,7 +19,7 @@ from .templates import (
 from .compositionparser import CompositionParser
 
 
-def create_app(test_config=None):
+def create_app():
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.static_folder = "static"
@@ -70,11 +71,12 @@ def create_app(test_config=None):
         pprint(data)
         comp_parser = CompositionParser(data)
         comp_parser.filter()
-        ctree = comp_parser.generate_tree()
+        comp_parser.generate_tree()
         comp_parser.resolve_hierarchy()
-        resolved_links = comp_parser.get_resolved_links()
-        pprint(ctree.get_tree())
-        pprint(sorted(resolved_links, key=lambda x: x[0][0].type))
+        comp_parser.get_resolved_links()
+        comp_parser.generate_config(
+            Path(app.static_folder).resolve() / "templates" / "run.templ"
+        )
 
         return ""
 

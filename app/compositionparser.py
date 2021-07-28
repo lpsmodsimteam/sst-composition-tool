@@ -77,3 +77,36 @@ class CompositionParser:
     def get_resolved_links(self) -> list:
 
         return self.resolved_links
+
+    def generate_config(self, config_templ_path, config_file_name="run.py") -> None:
+
+        with open(config_templ_path) as config_templ_file:
+            config_templ_str = config_templ_file.read()
+
+        leaves = self.ctree.get_leaves()
+        components_str_list = []
+        links_str_list = []
+        library = "calculator"
+        for leaf in leaves:
+            components_str_list.append(
+                f"""{leaf} = sst.Component("{leaf}", "{library}.{leaf.class_name}")"""
+            )
+
+        self.resolved_links = sorted(self.resolved_links, key=lambda x: x[0][0].id)
+        for link in self.resolved_links:
+            comp1, comp2 = link
+            comp1, link1 = comp1
+            comp2, link2 = comp2
+            links_str_list.append(
+                f"""sst.Link("{comp1}-{link1}").connect(
+    ({comp1}, "{link1}", LINK_DELAY), ({comp2}, "{link2}", LINK_DELAY)
+)"""
+            )
+
+        with open(config_file_name, "w") as config_file:
+            config_file.write(
+                config_templ_str.format(
+                    init="\n".join(components_str_list),
+                    connect="\n".join(links_str_list),
+                )
+            )

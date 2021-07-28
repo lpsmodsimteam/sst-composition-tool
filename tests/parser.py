@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import json
+from pathlib import Path
 from pprint import pprint
+
 
 from app.compositionparser import CompositionParser
 
@@ -18,4 +20,7 @@ if __name__ == "__main__":
     comp_parser.generate_tree()
     comp_parser.resolve_hierarchy()
     resolved_links = comp_parser.get_resolved_links()
-    pprint(sorted(resolved_links, key=lambda x: x[0][0].type))
+    p = Path(".")
+    templ_dir = p.resolve() / "app" / "static" / "templates" / "run.templ"
+    comp_parser.generate_config(templ_dir)
+    # pprint(sorted(resolved_links, key=lambda x: x[0][0].type))
