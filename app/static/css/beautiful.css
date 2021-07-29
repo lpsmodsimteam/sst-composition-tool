@@ -90,6 +90,39 @@ cursor: pointer;
   font-weight: bold;
 }
 
+.group {
+  float: right;
+  position: absolute;
+  top: 50px;
+  right: 10px;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 4px;
+  z-index: 5;
+}
+
+.group_cb {
+  float: right;
+  position: absolute;
+  top: 50px;
+  right: 210px;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 4px;
+  z-index: 5;
+}
+
+.group_msg {
+  float: right;
+  position: absolute;
+  top: 80px;
+  right: 10px;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 4px;
+  z-index: 5;
+}
+
 .btn-export {
   float: right;
   position: absolute;

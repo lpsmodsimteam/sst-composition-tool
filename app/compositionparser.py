@@ -15,6 +15,8 @@ class CompositionParser:
         self.library = "calculator"
         self.ctree = ComponentTree()
         self.resolved_links = []
+        self.components_str_list = []
+        self.links_str_list = []
 
     def __copy_connections(self, component: dict, component_list: dict) -> None:
 
@@ -57,7 +59,7 @@ class CompositionParser:
                         component_index,
                         component["id"],
                         self.__copy_connections(component, component_list),
-                        component["data"]["param"],
+                        str(component["data"]["param"]),
                     )
 
     def generate_tree(self) -> ComponentTree:
@@ -80,37 +82,37 @@ class CompositionParser:
 
         return self.resolved_links
 
-    def generate_config(self, config_templ_path, config_file_name="run.py") -> None:
+    def dump_config(self, config_templ_path, config_file_name="run.py"):
 
         with open(config_templ_path) as config_templ_file:
             config_templ_str = config_templ_file.read()
 
+        with open(config_file_name, "w") as config_file:
+            config_file.write(
+                config_templ_str.format(
+                    init="\n".join(self.components_str_list),
+                    links="\n".join(self.links_str_list),
+                )
+            )
+
+    def generate_config(self) -> None:
+
         leaves = self.ctree.get_leaves()
-        components_str_list = []
-        links_str_list = []
         for leaf in leaves:
-            components_str_list.append(
+            self.components_str_list.append(
                 COMPONENT_INIT_TEMPL.format(
                     name=leaf, library=self.library, class_name=leaf.class_name
                 )
             )
-            components_str_list.append(
-                COMPONENT_PARAM_TEMPL.format(name=leaf, params=str(leaf.params))
+            self.components_str_list.append(
+                COMPONENT_PARAM_TEMPL.format(name=leaf, params=leaf.params)
             )
 
         self.resolved_links = sorted(self.resolved_links, key=lambda x: x[0].id)
         for link in self.resolved_links:
             comp1, link1, comp2, link2 = link
-            links_str_list.append(
+            self.links_str_list.append(
                 COMPONENT_LINK_TEMPL.format(
                     comp1=comp1, link1=link1, comp2=comp2, link2=link2
-                )
-            )
-
-        with open(config_file_name, "w") as config_file:
-            config_file.write(
-                config_templ_str.format(
-                    init="\n".join(components_str_list),
-                    links="\n".join(links_str_list),
                 )
             )

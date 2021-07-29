@@ -20,7 +20,6 @@ if __name__ == "__main__":
     comp_parser.generate_tree()
     comp_parser.resolve_hierarchy()
     resolved_links = comp_parser.get_resolved_links()
-    p = Path(".")
-    templ_dir = p.resolve() / "app" / "static" / "templates" / "run.templ"
-    comp_parser.generate_config(templ_dir)
-    # pprint(sorted(resolved_links, key=lambda x: x[0][0].type))
+    comp_parser.generate_config()
+    templ_dir = Path(".").resolve() / "app" / "static" / "templates" / "run.templ"
+    comp_parser.dump_config(templ_dir)

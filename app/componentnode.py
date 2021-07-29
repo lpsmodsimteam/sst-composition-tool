@@ -6,7 +6,7 @@ class ComponentNode:
         name: str = None,
         parent: str = None,
         links: list = None,
-        params: dict = None,
+        params: str = None,
     ) -> None:
 
         self.class_name = class_name
@@ -32,19 +32,11 @@ class ComponentNode:
     def set_links(self, links: list) -> None:
         self.links = links
 
-    def set_params(self, params: list) -> None:
+    def set_params(self, params: str) -> None:
         self.params = params
 
     def __repr__(self) -> str:
         # debugging method
-        # rep = ""
-        # if self.links:
-        #     rep += " | "
-        #     for link in self.links:
-        #         rep += f'{link["from_port"]}/{link["to_node_type"]}/{link["to_port"]}'
-        #         if len(self.links) > 1:
-        #             rep += ",\n"
-        # return f"{self.class_name}({self.type})/{str(self.id)[-5:]}" + rep
         return f"{self.class_name}{str(self.id)[-5:]}"
 
     def __eq__(self, other) -> bool:

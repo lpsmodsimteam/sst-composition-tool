@@ -74,7 +74,8 @@ def create_app():
         comp_parser.generate_tree()
         comp_parser.resolve_hierarchy()
         comp_parser.get_resolved_links()
-        comp_parser.generate_config(
+        comp_parser.generate_config()
+        comp_parser.dump_config(
             Path(app.static_folder).resolve() / "templates" / "run.templ"
         )
 

@@ -36,7 +36,7 @@ class ComponentTree:
         node_index: int,
         node_type: str,
         node_links: list,
-        node_params: dict,
+        node_params: str,
     ):
 
         module_node = self.find_module(parent_name)
