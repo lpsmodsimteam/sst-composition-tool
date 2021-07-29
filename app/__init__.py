@@ -38,7 +38,7 @@ def create_app():
                 input_tags += INPUT_TAG_TEMPL.format(key=param)
             DF_BOX_DIVS[element_name] = {}
             DF_BOX_DIVS[element_name]["html"] = DF_BOX_DIVS_TEMPL.format(
-                element=element_name, input_tag=input_tags
+                element=element_name, desc=element["desc"], input_tag=input_tags
             )
             DF_BOX_DIVS[element_name]["links"] = element["links"]
             DF_BOX_DIVS[element_name]["param"] = element["param"]
@@ -67,9 +67,10 @@ def create_app():
     @app.route("/export_drawflow_data", methods=["POST"])
     def export_data():
 
-        data = json.loads(request.form["drawflow_data"])["drawflow"]
-        pprint(data)
-        comp_parser = CompositionParser(data)
+        json_data = json.loads(request.form["drawflow_data"])
+        data = json_data["data"]
+        library = json_data["library"]
+        comp_parser = CompositionParser(data, library)
         comp_parser.filter()
         comp_parser.generate_tree()
         comp_parser.resolve_hierarchy()

@@ -41,7 +41,8 @@ $("#group_nodes").change(function(e) {
 
 $("#export_button").click(function(e) {
     e.preventDefault();
-    $.post("/export_drawflow_data", {drawflow_data : JSON.stringify(editor.export())});
+    var export_data = {"data": editor.export()["drawflow"], "library": $("#library").val()};
+    $.post("/export_drawflow_data", {drawflow_data : JSON.stringify(export_data)});
 });
 /* ---------------------- EVENTS ---------------------- */
 

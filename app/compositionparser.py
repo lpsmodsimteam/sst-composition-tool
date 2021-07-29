@@ -9,10 +9,10 @@ from .templates import COMPONENT_INIT_TEMPL, COMPONENT_LINK_TEMPL, COMPONENT_PAR
 
 
 class CompositionParser:
-    def __init__(self, data: dict) -> None:
+    def __init__(self, data: dict, library:str) -> None:
 
         self.__raw_data = data
-        self.library = "calculator"
+        self.library = library
         self.ctree = ComponentTree()
         self.resolved_links = []
         self.components_str_list = []

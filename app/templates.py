@@ -6,13 +6,19 @@ DF_BOX_DIVS_TEMPL = """
   <div class="title-box">
     <i class="fas fa-code"></i> {element}
   </div>
-  <div class="box">
-    {input_tag}
+  <div class="box dbclickbox" ondblclick="showpopup(event)">
+    {desc}
+    <div class="modal" style="display:none">
+      <div class="modal-content">
+        <span class="close" onclick="closemodal(event)">&times;</span>
+        {input_tag}
+      </div>
+    </div>
   </div>
 </div>
 """
 
-INPUT_TAG_TEMPL = """<input type="text" df-{key} placeholder="{key}">"""
+INPUT_TAG_TEMPL = """<input type="text" df-{key} placeholder="{key}"><br>"""
 
 ELEMENT_DIV_TEMPL = """
 <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="{0}">
@@ -50,6 +56,7 @@ COMPONENT_LINK_TEMPL = """sst.Link("{comp1}-{link1}").connect(
 EXAMPLE_COMPONENTS = [
     {
         "name": "addsub",
+        "desc": "Description of addsub",
         "param": {
             "clock": "1MHz",
             "link_speed": "1ps",
@@ -87,6 +94,7 @@ EXAMPLE_COMPONENTS = [
     },
     {
         "name": "ripplecarryadder",
+        "desc": "Description of ripplecarryadder",
         "param": {
             "clock": "1MHz",
             "link_speed": "1ps",
@@ -138,6 +146,7 @@ EXAMPLE_COMPONENTS = [
     },
     {
         "name": "fulladder",
+        "desc": "Description of fulladder",
         "param": {
             "clock": "1MHz",
             "link_speed": "1ps",
@@ -153,6 +162,7 @@ EXAMPLE_COMPONENTS = [
     },
     {
         "name": "bintodec",
+        "desc": "Description of bintodec",
         "param": {
             "clock": "1MHz",
             "link_speed": "1ps",
