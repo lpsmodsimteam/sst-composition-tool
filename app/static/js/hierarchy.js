@@ -31,7 +31,23 @@ $("#group_nodes").change(function(e) {
 
         $("#group_nodes_msg").text("In grouping mode");
 
-    } else if (selectedNodes.length) {
+    } else {
+
+        $("#group_nodes_msg").text("");
+        selectedNodes.length = 0;
+
+    }
+});
+
+$("#export_button").click(function(e) {
+    e.preventDefault();
+    $.post("/export_drawflow_data", {drawflow_data : JSON.stringify(editor.export())});
+});
+/* ---------------------- EVENTS ---------------------- */
+
+function createGroup() {
+
+    if (selectedNodes.length) {
 
         var groupName = $("#group_nodes_name").val();
 
@@ -51,15 +67,10 @@ $("#group_nodes").change(function(e) {
             selectedNodes.length = 0;
             groupedNum++;
             $("#group_nodes_name").val('group_name_' + groupedNum);
+            $("#group_nodes").prop('checked', false);
         }
     }
-});
-
-$("#export_button").click(function(e) {
-    e.preventDefault();
-    $.post("/export_drawflow_data", {drawflow_data : JSON.stringify(editor.export())});
-});
-/* ---------------------- EVENTS ---------------------- */
+}
 
 function allowDrop(ev) { ev.preventDefault(); }
 

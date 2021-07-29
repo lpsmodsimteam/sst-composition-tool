@@ -93,6 +93,17 @@ cursor: pointer;
 .group {
   float: right;
   position: absolute;
+  top: 90px;
+  right: 10px;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 4px;
+  z-index: 5;
+}
+
+.library {
+  float: right;
+  position: absolute;
   top: 50px;
   right: 10px;
   font-weight: bold;
@@ -101,27 +112,6 @@ cursor: pointer;
   z-index: 5;
 }
 
-.group_cb {
-  float: right;
-  position: absolute;
-  top: 50px;
-  right: 210px;
-  font-weight: bold;
-  padding: 5px 10px;
-  border-radius: 4px;
-  z-index: 5;
-}
-
-.group_msg {
-  float: right;
-  position: absolute;
-  top: 80px;
-  right: 10px;
-  font-weight: bold;
-  padding: 5px 10px;
-  border-radius: 4px;
-  z-index: 5;
-}
 
 .btn-export {
   float: right;
@@ -131,7 +121,7 @@ cursor: pointer;
   color: white;
   font-weight: bold;
   border: 1px solid #0e5ba3;
-  background: #4ea9ff;
+  background: #93da72;
   padding: 5px 10px;
   border-radius: 4px;
   cursor: pointer;
@@ -152,6 +142,22 @@ cursor: pointer;
   cursor: pointer;
   z-index: 5;
 }
+
+.btn-group {
+  float: right;
+  position: absolute;
+  top: 130px;
+  right: 10px;
+  color: white;
+  font-weight: bold;
+  border: 1px solid #0e5ba3;
+  background: #4ea9ff;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  z-index: 5;
+}
+
 .swal-wide{
     width:80% !important;
 }
@@ -192,6 +198,58 @@ cursor: pointer;
 }
 .bar-zoom svg:nth-child(1) {
   padding-left: 0px;
+}
+
+
+
+.toggle {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 62px;
+  height: 32px;
+  top: 85px;
+  right: 220px;
+  display: inline-block;
+  position: absolute;
+  border-radius: 50px;
+  overflow: hidden;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  background-color: #707070;
+  transition: background-color ease 0.3s;
+}
+
+.toggle:before {
+  content: "on off";
+  display: block;
+  position: absolute;
+  z-index: 2;
+  width: 28px;
+  height: 28px;
+  background: #fff;
+  left: 2px;
+  top: 2px;
+  border-radius: 50%;
+  font: 10px/28px Helvetica;
+  text-transform: uppercase;
+  font-weight: bold;
+  text-indent: -22px;
+  word-spacing: 37px;
+  color: #fff;
+  text-shadow: -1px -1px rgba(0,0,0,0.15);
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  transition: all cubic-bezier(0.3, 1.5, 0.7, 1) 0.3s;
+}
+
+.toggle:checked {
+  background-color: #4CD964;
+}
+
+.toggle:checked:before {
+  left: 32px;
 }
 
 #drawflow {
