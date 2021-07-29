@@ -46,7 +46,7 @@ $("#export_button").click(function(e) {
 });
 /* ---------------------- EVENTS ---------------------- */
 
-function createGroup() {
+$("#group_button").click(function(e) {
 
     if (selectedNodes.length) {
 
@@ -71,7 +71,7 @@ function createGroup() {
             $("#group_nodes").prop('checked', false);
         }
     }
-}
+});
 
 function allowDrop(ev) { ev.preventDefault(); }
 

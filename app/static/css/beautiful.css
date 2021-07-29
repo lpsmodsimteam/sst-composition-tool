@@ -26,6 +26,7 @@ header h2 {
 header a {
   color: black;
 }
+
 .them-edit-link {
   position: absolute;
   top: 10px;
@@ -93,7 +94,7 @@ cursor: pointer;
 .group {
   float: right;
   position: absolute;
-  top: 90px;
+  top: 50px;
   right: 10px;
   font-weight: bold;
   padding: 5px 10px;
@@ -104,7 +105,7 @@ cursor: pointer;
 .library {
   float: right;
   position: absolute;
-  top: 50px;
+  top: 10px;
   right: 10px;
   font-weight: bold;
   padding: 5px 10px;
@@ -116,12 +117,12 @@ cursor: pointer;
 .btn-export {
   float: right;
   position: absolute;
-  top: 10px;
+  top: 130px;
   right: 10px;
   color: white;
   font-weight: bold;
   border: 1px solid #0e5ba3;
-  background: #93da72;
+  background: #00b894;
   padding: 5px 10px;
   border-radius: 4px;
   cursor: pointer;
@@ -131,12 +132,12 @@ cursor: pointer;
 .btn-clear {
   float: right;
   position: absolute;
-  top: 10px;
+  top: 130px;
   right: 85px;
   color: white;
   font-weight: bold;
   border: 1px solid #96015b;
-  background: #e3195a;
+  background: #d63031;
   padding: 5px 10px;
   border-radius: 4px;
   cursor: pointer;
@@ -146,12 +147,27 @@ cursor: pointer;
 .btn-group {
   float: right;
   position: absolute;
-  top: 130px;
+  top: 90px;
   right: 10px;
   color: white;
   font-weight: bold;
   border: 1px solid #0e5ba3;
-  background: #4ea9ff;
+  background: #6c5ce7;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  z-index: 5;
+}
+
+.btn-create {
+  float: right;
+  position: absolute;
+  top: 170px;
+  right: 10px;
+  color: white;
+  font-weight: bold;
+  border: 1px solid #0e5ba3;
+  background: #6c5ce7;
   padding: 5px 10px;
   border-radius: 4px;
   cursor: pointer;
@@ -186,7 +202,6 @@ cursor: pointer;
   display: flex;
   font-size: 24px;
   color: white;
-  padding: 5px 10px;
   background: #555555;
   border-radius: 4px;
   border-right: 1px solid var(--border-color);
@@ -208,7 +223,7 @@ cursor: pointer;
   appearance: none;
   width: 62px;
   height: 32px;
-  top: 128px;
+  top: 88px;
   right: 80px;
   display: inline-block;
   position: absolute;
@@ -245,7 +260,7 @@ cursor: pointer;
 }
 
 .toggle:checked {
-  background-color: #4CD964;
+  background-color: #00b894;
 }
 
 .toggle:checked:before {
