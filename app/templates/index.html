@@ -1,85 +1,265 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>SST Hierarchical Composition Tool</title>
+    <meta name="description" content="SST Hierarchical Composition Tool" />
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>SST Hierarchical Composition Tool</title>
-  <meta name="description" content="SST Hierarchical Composition Tool">
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/drawflow.min.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/micromodal.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='css/beautiful.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
+      integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ="
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/drawflow.min.css') }}">
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/beautiful.css') }}" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
-    integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/drawflow.min.js') }}"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"
+      integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="https://unpkg.com/micromodal/dist/micromodal.min.js"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"
+    ></script>
 
-  <script src="{{ url_for('static', filename='js/drawflow.min.js') }}"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"
-    integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs=" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-  <script src="https://unpkg.com/micromodal/dist/micromodal.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <style>
+      {{node_styles | safe}}
+    </style>
+  </head>
 
-  <style>
-    {{node_styles | safe}}
-  </style>
-</head>
+  <body>
+    <header>
+      <h2>SST Hierarchical Composition Tool</h2>
+    </header>
+    <div class="wrapper">
+      <div id="element_list" class="col">{{element_divs | safe}}</div>
+      <div id="element_inputs"></div>
+      <div class="col-right">
+        <div class="menu">
+          <ul id="hierarchy">
+            <li onclick="editor.changeModule('Home'); changeModule(event);">
+              Home
+            </li>
+          </ul>
+        </div>
+        <div id="drawflow" ondrop="drop(event)" ondragover="allowDrop(event)">
+          <form method="post">
+            <input
+              class="library"
+              id="library"
+              type="text"
+              value="library_name"
+            />
+            <input
+              class="group"
+              id="group_nodes_name"
+              type="text"
+              value="group_name_0"
+            />
+            <input id="group_nodes" class="toggle" type="checkbox" />
+            <div class="btn-group" id="group_button">Group</div>
 
-<body>
-  <header>
-    <h2>SST Hierarchical Composition Tool</h2>
-  </header>
-  <div class="wrapper">
-    <div id="element_list" class="col">
-      {{element_divs | safe}}
-    </div>
-    <div id="element_inputs">
-    </div>
-    <div class="col-right">
-      <div class="menu">
-        <ul id="hierarchy">
-          <li onclick="editor.changeModule('Home'); changeModule(event);">Home</li>
-        </ul>
-      </div>
-      <div id="drawflow" ondrop="drop(event)" ondragover="allowDrop(event)">
-        <form method="post">
-          <input class="library" id="library" type="text" value="library_name">
-          <input class="group" id="group_nodes_name" type="text" value="group_name_0">
-          <input id="group_nodes" class="toggle" type="checkbox"/>
-          <div class="btn-group" id="group_button">Group</div>
-          <div class="btn-create" id="create_button" onclick="showModal()">Create</div>
-          <div class="btn-clear" onclick="editor.clearModuleSelected()">Clear</div>
-          <div class="btn-export" id="export_button">Export</div>
-        </form>
+            <div
+              class="modal micromodal-slide"
+              id="modal-create"
+              aria-hidden="true"
+            >
+              <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+                <div
+                  id="modal-container"
+                  class="modal__container"
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="modal-create-title"
+                >
+                  <header id="modal-header" class="modal__header">
+                    <h2 class="modal__title">Create a new component</h2>
+                    <button
+                      type="button"
+                      class="modal__close"
+                      aria-label="Close modal"
+                      data-micromodal-close
+                    ></button>
+                  </header>
 
-        <div class="bar-zoom">
-          <span id="group_nodes_msg"></span>
+                  <div id="modal-content-content" class="modal-content-content">
+                    <form id="create_component_form">
+                      <div
+                        id="modal-content"
+                        class="modal__content"
+                        style="display: none"
+                      >
+                        <p>
+                          Lorem ipsum dolor sit amet, consectetur adipiscing
+                          elit, sed do eiusmod tempor incididunt ut labore et
+                          dolore magna aliqua. Ut enim ad minim veniam, quis
+                          nostrud exercitation ullamco laboris nisi ut aliquip
+                          ex ea commodo consequat. Duis aute irure dolor in
+                          reprehenderit in voluptate velit esse cillum dolore eu
+                          fugiat nulla pariatur. Excepteur sint occaecat
+                          cupidatat non proident, sunt in culpa qui officia
+                          deserunt mollit anim id est laborum.
+                        </p>
+
+                        <label for="component_name">Component name</label>
+                        <input
+                          type="text"
+                          id="component_name"
+                          name="component_name"
+                          value="comp"
+                        /><br />
+
+                        <br />
+                        <label for="component_desc">Description</label>
+                        <input
+                          type="text"
+                          id="component_desc"
+                          name="component_desc"
+                          value="Example description of comp"
+                        /><br />
+
+                        <br />
+                        <label for="component_params">Parameters</label>
+                        <div id="component_params" class="param_wrapper">
+                          <div>
+                            <input id="param_label_0" type="text" value="" />
+                            <select id="param_value_0">
+                              <option value="str">str</option>
+                              <option value="int">int</option>
+                              <option value="list">list</option>
+                            </select>
+                            <a
+                              href="javascript:void(0);"
+                              id="add_param"
+                              class="add_button"
+                              title="Add parameter"
+                            >
+                              <img
+                                src="{{ url_for('static', filename='img/add-icon.png') }}"
+                              />
+                            </a>
+                          </div>
+                        </div>
+
+                        <br />
+                        <label for="component_links">Links</label>
+                        <div id="component_links" class="link_wrapper">
+                          <div>
+                            <input id="link_label_0" type="text" value="" />
+                            <select id="link_value_0">
+                              <option value="input">input</option>
+                              <option value="output">output</option>
+                            </select>
+                            <a
+                              href="javascript:void(0);"
+                              id="add_link"
+                              class="add_button"
+                              title="Add links"
+                            >
+                              <img
+                                src="{{ url_for('static', filename='img/add-icon.png') }}"
+                              />
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+
+                      <footer id="modal-footer" class="modal__footer">
+                        <button
+                          id="create_component"
+                          type="button"
+                          class="modal__btn"
+                        >
+                          Create
+                        </button>
+                        <button
+                          type="button"
+                          class="modal__btn"
+                          data-micromodal-close
+                          aria-label="Close this dialog window"
+                        >
+                          Close
+                        </button>
+                      </footer>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              data-micromodal-trigger="modal-create"
+              class="btn-create"
+              id="create_button"
+            >
+              Create
+            </div>
+
+            <div class="btn-clear" onclick="editor.clearModuleSelected()">
+              Clear
+            </div>
+            <div class="btn-export" id="export_button">Export</div>
+          </form>
+
+          <div class="bar-zoom">
+            <span id="group_nodes_msg"></span>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <script type="text/javascript">
-    var dfBoxDivs = JSON.parse({{df_box_divs | tojson}});
+    <script src="{{ url_for('static', filename='js/html.js') }}"></script>
 
-    var id = document.getElementById("drawflow");
-    const editor = new Drawflow(id);
-    editor.reroute = true;
-    editor.start();
+    <script type="text/javascript">
+      var dfBoxDivs = JSON.parse({{df_box_divs | tojson}});
 
-    var groupedNum = 0;
-    const groupNamesSet = new Set();
-    const selectedNodes = [];
-    const nodeHistory = {};
-    var newNodeId = 0;
+      var id = document.getElementById("drawflow");
+      const editor = new Drawflow(id);
+      editor.reroute = true;
+      editor.start();
 
-  </script>
+      var groupedNum = 0;
+      const groupNamesSet = new Set();
+      const selectedNodes = [];
+      const nodeHistory = {};
+      var newNodeId = 0;
 
-  <script src="{{ url_for('static', filename='js/hierarchy.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+      const removeIconPngPath = '{{ url_for("static", filename="img/remove-icon.png") }}';
 
-</body>
+      String.format = function() {
+          var s = arguments[0];
+          for (var i = 0; i < arguments.length - 1; i++) {
+              var reg = new RegExp("\\{" + i + "\\}", "gm");
+              s = s.replace(reg, arguments[i + 1]);
+          }
+          return s;
+      }
+    </script>
 
+    <script src="{{ url_for('static', filename='js/hierarchy.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+  </body>
 </html>

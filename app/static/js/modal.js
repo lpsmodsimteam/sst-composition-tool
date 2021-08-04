@@ -1,26 +1,101 @@
-var transform = '';
-function showpopup(e) {
-    e.target.closest(".drawflow-node").style.zIndex = "9999";
-    e.target.children[0].style.display = "block";
-    console.log(e.target.children[0]);
-    //document.getElementById("modalfix").style.display = "block";
+$(document).ready(function () {
+  var paramNum = 1;
+  var addParamButton = $("#add_param"); //Add button selector
+  var paramWrapper = $(".param_wrapper"); //Input param wrapper
 
-    //e.target.children[0].style.transform = 'translate('+translate.x+'px, '+translate.y+'px)';
-    transform = editor.precanvas.style.transform;
-    editor.precanvas.style.transform = '';
-    editor.precanvas.style.left = editor.canvas_x +'px';
-    editor.precanvas.style.top = editor.canvas_y +'px';
+  //Once add button is clicked
+  $(addParamButton).click(function () {
+    var paramHtml = String.format(PARAMHTML, paramNum, removeIconPngPath);
+    $(paramWrapper).append(paramHtml); //Add param html
+    paramNum++;
+  });
 
-    editor.editor_mode = "fixed";
+  //Once remove button is clicked
+  $(paramWrapper).on("click", "#remove_param", function (e) {
+    e.preventDefault();
+    $(this).parent("div").remove(); //Remove param html
+    paramNum--;
+  });
 
+  var linkNum = 1;
+  var addLinkButton = $("#add_link"); //Add button selector
+  var linkWrapper = $(".link_wrapper"); //Input link wrapper
+
+  //Once add button is clicked
+  $(addLinkButton).click(function () {
+    var linkHtml = String.format(LINKHTML, linkNum, removeIconPngPath);
+    $(linkWrapper).append(linkHtml); //Add link html
+    linkNum++;
+  });
+
+  //Once remove button is clicked
+  $(linkWrapper).on("click", "#remove_link", function (e) {
+    e.preventDefault();
+    $(this).parent("div").remove(); //Remove link html
+    linkNum--;
+  });
+
+  MicroModal.init({
+    awaitCloseAnimation: true, // set to false, to remove close animation
+    onShow: function (modal) {
+      addModalContentHeight("short");
+    },
+  });
+});
+
+function addModalContentHeight(type) {
+  var type = arguments[0] != null ? arguments[0] : "short";
+  var modalContainer = $("#modal-container");
+  var modalHeader = $("#modal-header");
+  var modalContentContent = $("#modal-content-content");
+  var modalContent = $("#modal-content");
+  var modalFooter = $("#modal-footer");
+
+  var modalIsDefined =
+    modalContainer.length &&
+    modalHeader.length &&
+    modalContent.length &&
+    modalFooter.length;
+
+  if (modalIsDefined) {
+    var modalContainerHeight = modalContainer.outerHeight();
+    var modalHeaderHeight = modalHeader.outerHeight();
+    var modalFooterHeight = modalFooter.outerHeight();
+
+    var offset = 80;
+
+    var height =
+      modalContainerHeight - (modalHeaderHeight + modalFooterHeight + offset);
+
+    if (!isNaN(height)) {
+      height = height > 0 ? height : 20;
+
+      if (type == "short") {
+        modalContent.css({ height: height + "px" });
+      } else {
+        modalContainer.css({
+          height: "100%",
+          "overflow-y": "hidden",
+          "margin-top": "40px",
+        });
+        modalContentContent.css({ height: "100%", "overflow-y": "auto" });
+        modalContent.css({ "overflow-y": "visible" });
+        modalFooter.css({ "margin-bottom": "120px" });
+      }
+
+      setTimeout(function () {
+        modalContent.css({ display: "block" });
+        var modalContentDOM = document.querySelector("#modal-content");
+        modalContentDOM.scrollTop = 0;
+      });
+    }
+  }
 }
 
-function closemodal(e) {
-    e.target.closest(".drawflow-node").style.zIndex = "2";
-    e.target.parentElement.parentElement.style.display  ="none";
-    //document.getElementById("modalfix").style.display = "none";
-    editor.precanvas.style.transform = transform;
-    editor.precanvas.style.left = '0px';
-    editor.precanvas.style.top = '0px';
-    editor.editor_mode = "edit";
+function showComponentModal(id) {
+  MicroModal.show(id);
+}
+
+function showCreateComponentModal(id) {
+  MicroModal.show(id);
 }
