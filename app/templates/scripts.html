@@ -1,0 +1,47 @@
+{% block js %}
+
+<script src="{{ url_for('static', filename='js/drawflow.min.js') }}"></script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"
+  integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs="
+  crossorigin="anonymous"
+></script>
+<script src="https://unpkg.com/micromodal/dist/micromodal.min.js"></script>
+<script
+  src="https://code.jquery.com/jquery-3.6.0.min.js"
+  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+  crossorigin="anonymous"
+></script>
+
+<script src="{{ url_for('static', filename='js/html.js') }}"></script>
+
+<script type="text/javascript">
+  var dfBoxDivs = JSON.parse({{df_box_divs | tojson}});
+
+  var id = document.getElementById("drawflow");
+  const editor = new Drawflow(id);
+  editor.reroute = true;
+  editor.start();
+
+  var groupedNum = 0;
+  const groupNamesSet = new Set();
+  const selectedNodes = [];
+  const nodeHistory = {};
+  var newNodeId = 0;
+
+  const removeIconPngPath = '{{ url_for("static", filename="img/remove-icon.png") }}';
+
+  String.format = function() {
+      var s = arguments[0];
+      for (var i = 0; i < arguments.length - 1; i++) {
+          var reg = new RegExp("\\{" + i + "\\}", "gm");
+          s = s.replace(reg, arguments[i + 1]);
+      }
+      return s;
+  }
+</script>
+
+<script src="{{ url_for('static', filename='js/hierarchy.js') }}"></script>
+<script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+
+{% endblock js %}
