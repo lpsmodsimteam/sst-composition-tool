@@ -11,16 +11,11 @@ editor.on("nodeRemoved", function (id) {
   // console.log("Node removed " + id);
 });
 
-editor.on("contextmenu", function (id) {
-  // removedNodes = parseInt(id);
-});
-
 editor.on("nodeSelected", function (id) {
   if ($("#group_nodes").is(":checked") && !selectedNodes.includes(id)) {
     selectedNodes.push(id);
     $("#group_nodes_msg").text("Nodes selected " + selectedNodes);
   }
-  // generateIODropdown(id, editor.getNodeFromId(id)["name"], "inputs");
 });
 /* ---------------------- NODE EVENTS ---------------------- */
 
@@ -89,12 +84,7 @@ $("#group_button").click(function (e) {
       $("#group_nodes_msg").text("Created: " + groupName);
       editor.addModule(groupName);
       editor.changeModule(groupName);
-      var newModuleDivHtml =
-        "<li onclick=\"editor.changeModule('" +
-        groupName +
-        "'); changeModule(event);\">" +
-        groupName +
-        "</li>";
+      var newModuleDivHtml = String.format(NEWMODULEDIVHTML, groupName);
       $(newModuleDivHtml).appendTo("#hierarchy");
       moveNodesToModule(groupName, selectedNodes);
 
@@ -159,16 +149,6 @@ function changeModule(event) {
   event.target.classList.add("selected");
 }
 
-function changeMode(option) {
-  if (option == "lock") {
-    lock.style.display = "none";
-    unlock.style.display = "block";
-  } else {
-    lock.style.display = "block";
-    unlock.style.display = "none";
-  }
-}
-
 function moveConnectionsToModule(newConnectionsArr) {
   for (const i in newConnectionsArr) {
     const outputList = newConnectionsArr[i]["outputs"];
@@ -210,34 +190,6 @@ function addGroupNodesConnectionLabels(groupName, newNamesArr, io) {
   return ioStyles;
 }
 
-function updateIO(cb, elementName, io, ioName) {
-  // console.log(cb, elementName, io, ioName);
-  if (!cb.checked) {
-  }
-}
-
-function generateIODropdown(id, elementName, io) {
-  const ioList = dfBoxDivs[elementName]["links"][io];
-
-  var checkboxes = $("#element_inputs");
-  var options = "";
-  for (var val in ioList) {
-    options +=
-      '<input type="checkbox" onclick="updateIO(this, \'' +
-      elementName +
-      "', '" +
-      io +
-      "', '" +
-      ioList[val] +
-      '\');" name="' +
-      ioList[val] +
-      '" checked/>' +
-      ioList[val] +
-      "<br />";
-  }
-  checkboxes.html(options);
-}
-
 function addGroupNodesStyles(groupName, newNamesArr) {
   const inputStyles = addGroupNodesConnectionLabels(
     groupName,
@@ -250,20 +202,11 @@ function addGroupNodesStyles(groupName, newNamesArr) {
     "outputs"
   );
 
-  var newElementStyle =
-    `<style type='text/css'>` +
-    inputStyles +
-    outputStyles +
-    `
-.drawflow-node.` +
-    groupName +
-    ` {
-  background: #2c3e50;
-  text-align: center;
-  color: #1abc9c;
-}
-  </style>
-  `;
+  var newElementStyle = String.format(
+    NEWELEMENTSTYLE,
+    inputStyles + outputStyles,
+    groupName
+  );
   $(newElementStyle).appendTo("head");
 }
 
@@ -333,26 +276,11 @@ function moveNodesToModule(groupName, selectedNodes) {
   moveConnectionsToModule(newConnectionsArr);
 
   editor.changeModule("Home");
-  var newElementDivHtml =
-    `
-  <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="` +
-    groupName +
-    `" style="background: #2c3e50; color: #1abc9c;">
-  <i class="fas fa-code"></i><span> ` +
-    groupName +
-    `</span>
-  </div>
-  `;
+  var newElementDivHtml = String.format(NEWELEMENTDIVHTML, groupName);
   $(newElementDivHtml).appendTo("#element_list");
 
-  var newGroupNodeHTML =
-    `
-  <div class="dbclickbox" ondblclick="editor.changeModule('` +
-    groupName +
-    `')">` +
-    groupName +
-    `</div>
-  `;
+  var newGroupNodeHTML = String.format(NEWGROUPNODEHTML, groupName);
+
   dfBoxDivs[groupName] = {};
   dfBoxDivs[groupName]["html"] = newGroupNodeHTML;
   dfBoxDivs[groupName]["links"] = newLinks;
