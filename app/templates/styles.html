@@ -1,5 +1,3 @@
-{% block css %}
-
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='css/drawflow.min.css') }}"
@@ -23,8 +21,3 @@
   href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
   rel="stylesheet"
 />
-<style>
-  {{node_styles | safe}}
-</style>
-
-{% endblock css %}

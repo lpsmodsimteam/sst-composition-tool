@@ -1,28 +1,28 @@
 /* -------------------- MODAL HTML -------------------- */
 const PARAMHTML = `
-  <div>
-    <input id="param_label_{0}" type="text" value=""/>
-    <select id="param_value_{0}">
-      <option value="str">str</option>
-      <option value="int">int</option>
-      <option value="list">list</option>
-    </select>
-    <a href="javascript:void(0);" id="remove_param" class="remove_button">
-      <img src="{1}"/>
-    </a>
-  </div>`;
+<div>
+  <input id="param_value_{0}" type="text" value=""/>
+  <select id="param_type_{0}">
+    <option value="str">str</option>
+    <option value="int">int</option>
+    <option value="list">list</option>
+  </select>
+  <a href="javascript:void(0);" id="remove_param" class="remove_button">
+    <img src="{1}"/>
+  </a>
+</div>`;
 
 const LINKHTML = `
-  <div>
-    <input id="link_label_{0}" type="text" value=""/>
-    <select id="link_value_{0}">
-      <option value="input">input</option>
-      <option value="output">output</option>
-    </select>
-    <a href="javascript:void(0);" id="remove_link" class="remove_button">
-      <img src="{1}"/>
-    </a>
-  </div>`;
+<div>
+  <select id="link_type_{0}">
+    <option value="input">input</option>
+    <option value="output">output</option>
+  </select>
+  <input id="link_label_{0}" type="text" value=""/>
+  <a href="javascript:void(0);" id="remove_link" class="remove_button">
+    <img src="{1}"/>
+  </a>
+</div>`;
 /* -------------------- MODAL HTML -------------------- */
 
 /* -------------------- STYLES -------------------- */
@@ -35,14 +35,14 @@ const IOSTYLE = `
 }`;
 
 const NEWELEMENTSTYLE = `
-  <style type='text/css'>
-    {0}
-    .drawflow-node.{1} {
-      background: #2c3e50;
-      text-align: center;
-      color: #1abc9c;
-    }
-  </style>`;
+<style type='text/css'>
+  {0}
+  .drawflow-node.{1} {
+    background: #2c3e50;
+    text-align: center;
+    color: #1abc9c;
+  }
+</style>`;
 /* -------------------- STYLES -------------------- */
 
 /* -------------------- NODE HTML -------------------- */
@@ -78,16 +78,20 @@ const NEWNODEHTML = `
   <div class="box dbclickbox" id="modal-{0}" ondblclick="showComponentModal(this.id)">
     {1}
   </div>
-</div>
-`;
+</div>`;
 
 const NEWMODULEDIVHTML = `
-  <li onclick="editor.changeModule('{0}'); changeModule(event);">{0}</li>`;
+<li onclick="editor.changeModule('{0}'); changeModule(event);">{0}</li>`;
 
-const NEWELEMENTDIVHTML = `
-  <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="{0}" style="background: #2c3e50; color: #1abc9c;">
-    <i class="fas fa-code"></i><span> {0}</span>
-  </div>`;
+const NEWGROUPLISTDIVHTML = `
+<div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="{0}" style="background: #2c3e50; color: #1abc9c;">
+  <i class="fas fa-code"></i><span> {0}</span>
+</div>`;
+
+const NEWNODELISTDIVHTML = `
+<div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="{0}">
+  <i class="fas fa-code"></i><span> {0}</span>
+</div>`;
 
 const NEWGROUPNODEHTML = `
   <div class="dbclickbox" ondblclick="editor.changeModule('{0}')">{0}</div>`;

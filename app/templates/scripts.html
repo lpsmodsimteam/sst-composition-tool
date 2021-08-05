@@ -1,5 +1,3 @@
-{% block js %}
-
 <script src="{{ url_for('static', filename='js/drawflow.min.js') }}"></script>
 <script
   src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"
@@ -15,11 +13,11 @@
 
 <script src="{{ url_for('static', filename='js/html.js') }}"></script>
 
+{# const dfBoxDivs = JSON.parse({{df_box_divs | tojson}}); #}
 <script type="text/javascript">
-  var dfBoxDivs = JSON.parse({{df_box_divs | tojson}});
+  const dfBoxDivs = {};
 
-  var id = document.getElementById("drawflow");
-  const editor = new Drawflow(id);
+  const editor = new Drawflow($("#drawflow")[0]);
   editor.reroute = true;
   editor.start();
 
@@ -29,19 +27,18 @@
   const nodeHistory = {};
   var newNodeId = 0;
 
-  const removeIconPngPath = '{{ url_for("static", filename="img/remove-icon.png") }}';
+  const removeIconPngPath =
+    '{{ url_for("static", filename="img/remove-icon.png") }}';
 
-  String.format = function() {
-      var s = arguments[0];
-      for (var i = 0; i < arguments.length - 1; i++) {
-          var reg = new RegExp("\\{" + i + "\\}", "gm");
-          s = s.replace(reg, arguments[i + 1]);
-      }
-      return s;
-  }
+  String.format = function () {
+    var s = arguments[0];
+    for (var i = 0; i < arguments.length - 1; i++) {
+      var reg = new RegExp("\\{" + i + "\\}", "gm");
+      s = s.replace(reg, arguments[i + 1]);
+    }
+    return s;
+  };
 </script>
 
 <script src="{{ url_for('static', filename='js/hierarchy.js') }}"></script>
 <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
-
-{% endblock js %}

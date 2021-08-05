@@ -46,32 +46,57 @@ $("#create_component").click(function (e) {
   var name = $("#component_name").val();
   var desc = $("#component_desc").val();
   var $params = $("#component_params :input");
+  var $links = $("#component_links :input");
 
-  var paramValues = {};
+  var paramValues = [];
   var paramKey = "";
   $params.each(function () {
     var valueId = $(this).attr("id");
-    if (valueId.includes("label")) {
+    if (valueId.includes("value")) {
       paramKey = $(this).val();
     } else {
-      paramValues[paramKey] = $(this).val();
+      paramValues.push({ [paramKey]: $(this).val() });
     }
   });
 
-  var $links = $("#component_links :input");
-
-  var linkValues = {};
+  var linkValues = { inputs: [], outputs: [] };
   var linkKey = "";
   $links.each(function () {
     var valueId = $(this).attr("id");
-    if (valueId.includes("label")) {
-      linkKey = $(this).val();
+    if (valueId.includes("type")) {
+      linkKey = $(this).val() + "s";
     } else {
-      linkValues[linkKey] = $(this).val();
+      linkValues[linkKey].push($(this).val());
     }
   });
 
-  console.log(paramValues, linkValues);
+  var paramHtml = "";
+  for (const i in paramValues) {
+    paramHtml += String.format(NODEPARAMHTML, Object.keys(paramValues[i])[0]);
+  }
+
+  var nodeHtml = String.format(NEWNODEHTML, name, desc, paramHtml);
+
+  var newNodeDivHtml = String.format(NEWNODELISTDIVHTML, name);
+  $(newNodeDivHtml).appendTo("#element_list");
+
+  dfBoxDivs[name] = {};
+  dfBoxDivs[name]["html"] = nodeHtml;
+  dfBoxDivs[name]["links"] = linkValues;
+  dfBoxDivs[name]["param"] = paramValues;
+
+  editor.addNode(
+    name,
+    linkValues["inputs"].length,
+    linkValues["outputs"].length,
+    0,
+    0,
+    name,
+    { links: linkValues, param: paramValues },
+    nodeHtml
+  );
+
+  // console.log(paramValues, linkValues);
 });
 
 $("#group_button").click(function (e) {
@@ -276,7 +301,7 @@ function moveNodesToModule(groupName, selectedNodes) {
   moveConnectionsToModule(newConnectionsArr);
 
   editor.changeModule("Home");
-  var newElementDivHtml = String.format(NEWELEMENTDIVHTML, groupName);
+  var newElementDivHtml = String.format(NEWGROUPLISTDIVHTML, groupName);
   $(newElementDivHtml).appendTo("#element_list");
 
   var newGroupNodeHTML = String.format(NEWGROUPNODEHTML, groupName);

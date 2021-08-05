@@ -15,7 +15,7 @@
       <h2>SST Hierarchical Composition Tool</h2>
     </header>
     <div class="wrapper">
-      <div id="element_list" class="col">{{element_divs | safe}}</div>
+      <div id="element_list" class="col"></div>
       <div id="element_inputs"></div>
       <div class="col-right">
         <div class="menu">
@@ -105,8 +105,8 @@
                         <label for="component_params">Parameters</label>
                         <div id="component_params" class="param_wrapper">
                           <div>
-                            <input id="param_label_0" type="text" value="" />
-                            <select id="param_value_0">
+                            <input id="param_value_0" type="text" value="" />
+                            <select id="param_type_0">
                               <option value="str">str</option>
                               <option value="int">int</option>
                               <option value="list">list</option>
@@ -128,11 +128,11 @@
                         <label for="component_links">Links</label>
                         <div id="component_links" class="link_wrapper">
                           <div>
-                            <input id="link_label_0" type="text" value="" />
-                            <select id="link_value_0">
+                            <select id="link_type_0">
                               <option value="input">input</option>
                               <option value="output">output</option>
                             </select>
+                            <input id="link_label_0" type="text" value="" />
                             <a
                               href="javascript:void(0);"
                               id="add_link"
@@ -152,6 +152,7 @@
                           id="create_component"
                           type="button"
                           class="modal__btn"
+                          data-micromodal-close
                         >
                           Create
                         </button>
