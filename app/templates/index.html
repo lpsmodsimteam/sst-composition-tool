@@ -90,6 +90,7 @@
                           id="component_name"
                           name="component_name"
                           value="comp"
+                          required="required"
                         /><br />
 
                         <br />
@@ -99,13 +100,19 @@
                           id="component_desc"
                           name="component_desc"
                           value="Example description of comp"
+                          required="required"
                         /><br />
 
                         <br />
                         <label for="component_params">Parameters</label>
                         <div id="component_params" class="param_wrapper">
                           <div>
-                            <input id="param_value_0" type="text" value="" />
+                            <input
+                              id="param_value_0"
+                              type="text"
+                              value="param0"
+                              required="required"
+                            />
                             <select id="param_type_0">
                               <option value="str">str</option>
                               <option value="int">int</option>
@@ -132,7 +139,12 @@
                               <option value="input">input</option>
                               <option value="output">output</option>
                             </select>
-                            <input id="link_label_0" type="text" value="" />
+                            <input
+                              id="link_label_0"
+                              type="text"
+                              value="link0"
+                              required="required"
+                            />
                             <a
                               href="javascript:void(0);"
                               id="add_link"

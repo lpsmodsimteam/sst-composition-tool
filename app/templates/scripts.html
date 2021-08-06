@@ -20,6 +20,8 @@
   const editor = new Drawflow($("#drawflow")[0]);
   editor.reroute = true;
   editor.start();
+  const width = editor.precanvas.clientWidth;
+  const height = editor.precanvas.clientHeight;
 
   var groupedNum = 0;
   const groupNamesSet = new Set();
@@ -27,6 +29,7 @@
   const nodeHistory = {};
   var newNodeId = 0;
 
+  const addIconPngPath = '{{ url_for("static", filename="img/add-icon.png") }}';
   const removeIconPngPath =
     '{{ url_for("static", filename="img/remove-icon.png") }}';
 

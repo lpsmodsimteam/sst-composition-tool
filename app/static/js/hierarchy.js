@@ -42,9 +42,28 @@ $("#export_button").click(function (e) {
 });
 /* ---------------------- EVENTS ---------------------- */
 
+function resetCreateComponent(numParams, numLinks) {
+  $("#component_name").val("");
+  $("#component_desc").val("");
+  for (var i = 0; i < numParams; i++) {
+    $("#remove_param").trigger("click");
+  }
+  for (var i = 0; i < numParams; i++) {
+    $("#remove_link").trigger("click");
+  }
+}
+
+function validateValue(value) {
+  if ($.trim(value) == "") {
+    return null;
+  } else {
+    return value;
+  }
+}
+
 $("#create_component").click(function (e) {
-  var name = $("#component_name").val();
-  var desc = $("#component_desc").val();
+  var name = validateValue($("#component_name").val());
+  var desc = validateValue($("#component_desc").val());
   var $params = $("#component_params :input");
   var $links = $("#component_links :input");
 
@@ -53,20 +72,9 @@ $("#create_component").click(function (e) {
   $params.each(function () {
     var valueId = $(this).attr("id");
     if (valueId.includes("value")) {
-      paramKey = $(this).val();
+      paramKey = validateValue($(this).val());
     } else {
-      paramValues.push({ [paramKey]: $(this).val() });
-    }
-  });
-
-  var linkValues = { inputs: [], outputs: [] };
-  var linkKey = "";
-  $links.each(function () {
-    var valueId = $(this).attr("id");
-    if (valueId.includes("type")) {
-      linkKey = $(this).val() + "s";
-    } else {
-      linkValues[linkKey].push($(this).val());
+      paramValues.push({ [paramKey]: validateValue($(this).val()) });
     }
   });
 
@@ -75,10 +83,18 @@ $("#create_component").click(function (e) {
     paramHtml += String.format(NODEPARAMHTML, Object.keys(paramValues[i])[0]);
   }
 
-  var nodeHtml = String.format(NEWNODEHTML, name, desc, paramHtml);
+  var linkValues = { inputs: [], outputs: [] };
+  var linkKey = "";
+  $links.each(function () {
+    var valueId = $(this).attr("id");
+    if (valueId.includes("type")) {
+      linkKey = validateValue($(this).val()) + "s";
+    } else {
+      linkValues[linkKey].push(validateValue($(this).val()));
+    }
+  });
 
-  var newNodeDivHtml = String.format(NEWNODELISTDIVHTML, name);
-  $(newNodeDivHtml).appendTo("#element_list");
+  var nodeHtml = String.format(NEWNODEHTML, name, desc, paramHtml);
 
   dfBoxDivs[name] = {};
   dfBoxDivs[name]["html"] = nodeHtml;
@@ -89,14 +105,24 @@ $("#create_component").click(function (e) {
     name,
     linkValues["inputs"].length,
     linkValues["outputs"].length,
-    0,
-    0,
+    width / 2,
+    height / 2,
     name,
     { links: linkValues, param: paramValues },
     nodeHtml
   );
 
-  // console.log(paramValues, linkValues);
+  var newNodeDivHtml = String.format(NEWNODELISTDIVHTML, name);
+  $(newNodeDivHtml).appendTo("#element_list");
+
+  const inputStyles = addNodeConnectionLabels(name, [name], "inputs");
+  const outputStyles = addNodeConnectionLabels(name, [name], "outputs");
+
+  $(
+    `<style type='text/css'>` + inputStyles + outputStyles + `</style>`
+  ).appendTo("head");
+
+  resetCreateComponent(paramValues.length, linkValues.length);
 });
 
 $("#group_button").click(function (e) {
@@ -140,20 +166,14 @@ function addNodeToDrawFlow(name, pos_x, pos_y) {
   if (editor.editor_mode === "fixed") {
     return false;
   }
-  pos_x =
-    pos_x *
-      (editor.precanvas.clientWidth /
-        (editor.precanvas.clientWidth * editor.zoom)) -
+  pos_x *= width / (width * editor.zoom);
+  pos_x -=
     editor.precanvas.getBoundingClientRect().x *
-      (editor.precanvas.clientWidth /
-        (editor.precanvas.clientWidth * editor.zoom));
-  pos_y =
-    pos_y *
-      (editor.precanvas.clientHeight /
-        (editor.precanvas.clientHeight * editor.zoom)) -
+    (width / (width * editor.zoom));
+  pos_y *= height / (height * editor.zoom);
+  pos_y -=
     editor.precanvas.getBoundingClientRect().y *
-      (editor.precanvas.clientHeight /
-        (editor.precanvas.clientHeight * editor.zoom));
+    (height / (height * editor.zoom));
   editor.addNode(
     name,
     dfBoxDivs[name]["links"]["inputs"].length,
@@ -193,7 +213,7 @@ function moveConnectionsToModule(newConnectionsArr) {
   }
 }
 
-function addGroupNodesConnectionLabels(groupName, newNamesArr, io) {
+function addNodeConnectionLabels(moduleName, newNamesArr, io) {
   var ioStyles = "";
   var newNumIos = 0;
   for (const i in newNamesArr) {
@@ -201,7 +221,7 @@ function addGroupNodesConnectionLabels(groupName, newNamesArr, io) {
     for (var j = 0; j < ioArr.length; j++) {
       ioStyles += String.format(
         IOSTYLE,
-        groupName,
+        moduleName,
         io,
         io.substring(0, io.length - 1),
         newNumIos + 1,
@@ -215,27 +235,27 @@ function addGroupNodesConnectionLabels(groupName, newNamesArr, io) {
   return ioStyles;
 }
 
-function addGroupNodesStyles(groupName, newNamesArr) {
-  const inputStyles = addGroupNodesConnectionLabels(
-    groupName,
+function addModuleNodeStyles(moduleName, newNamesArr) {
+  const inputStyles = addNodeConnectionLabels(
+    moduleName,
     newNamesArr,
     "inputs"
   );
-  const outputStyles = addGroupNodesConnectionLabels(
-    groupName,
+  const outputStyles = addNodeConnectionLabels(
+    moduleName,
     newNamesArr,
     "outputs"
   );
 
   var newElementStyle = String.format(
-    NEWELEMENTSTYLE,
+    NEWMODULENODESTYLE,
     inputStyles + outputStyles,
-    groupName
+    moduleName
   );
   $(newElementStyle).appendTo("head");
 }
 
-function moveNodesToModule(groupName, selectedNodes) {
+function moveNodesToModule(moduleName, selectedNodes) {
   function mapNewLinks(arr, nodeId) {
     return arr.map(function (e) {
       e += "#" + nodeId;
@@ -301,25 +321,25 @@ function moveNodesToModule(groupName, selectedNodes) {
   moveConnectionsToModule(newConnectionsArr);
 
   editor.changeModule("Home");
-  var newElementDivHtml = String.format(NEWGROUPLISTDIVHTML, groupName);
+  var newElementDivHtml = String.format(NEWMODULELISTDIVHTML, moduleName);
   $(newElementDivHtml).appendTo("#element_list");
 
-  var newGroupNodeHTML = String.format(NEWGROUPNODEHTML, groupName);
+  var newGroupNodeHTML = String.format(NEWMODULENODEHTML, moduleName);
 
-  dfBoxDivs[groupName] = {};
-  dfBoxDivs[groupName]["html"] = newGroupNodeHTML;
-  dfBoxDivs[groupName]["links"] = newLinks;
-  dfBoxDivs[groupName]["param"] = newParams;
+  dfBoxDivs[moduleName] = {};
+  dfBoxDivs[moduleName]["html"] = newGroupNodeHTML;
+  dfBoxDivs[moduleName]["links"] = newLinks;
+  dfBoxDivs[moduleName]["param"] = newParams;
   editor.addNode(
-    groupName,
+    moduleName,
     totalInputs,
     totalOutputs,
     minPosX,
     minPosY,
-    groupName,
+    moduleName,
     { links: newLinks, param: newParams },
     newGroupNodeHTML
   );
 
-  addGroupNodesStyles(groupName, newNamesArr);
+  addModuleNodeStyles(moduleName, newNamesArr);
 }

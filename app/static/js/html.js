@@ -1,7 +1,7 @@
 /* -------------------- MODAL HTML -------------------- */
 const PARAMHTML = `
 <div>
-  <input id="param_value_{0}" type="text" value=""/>
+  <input id="param_value_{0}" type="text" value="param{0}"/>
   <select id="param_type_{0}">
     <option value="str">str</option>
     <option value="int">int</option>
@@ -18,11 +18,12 @@ const LINKHTML = `
     <option value="input">input</option>
     <option value="output">output</option>
   </select>
-  <input id="link_label_{0}" type="text" value=""/>
+  <input id="link_label_{0}" type="text" value="link{0}"/>
   <a href="javascript:void(0);" id="remove_link" class="remove_button">
     <img src="{1}"/>
   </a>
 </div>`;
+
 /* -------------------- MODAL HTML -------------------- */
 
 /* -------------------- STYLES -------------------- */
@@ -34,7 +35,7 @@ const IOSTYLE = `
   {5}px;
 }`;
 
-const NEWELEMENTSTYLE = `
+const NEWMODULENODESTYLE = `
 <style type='text/css'>
   {0}
   .drawflow-node.{1} {
@@ -83,7 +84,7 @@ const NEWNODEHTML = `
 const NEWMODULEDIVHTML = `
 <li onclick="editor.changeModule('{0}'); changeModule(event);">{0}</li>`;
 
-const NEWGROUPLISTDIVHTML = `
+const NEWMODULELISTDIVHTML = `
 <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="{0}" style="background: #2c3e50; color: #1abc9c;">
   <i class="fas fa-code"></i><span> {0}</span>
 </div>`;
@@ -93,6 +94,6 @@ const NEWNODELISTDIVHTML = `
   <i class="fas fa-code"></i><span> {0}</span>
 </div>`;
 
-const NEWGROUPNODEHTML = `
+const NEWMODULENODEHTML = `
   <div class="dbclickbox" ondblclick="editor.changeModule('{0}')">{0}</div>`;
 /* -------------------- NODE HTML -------------------- */
