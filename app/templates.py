@@ -68,7 +68,6 @@ COMPONENT_LINK_TEMPL = """sst.Link("{comp1}-{link1}").connect(
     ({comp1}, "{link1}", LINK_DELAY), ({comp2}, "{link2}", LINK_DELAY)
 )"""
 
-
 EXAMPLE_COMPONENTS = [
     {
         "name": "addsub",
@@ -194,3 +193,4 @@ EXAMPLE_COMPONENTS = [
         },
     },
 ]
+EXAMPLE_COMPONENTS = []
