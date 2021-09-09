@@ -15,7 +15,7 @@ if __name__ == "__main__":
     with open("dump.json") as dump_file:
         composition_data = json.loads(dump_file.read())
 
-    comp_parser = CompositionParser(composition_data)
+    comp_parser = CompositionParser(composition_data, "library")
     comp_parser.filter()
     comp_parser.generate_tree()
     comp_parser.resolve_hierarchy()

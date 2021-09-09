@@ -11,7 +11,6 @@ ComponentTree objects.
 
 
 class ComponentNode:
-
     """Structured representation of Drawflow data nodes
 
     Attributes
@@ -34,7 +33,7 @@ class ComponentNode:
 
     parent: str = None
         Name of the parent node of the component in the hierarchy. At the first
-        level, the parent of the nodes is "Home", a null ComponentNode object.
+        level, the parent of the nodes is "Home", an empty ComponentNode object.
         The nodes at every other level have parents that point to ComponentNode
         objects.
 

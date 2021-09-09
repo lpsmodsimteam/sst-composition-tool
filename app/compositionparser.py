@@ -9,7 +9,7 @@ from .templates import COMPONENT_INIT_TEMPL, COMPONENT_LINK_TEMPL, COMPONENT_PAR
 
 
 class CompositionParser:
-    def __init__(self, data: dict, library:str) -> None:
+    def __init__(self, data: dict, library: str) -> None:
 
         self.__raw_data = data
         self.library = library
