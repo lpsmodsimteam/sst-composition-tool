@@ -11,7 +11,8 @@ ComponentTree objects.
 
 
 class ComponentNode:
-    """Structured representation of Drawflow data nodes
+    """
+    Structured representation of Drawflow data nodes.
 
     Attributes
     ----------
@@ -56,19 +57,19 @@ class ComponentNode:
         parameter is a dictionary that has been converted to an immutable
         string, since it does not serve a purpose in building the hierarchy.
 
-    Methods
-    -------
+    Public methods
+    --------------
     Setters
     -------
-    set_class_name(class_name)
-    set_type(type)
-    set_name(name)
-    set_parent(parent)
-    set_links(links)
-    set_params(params)
+    set_class_name(str)
+    set_type(int)
+    set_name(str)
+    set_parent(str)
+    set_links(list)
+    set_params(str)
 
-    Overloaded builtins
-    -------------------
+    Overloaded built-ins
+    --------------------
     __eq__
     __hash__
     """
@@ -83,7 +84,7 @@ class ComponentNode:
         params: str = None,
     ) -> None:
         """
-        Constructor for ComponentNode
+        Constructor for ComponentNode.
 
         Params
         ------

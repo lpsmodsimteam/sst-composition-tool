@@ -1,17 +1,86 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""
+Resolves Drawflow connections between nodes to represent one-to-one
+relationships between SST Links.
+
+The class is a helper class and builds on an initialized ComponentTree object.
+The connections between the nodes must be resolved for the Python configuration
+file. Without the SST Links, the configuration file would instantiate SST
+Components that do not have any functionality.
+"""
+
 from .componentnode import ComponentNode
 
 
 class HierarchyResolver:
+    """
+    Helper class to build SST Links from the ComponentNodes in an initialized
+    ComponentTree object.
+
+    Attributes
+    ----------
+    __tree: dict<ComponentNode, list<dict<ComponentNode>, list...>>
+        the tree generated from a ComponentTree object.
+
+    __hierarchy_links: list<tuple<str>>
+        list of SST Links generated from the ComponentTree object's tree.
+
+    Methods
+    -------
+    Public methods
+    --------------
+    get_path_to_root(ComponentNode, list)
+    get_parent(ComponentNode)
+    get_sibling_subtree(ComponentNode, int)
+    resolve_from_port(ComponentNode, str)
+    resolve_to_port()
+    parse_connection(str)
+    resolve_hierarchy()
+    get_links()
+
+    Private methods
+    ---------------
+    __resolve_port(list, dict)
+    __find_node_by_attr(dict, str, int)
+    __get_parent(ComponentNode, dict)
+    __resolve_hierarchy(dict)
+    """
+
     def __init__(self, component_tree: dict) -> None:
+        """
+        Constructor for HierarchyResolver
+
+        Params
+        ------
+        component_tree: dict<ComponentNode, list<dict<ComponentNode>, list...>>
+            the tree generated from a ComponentTree object.
+
+        Returns
+        -------
+        None
+        """
         self.__tree = component_tree
         self.__hierarchy_links = []
-        self.__node_delim = "#"
 
-    def __find_node_by_attr(self, subtree: dict, attr: str, data) -> ComponentNode:
+    def __find_node_by_attr(self, subtree: dict, attr: str, data: int) -> ComponentNode:
+        """
+        Constructor for HierarchyResolver
 
+        Params
+        ------
+        subtree: dict
+
+        attr: str
+
+
+        data: int
+
+        Returns
+        -------
+        None
+        """
         for key, value in subtree.items():
             if getattr(key, attr) == data:
                 return key, subtree
@@ -110,14 +179,14 @@ class HierarchyResolver:
         The connection string is split on the node delimiter. The first node of the
         list is the name of the connection, and the rest of the list is its nested types
         """
-        connection_list = connection.split(self.__node_delim)
+        connection_list = connection.split("#")
         return connection_list[0], [int(i) for i in connection_list[1:]]
 
     def resolve_hierarchy(self) -> None:
 
         self.__resolve_hierarchy(self.__tree)
 
-    def __resolve_hierarchy(self, subtree) -> None:
+    def __resolve_hierarchy(self, subtree: dict) -> None:
 
         for value in subtree.values():
             if not value:

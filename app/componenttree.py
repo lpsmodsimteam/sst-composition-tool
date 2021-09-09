@@ -17,7 +17,7 @@ from .componentnode import ComponentNode
 
 class ComponentTree:
     """
-    Tree representation of Drawflow composition of nodes
+    Tree representation of Drawflow composition of nodes.
 
     Attributes
     ----------
@@ -47,10 +47,9 @@ class ComponentTree:
     -------
     Public methods
     --------------
-    add_parent(parent_name)
-    add_child(parent_name, node_name, node_index, node_type, node_links,
-        node_params)
-    find_module(node_name)
+    add_parent(str)
+    add_child(str, str, int, str, list, str)
+    find_module(str)
     decompress()
     get_leaves()
     get_height()
@@ -58,10 +57,10 @@ class ComponentTree:
 
     Private methods
     ---------------
-    __get_node_count(node_name)
-    __get_children(node)
-    __decompress(node)
-    __get_leaves(subtree, depth)
+    __get_node_count(str)
+    __get_children(ComponentNode)
+    __decompress(ComponentNode)
+    __get_leaves(dict, int)
     """
 
     def __init__(self, composition: dict = None, root_key: str = "Home") -> None:
@@ -304,8 +303,8 @@ class ComponentTree:
 
         Returns
         -------
-        dict<ComponentNode, list<ComponentNode>>: decompressed version of
-        the composition
+        dict<ComponentNode, list<dict<ComponentNode>, list...>>:
+            nested, decompressed version of the composition
         """
         return {node: [self.__decompress(n) for n in self.__get_children(node)]}
 
@@ -376,7 +375,7 @@ class ComponentTree:
 
         Returns
         -------
-        self.__tree: dict<ComponentNode: <list<ComponentNode>>>
+        self.__tree: dict<ComponentNode, list<dict<ComponentNode>, list...>>
             the ComponentTree.
         """
         return self.__tree
