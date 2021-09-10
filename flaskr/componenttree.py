@@ -310,7 +310,7 @@ class ComponentTree:
 
     def decompress(self) -> None:
         """
-        Generates the root ComponentNode objects and generates the values for
+        Generates the root ComponentNode objects and initializes the values for
         the recursive decompress method to generate the tree.
 
         Params

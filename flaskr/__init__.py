@@ -20,6 +20,9 @@ from .compositionparser import CompositionParser
 
 
 def create_app():
+    """
+    The Flask application factory function.
+    """
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.static_folder = "static"

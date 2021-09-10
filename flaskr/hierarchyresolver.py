@@ -35,7 +35,7 @@ class HierarchyResolver:
     get_parent(ComponentNode)
     get_sibling_subtree(ComponentNode, int)
     resolve_from_port(ComponentNode, str)
-    resolve_to_port()
+    resolve_to_port(ComponentNode, int, str)
     parse_connection(str)
     resolve_hierarchy()
     get_links()
@@ -64,22 +64,32 @@ class HierarchyResolver:
         self.__tree = component_tree
         self.__hierarchy_links = []
 
-    def __find_node_by_attr(self, subtree: dict, attr: str, data: int) -> ComponentNode:
+    def __find_node_by_attr(self, subtree: dict, attr: str, data: int) -> tuple:
         """
-        Constructor for HierarchyResolver
+        Recursively searches for a node by the specified attribute type and
+        value.
+
+        For example, to locate a node with a "type" attribute of 10 in the
+        entire tree, run `__find_node_by_attr(tree, "type", 10)`.
 
         Params
         ------
-        subtree: dict
+        subtree: dict<ComponentNode, list<dict<ComponentNode>, list...>>
+            A subtree of the tree to locate a node by the specified attribute.
 
         attr: str
-
+            The attribute to locate the node with. The current attributes used
+            in the program are: {"id", "type"}
 
         data: int
+            The value of the attribute to locate the node with. The current
+            attributes are both integer types.
 
         Returns
         -------
-        None
+        key, subtree: tuple<ComponentNode, dict>
+            a tuple of the found node and the subtree that was reduced from the
+            recursive calls. If the node was not found, None is returned.
         """
         for key, value in subtree.items():
             if getattr(key, attr) == data:
@@ -91,12 +101,31 @@ class HierarchyResolver:
                     return found
 
     def get_path_to_root(self, node: ComponentNode, node_types_list: list) -> list:
+        """
+        Generates a list of node types to represent the shortest path between
+        the specified node and the root.
 
+        Params
+        ------
+        node: ComponentNode
+            The specific node to find the shortest path to root.
+
+        node_types_list: list<int>
+            Initial list of node types between the specified node and the root.
+
+        Returns
+        -------
+        list<int>: updated list of node types and the root.
+        """
+        # append the type of the current node to the list
         node_types_list.append(node.type)
 
+        # append the type of the current node's parent to the list
         parent = self.get_parent(node)
         node_types_list.append(parent.type)
 
+        # keep appending the types of the node's parents to the list until root
+        # root.type is always 0
         while parent.type:
             parent = self.get_parent(parent)
             node_types_list.append(parent.type)
@@ -104,14 +133,44 @@ class HierarchyResolver:
         return node_types_list
 
     def get_parent(self, node: ComponentNode) -> ComponentNode:
+        """
+        Initializes the recursive method to search for the parent of the
+        current ComponentNode.
 
+        Params
+        ------
+        node: ComponentNode
+            The specific node to find the parent of.
+
+        Returns
+        -------
+        ComponentNode: the parent of the current node or None if no parents
+        are found.
+        """
         return self.__get_parent(node, self.__tree)
 
     def __get_parent(self, node: ComponentNode, subtree: dict) -> ComponentNode:
+        """
+        Searches and returns the parent of the current ComponentNode.
 
+        Params
+        ------
+        node: ComponentNode
+            The specific node to find the parent of.
+
+        subtree: dict<ComponentNode, list<dict<ComponentNode>, list...>>
+            A subtree of the tree to locate the parent node.
+
+        Returns
+        -------
+        key: ComponentNode
+            parent node of the specified ComponentNode.
+        """
         for key, value in subtree.items():
             for k in value:
 
+                # if the id of the child node matches the current node, return
+                # the parent
                 if node.id == next(iter(k)).id:
                     return key
 
@@ -122,10 +181,12 @@ class HierarchyResolver:
     def get_sibling_subtree(self, node: ComponentNode, sibling_node_type: int) -> dict:
 
         current_node, _ = self.__find_node_by_attr(self.__tree, "id", node.id)
+
         current_parent = self.get_parent(current_node)
         current_parent, subtree = self.__find_node_by_attr(
             self.__tree, "id", current_parent.id
         )
+
         sibling_node = self.__find_node_by_attr(subtree, "type", sibling_node_type)
         while not sibling_node:
             current_parent = self.get_parent(current_parent)
@@ -133,6 +194,7 @@ class HierarchyResolver:
                 self.__tree, "id", current_parent.id
             )
             sibling_node = self.__find_node_by_attr(subtree, "type", sibling_node_type)
+
         else:
             sibling_node, subtree = sibling_node
 
@@ -174,10 +236,12 @@ class HierarchyResolver:
         return self.__resolve_port(node_types_list, subtree), connection_name
 
     def parse_connection(self, connection: str) -> tuple:
-        """Parse connection string representing SST Links
+        """
+        Parses connection string representing SST Links.
 
-        The connection string is split on the node delimiter. The first node of the
-        list is the name of the connection, and the rest of the list is its nested types
+        The connection string is split on the node delimiter. The first node of
+        the list is the name of the connection, and the rest of the list is its
+        nested types.
         """
         connection_list = connection.split("#")
         return connection_list[0], [int(i) for i in connection_list[1:]]
