@@ -32,6 +32,7 @@ def create_app():
 
         return render_template("index.html")
 
+    # temporary method to be replaced
     @app.route("/upload")
     def upload():
 
