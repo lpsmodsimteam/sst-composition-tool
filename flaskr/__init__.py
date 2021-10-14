@@ -77,8 +77,12 @@ def create_app():
     def export_data():
 
         json_data = json.loads(request.form["drawflow_data"])
+
+        with open("save.json", "w") as fp:
+            json.dump(json_data["data"], fp)
+
         pprint(json_data)
-        data = json_data["data"]
+        data = json_data["data"]["drawflow"]
         library = json_data["library"]
         comp_parser = CompositionParser(data, library)
         comp_parser.filter()

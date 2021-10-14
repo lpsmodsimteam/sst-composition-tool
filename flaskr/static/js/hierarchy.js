@@ -33,12 +33,29 @@ $("#group_nodes").change(function (e) {
 $("#export_button").click(function (e) {
   e.preventDefault();
   var export_data = {
-    data: editor.export()["drawflow"],
+    data: editor.export(),
     library: $("#library").val(),
   };
   $.post("/export_drawflow_data", {
     drawflow_data: JSON.stringify(export_data),
   });
+});
+
+function handleFileSelect(event) {
+  const reader = new FileReader();
+  reader.onload = handleFileLoad;
+  reader.readAsText(event.target.files[0]);
+}
+
+function handleFileLoad(event) {
+  editor.import(JSON.parse(event.target.result));
+}
+
+$("#import_button").click(function () {
+  $("#imgupload").trigger("click");
+  document
+    .getElementById("imgupload")
+    .addEventListener("change", handleFileSelect, false);
 });
 /* ---------------------- EVENTS ---------------------- */
 
