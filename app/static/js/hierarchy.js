@@ -191,6 +191,7 @@ function addNodeToDrawFlow(name, pos_x, pos_y) {
   pos_y -=
     editor.precanvas.getBoundingClientRect().y *
     (height / (height * editor.zoom));
+  console.log(dfBoxDivs);
   editor.addNode(
     name,
     dfBoxDivs[name]["links"]["inputs"].length,

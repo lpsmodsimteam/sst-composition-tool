@@ -13,9 +13,12 @@
 
 <script src="{{ url_for('static', filename='js/html.js') }}"></script>
 
-{# const dfBoxDivs = JSON.parse({{df_box_divs | tojson}}); #}
 <script type="text/javascript">
-  const dfBoxDivs = {};
+  {% if url_for(request.endpoint) == "/demo" %}
+    const dfBoxDivs = JSON.parse({{df_box_divs | tojson}});
+  {% else %}
+    const dfBoxDivs = {};
+  {% endif %}
 
   const editor = new Drawflow($("#drawflow")[0]);
   editor.reroute = true;

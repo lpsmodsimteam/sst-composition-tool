@@ -193,4 +193,4 @@ EXAMPLE_COMPONENTS = [
         },
     },
 ]
-EXAMPLE_COMPONENTS = []
+# EXAMPLE_COMPONENTS = []

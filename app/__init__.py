@@ -32,9 +32,14 @@ def create_app():
 
         return render_template("index.html")
 
+    @app.route("/canvas")
+    def canvas():
+
+        return render_template("canvas.html")
+
     # temporary method to be replaced
-    @app.route("/upload")
-    def upload():
+    @app.route("/demo")
+    def demo():
 
         element_divs = ""
         node_styles = ""
@@ -67,7 +72,7 @@ def create_app():
             element_divs += ELEMENT_DIV_TEMPL.format(element_name)
 
         return render_template(
-            "index.html",
+            "canvas.html",
             element_divs=element_divs,
             df_box_divs=json.dumps(DF_BOX_DIVS),
             node_styles=node_styles,
