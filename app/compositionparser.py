@@ -5,7 +5,11 @@ import json
 
 from .componenttree import ComponentTree
 from .hierarchyresolver import HierarchyResolver
-from .templates import COMPONENT_INIT_TEMPL, COMPONENT_LINK_TEMPL, COMPONENT_PARAM_TEMPL
+from .boilerplate.sst import (
+    COMPONENT_INIT_TEMPL,
+    COMPONENT_LINK_TEMPL,
+    COMPONENT_PARAM_TEMPL,
+)
 
 
 class CompositionParser:
