@@ -10,8 +10,6 @@ be instantiated by a raw Drawflow node structure composition data structure.
 The object would however not be an accurate representation of the composition
 if the Drawflow node structure contains submodules.
 """
-
-
 from .componentnode import ComponentNode
 
 

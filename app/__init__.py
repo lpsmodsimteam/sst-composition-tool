@@ -2,23 +2,21 @@
 # -*- coding: utf-8 -*-
 
 import json
-from pprint import pprint
-from pathlib import Path
 
-from flask import Flask, render_template, Response, request
+from flask import Flask, Response, render_template, request
 
 from .boilerplate.demo import DEMO_COMPONENTS
 from .boilerplate.html import (
-    DF_BOX_DIVS_TEMPL,
-    INPUT_TAG_TEMPL,
-    ELEMENT_DIV_TEMPL,
-    NODE_INPUT_STYLE_TEMPL,
-    NODE_OUTPUT_STYLE_TEMPL,
+    DF_BOX_DIVS,
+    ELEMENT_DIV,
+    INPUT_TAG,
+    NODE_INPUT_STYLE,
+    NODE_OUTPUT_STYLE,
 )
 from .compositionparser import CompositionParser
 
 
-def create_app():
+def create_app() -> Flask:
     """
     The Flask application factory function.
     """
@@ -27,17 +25,17 @@ def create_app():
     app.static_folder = "static"
 
     @app.route("/")
-    def index():
+    def index() -> str:
 
         return render_template("index.html")
 
     @app.route("/canvas")
-    def canvas():
+    def canvas() -> str:
 
         return render_template("canvas.html")
 
     @app.route("/demo")
-    def demo():
+    def demo() -> str:
 
         element_divs = ""
         node_styles = ""
@@ -48,27 +46,23 @@ def create_app():
             element_name = element["name"]
 
             for param in element["param"].keys():
-                input_tags += INPUT_TAG_TEMPL.format(key=param)
+                input_tags += INPUT_TAG.format(key=param)
             df_box_divs[element_name] = {}
-            df_box_divs[element_name]["html"] = DF_BOX_DIVS_TEMPL.format(
+            df_box_divs[element_name]["html"] = DF_BOX_DIVS.format(
                 element=element_name, desc=element["desc"], input_tag=input_tags
             )
             df_box_divs[element_name]["links"] = element["links"]
             df_box_divs[element_name]["param"] = element["param"]
             node_styles += "\n".join(
-                NODE_INPUT_STYLE_TEMPL.format(
-                    class_name=element_name, index=i + 1, value=j
-                )
+                NODE_INPUT_STYLE.format(class_name=element_name, index=i + 1, value=j)
                 for i, j in enumerate(element["links"]["inputs"])
             )
             node_styles += "\n".join(
-                NODE_OUTPUT_STYLE_TEMPL.format(
-                    class_name=element_name, index=i + 1, value=j
-                )
+                NODE_OUTPUT_STYLE.format(class_name=element_name, index=i + 1, value=j)
                 for i, j in enumerate(element["links"]["outputs"])
             )
 
-            element_divs += ELEMENT_DIV_TEMPL.format(element_name)
+            element_divs += ELEMENT_DIV.format(element_name)
 
         return render_template(
             "canvas.html",
@@ -78,7 +72,7 @@ def create_app():
         )
 
     @app.route("/export_drawflow_data", methods=["POST"])
-    def export_data():
+    def export_data() -> Response:
 
         json_data = json.loads(request.form["drawflow_data"])
 

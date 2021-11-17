@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-DF_BOX_DIVS_TEMPL = """
+DF_BOX_DIVS = """
 <div>
   <div class="title-box">
     <i class="fas fa-code"></i> {element}
@@ -34,15 +34,15 @@ DF_BOX_DIVS_TEMPL = """
 </div>
 """
 
-INPUT_TAG_TEMPL = """<input type="text" df-{key} placeholder="{key}"><br>"""
+INPUT_TAG = """<input type="text" df-{key} placeholder="{key}"><br>"""
 
-ELEMENT_DIV_TEMPL = """
+ELEMENT_DIV = """
 <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="{0}">
   <i class="fas fa-code"></i><span> {0}</span>
 </div>
 """
 
-NODE_INPUT_STYLE_TEMPL = """
+NODE_INPUT_STYLE = """
 .drawflow-node.{class_name} .inputs .input:nth-child({index}):before {{
   display: block;
   content: "{value}";
@@ -51,7 +51,7 @@ NODE_INPUT_STYLE_TEMPL = """
 }}
 """
 
-NODE_OUTPUT_STYLE_TEMPL = """
+NODE_OUTPUT_STYLE = """
 .drawflow-node.{class_name} .outputs .output:nth-child({index}):before {{
   display: block;
   content: "{value}";

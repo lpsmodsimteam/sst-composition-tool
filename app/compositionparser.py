@@ -4,9 +4,9 @@
 import json
 
 from .boilerplate.sst import (
-    COMPONENT_INIT_TEMPL,
-    COMPONENT_LINK_TEMPL,
-    COMPONENT_PARAM_TEMPL,
+    COMPONENT_INIT,
+    COMPONENT_LINK,
+    COMPONENT_PARAM,
 )
 from .componenttree import ComponentTree
 from .hierarchyresolver import HierarchyResolver
@@ -91,19 +91,19 @@ class CompositionParser:
         leaves = self.__ctree.get_leaves()
         for leaf in leaves:
             self.__components_str_list.append(
-                COMPONENT_INIT_TEMPL.format(
+                COMPONENT_INIT.format(
                     name=leaf, library=self.__library, class_name=leaf.class_name
                 )
             )
             self.__components_str_list.append(
-                COMPONENT_PARAM_TEMPL.format(name=leaf, params=leaf.params)
+                COMPONENT_PARAM.format(name=leaf, params=leaf.params)
             )
 
         self.__resolved_links = sorted(self.__resolved_links, key=lambda x: x[0].id)
         for link in self.__resolved_links:
             comp1, link1, comp2, link2 = link
             self.__links_str_list.append(
-                COMPONENT_LINK_TEMPL.format(
+                COMPONENT_LINK.format(
                     comp1=comp1, link1=link1, comp2=comp2, link2=link2
                 )
             )

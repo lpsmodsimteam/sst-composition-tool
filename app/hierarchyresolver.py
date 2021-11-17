@@ -10,7 +10,6 @@ The connections between the nodes must be resolved for the Python configuration
 file. Without the SST Links, the configuration file would instantiate SST
 Components that do not have any functionality.
 """
-
 from .componentnode import ComponentNode
 
 
