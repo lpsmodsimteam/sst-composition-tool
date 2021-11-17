@@ -80,10 +80,7 @@ def create_app() -> Flask:
             json.dump(json_data, fp)
 
         comp_parser = CompositionParser(json_data["drawflow"], json_data["library"])
-        comp_parser.filter()
-        comp_parser.generate_tree()
-        comp_parser.resolve_hierarchy()
-        comp_parser.get_resolved_links()
+        comp_parser.parse()
         comp_parser.generate_config()
         config_templ_str = render_template("run.py", **comp_parser.get_config())
         comp_parser.dump_config("run.py", config_templ_str)

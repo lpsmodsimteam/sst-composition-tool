@@ -86,6 +86,13 @@ class CompositionParser:
 
         return self.__resolved_links
 
+    def parse(self) -> None:
+
+        self.filter()
+        self.generate_tree()
+        self.resolve_hierarchy()
+        self.get_resolved_links()
+
     def generate_config(self) -> None:
 
         leaves = self.__ctree.get_leaves()
@@ -101,18 +108,21 @@ class CompositionParser:
 
         self.__resolved_links = sorted(self.__resolved_links, key=lambda x: x[0].id)
         for link in self.__resolved_links:
-            comp1, link1, comp2, link2 = link
+            comp_out, link_out, comp_in, link_in = link
             self.__links_str_list.append(
                 COMPONENT_LINK.format(
-                    comp1=comp1, link1=link1, comp2=comp2, link2=link2
+                    comp_out=comp_out,
+                    link_out=link_out,
+                    comp_in=comp_in,
+                    link_in=link_in,
                 )
             )
 
     def get_config(self) -> dict:
 
         return {
-            "init": "\n".join(self.__components_str_list),
-            "links": "\n".join(self.__links_str_list),
+            "components": self.__components_str_list,
+            "links": self.__links_str_list,
         }
 
     def dump_config(self, config_file_name, config_templ_str):

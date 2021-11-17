@@ -5,6 +5,6 @@ import sst
 
 sst.setProgramOption("stopAtCycle", "5s")
 
-{{init}}
+{{components | join("\n")}}
 
-{{links}}
+{{links | join("\n")}}
