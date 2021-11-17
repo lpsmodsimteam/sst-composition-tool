@@ -85,9 +85,7 @@ def create_app():
         with open("save.json", "w") as fp:
             json.dump(json_data, fp)
 
-        data = json_data["drawflow"]
-        library = json_data["library"]
-        comp_parser = CompositionParser(data, library)
+        comp_parser = CompositionParser(json_data["drawflow"], json_data["library"])
         comp_parser.filter()
         comp_parser.generate_tree()
         comp_parser.resolve_hierarchy()

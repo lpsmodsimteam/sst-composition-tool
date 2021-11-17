@@ -3,14 +3,14 @@ $(document).ready(function () {
   var addParamButton = $("#add_param"); //Add button selector
   var paramWrapper = $(".param_wrapper"); //Input param wrapper
 
-  //Once add button is clicked
+  // once add button is clicked
   $(addParamButton).click(function () {
     var paramHtml = String.format(PARAM_HTML, paramNum, removeIconPngPath);
     $(paramWrapper).append(paramHtml); //Add param html
     paramNum++;
   });
 
-  //Once remove button is clicked
+  // once remove button is clicked
   $(paramWrapper).on("click", "#remove_param", function (e) {
     e.preventDefault();
     $(this).parent("div").remove(); //Remove param html
@@ -21,14 +21,14 @@ $(document).ready(function () {
   var addLinkButton = $("#add_link"); //Add button selector
   var linkWrapper = $(".link_wrapper"); //Input link wrapper
 
-  //Once add button is clicked
+  // once add button is clicked
   $(addLinkButton).click(function () {
     var linkHtml = String.format(LINK_HTML, linkNum, removeIconPngPath);
     $(linkWrapper).append(linkHtml); //Add link html
     linkNum++;
   });
 
-  //Once remove button is clicked
+  // once remove button is clicked
   $(linkWrapper).on("click", "#remove_link", function (e) {
     e.preventDefault();
     $(this).parent("div").remove(); //Remove link html
