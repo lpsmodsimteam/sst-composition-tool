@@ -3,24 +3,24 @@
 
 import json
 
-from .componenttree import ComponentTree
-from .hierarchyresolver import HierarchyResolver
 from .boilerplate.sst import (
     COMPONENT_INIT_TEMPL,
     COMPONENT_LINK_TEMPL,
     COMPONENT_PARAM_TEMPL,
 )
+from .componenttree import ComponentTree
+from .hierarchyresolver import HierarchyResolver
 
 
 class CompositionParser:
     def __init__(self, data: dict, library: str) -> None:
 
         self.__raw_data = data
-        self.library = library
-        self.ctree = ComponentTree()
-        self.resolved_links = []
-        self.components_str_list = []
-        self.links_str_list = []
+        self.__library = library
+        self.__ctree = ComponentTree()
+        self.__components_str_list = []
+        self.__links_str_list = []
+        self.__resolved_links = []
 
     def __copy_connections(self, component: dict, component_list: dict) -> None:
 
@@ -50,14 +50,14 @@ class CompositionParser:
 
         for module_name, module in self.__raw_data.items():
 
-            self.ctree.add_parent(module_name)
+            self.__ctree.add_parent(module_name)
 
             for component_list in module.values():
 
                 for component_index, component in enumerate(component_list.values()):
 
                     # append a new CompressedNode object with CompressedNode.class_name
-                    self.ctree.add_child(
+                    self.__ctree.add_child(
                         module_name,
                         component["name"],
                         component_index,
@@ -68,8 +68,8 @@ class CompositionParser:
 
     def generate_tree(self) -> ComponentTree:
 
-        self.ctree.decompress()
-        return self.ctree
+        self.__ctree.decompress()
+        return self.__ctree
 
     def dump_raw_data(self, file_name="dump.json") -> None:
 
@@ -78,45 +78,44 @@ class CompositionParser:
 
     def resolve_hierarchy(self) -> None:
 
-        hr = HierarchyResolver(self.ctree.get_tree())
+        hr = HierarchyResolver(self.__ctree.get_tree())
         hr.resolve_hierarchy()
-        self.resolved_links = hr.get_links()
+        self.__resolved_links = hr.get_links()
 
     def get_resolved_links(self) -> list:
 
-        return self.resolved_links
-
-    def dump_config(self, config_templ_path, config_file_name="run.py"):
-
-        with open(config_templ_path) as config_templ_file:
-            config_templ_str = config_templ_file.read()
-
-        with open(config_file_name, "w") as config_file:
-            config_file.write(
-                config_templ_str.format(
-                    init="\n".join(self.components_str_list),
-                    links="\n".join(self.links_str_list),
-                )
-            )
+        return self.__resolved_links
 
     def generate_config(self) -> None:
 
-        leaves = self.ctree.get_leaves()
+        leaves = self.__ctree.get_leaves()
         for leaf in leaves:
-            self.components_str_list.append(
+            self.__components_str_list.append(
                 COMPONENT_INIT_TEMPL.format(
-                    name=leaf, library=self.library, class_name=leaf.class_name
+                    name=leaf, library=self.__library, class_name=leaf.class_name
                 )
             )
-            self.components_str_list.append(
+            self.__components_str_list.append(
                 COMPONENT_PARAM_TEMPL.format(name=leaf, params=leaf.params)
             )
 
-        self.resolved_links = sorted(self.resolved_links, key=lambda x: x[0].id)
-        for link in self.resolved_links:
+        self.__resolved_links = sorted(self.__resolved_links, key=lambda x: x[0].id)
+        for link in self.__resolved_links:
             comp1, link1, comp2, link2 = link
-            self.links_str_list.append(
+            self.__links_str_list.append(
                 COMPONENT_LINK_TEMPL.format(
                     comp1=comp1, link1=link1, comp2=comp2, link2=link2
                 )
             )
+
+    def get_config(self) -> dict:
+
+        return {
+            "init": "\n".join(self.__components_str_list),
+            "links": "\n".join(self.__links_str_list),
+        }
+
+    def dump_config(self, config_file_name, config_templ_str):
+
+        with open(config_file_name, "w") as config_file:
+            config_file.write(config_templ_str)

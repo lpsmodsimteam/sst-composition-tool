@@ -7,6 +7,7 @@ from pathlib import Path
 
 from flask import Flask, render_template, request
 
+from .boilerplate.demo import DEMO_COMPONENTS
 from .boilerplate.html import (
     DF_BOX_DIVS_TEMPL,
     INPUT_TAG_TEMPL,
@@ -14,8 +15,6 @@ from .boilerplate.html import (
     NODE_INPUT_STYLE_TEMPL,
     NODE_OUTPUT_STYLE_TEMPL,
 )
-
-from .boilerplate.demo import DEMO_COMPONENTS
 from .compositionparser import CompositionParser
 
 
@@ -86,7 +85,6 @@ def create_app():
         with open("save.json", "w") as fp:
             json.dump(json_data["data"], fp)
 
-        pprint(json_data)
         data = json_data["data"]["drawflow"]
         library = json_data["library"]
         comp_parser = CompositionParser(data, library)
@@ -95,9 +93,8 @@ def create_app():
         comp_parser.resolve_hierarchy()
         comp_parser.get_resolved_links()
         comp_parser.generate_config()
-        comp_parser.dump_config(
-            Path(app.static_folder).resolve() / "templates" / "run.templ"
-        )
+        config_templ_str = render_template("run.py", **comp_parser.get_config())
+        comp_parser.dump_config("run.py", config_templ_str)
 
         return ""
 
