@@ -1,0 +1,130 @@
+<div class="modal micromodal-slide" id="modal-create" aria-hidden="true">
+  <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+    <div
+      id="modal-container"
+      class="modal__container"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-create-title"
+    >
+      <header id="modal-header" class="modal__header">
+        <h2 class="modal__title">Create a new component</h2>
+        <button
+          type="button"
+          class="modal__close"
+          aria-label="Close modal"
+          data-micromodal-close
+        ></button>
+      </header>
+
+      <div id="modal-content-content" class="modal-content-content">
+        <form id="create_component_form">
+          <div id="modal-content" class="modal__content" style="display: none">
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+              enim ad minim veniam, quis nostrud exercitation ullamco laboris
+              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+              reprehenderit in voluptate velit esse cillum dolore eu fugiat
+              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+              sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+
+            <label for="component_name">Component name</label>
+            <input
+              type="text"
+              id="component_name"
+              name="component_name"
+              value="comp"
+              required="required"
+            /><br />
+
+            <br />
+            <label for="component_desc">Description</label>
+            <input
+              type="text"
+              id="component_desc"
+              name="component_desc"
+              value="Example description of comp"
+              required="required"
+            /><br />
+
+            <br />
+            <label for="component_params">Parameters</label>
+            <div id="component_params" class="param_wrapper">
+              <div>
+                <input
+                  id="param_value_0"
+                  type="text"
+                  value="param0"
+                  required="required"
+                />
+                <select id="param_type_0">
+                  <option value="str">str</option>
+                  <option value="int">int</option>
+                  <option value="list">list</option>
+                </select>
+                <a
+                  href="javascript:void(0);"
+                  id="add_param"
+                  class="add_button"
+                  title="Add parameter"
+                >
+                  <img
+                    src="{{ url_for('static', filename='img/add-icon.png') }}"
+                  />
+                </a>
+              </div>
+            </div>
+
+            <br />
+            <label for="component_links">Links</label>
+            <div id="component_links" class="link_wrapper">
+              <div>
+                <select id="link_type_0">
+                  <option value="input">input</option>
+                  <option value="output">output</option>
+                </select>
+                <input
+                  id="link_label_0"
+                  type="text"
+                  value="link0"
+                  required="required"
+                />
+                <a
+                  href="javascript:void(0);"
+                  id="add_link"
+                  class="add_button"
+                  title="Add links"
+                >
+                  <img
+                    src="{{ url_for('static', filename='img/add-icon.png') }}"
+                  />
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <footer id="modal-footer" class="modal__footer">
+            <button
+              id="create_component"
+              type="button"
+              class="modal__btn"
+              data-micromodal-close
+            >
+              Create
+            </button>
+            <button
+              type="button"
+              class="modal__btn"
+              data-micromodal-close
+              aria-label="Close this dialog window"
+            >
+              Close
+            </button>
+          </footer>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
