@@ -1,0 +1,44 @@
+button:hover {
+  cursor: pointer;
+}
+
+.home {
+  height: 100vh;
+  background-color: #000;
+}
+
+.splash {
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  justify-content: center; /* align horizontal */
+  align-items: center; /* align vertical */
+}
+
+.intro {
+  padding-right: 15px;
+  padding-bottom: 15px;
+}
+
+.CTA {
+  width: 300px;
+  padding: 20px;
+  color: #28324e;
+  font-size: large;
+}
+
+.CTA:hover {
+  background-color: #28324e;
+  border-color: white;
+  color: white;
+}
+
+.splash h1 {
+  color: #ffffff;
+}
+
+.splash p {
+  padding-top: 10px;
+  color: #ffffff;
+}
