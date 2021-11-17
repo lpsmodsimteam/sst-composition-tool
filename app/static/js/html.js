@@ -1,5 +1,5 @@
 /* -------------------- MODAL HTML -------------------- */
-const PARAMHTML = `
+const PARAM_HTML = `
 <div>
   <input id="param_value_{0}" type="text" value="param{0}"/>
   <select id="param_type_{0}">
@@ -12,7 +12,7 @@ const PARAMHTML = `
   </a>
 </div>`;
 
-const LINKHTML = `
+const LINK_HTML = `
 <div>
   <select id="link_type_{0}">
     <option value="input">input</option>
@@ -27,7 +27,7 @@ const LINKHTML = `
 /* -------------------- MODAL HTML -------------------- */
 
 /* -------------------- STYLES -------------------- */
-const IOSTYLE = `
+const IO_STYLE = `
 .drawflow-node.{0} .{1} .{2}:nth-child({3}):before {
   display: block;
   content: "{4}";
@@ -35,7 +35,7 @@ const IOSTYLE = `
   {5}px;
 }`;
 
-const NEWMODULENODESTYLE = `
+const NEW_MODULE_NODE_STYLE = `
 <style type='text/css'>
   {0}
   .drawflow-node.{1} {
@@ -47,9 +47,9 @@ const NEWMODULENODESTYLE = `
 /* -------------------- STYLES -------------------- */
 
 /* -------------------- NODE HTML -------------------- */
-const NODEPARAMHTML = `<input type="text" df-{0} placeholder="{0}"><br>`;
+const NODE_PARAM_HTML = `<input type="text" df-{0} placeholder="{0}"><br>`;
 
-const NEWNODEHTML = `
+const NEW_NODE_HTML = `
 <div>
   <div class="title-box">
     <i class="fas fa-code"></i> {0}
@@ -81,19 +81,19 @@ const NEWNODEHTML = `
   </div>
 </div>`;
 
-const NEWMODULEDIVHTML = `
+const NEW_MODULE_DIV_HTML = `
 <li onclick="editor.changeModule('{0}'); changeModule(event);">{0}</li>`;
 
-const NEWMODULELISTDIVHTML = `
+const NEW_MODULE_LIST_DIV_HTML = `
 <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="{0}" style="background: #2c3e50; color: #1abc9c;">
   <i class="fas fa-code"></i><span> {0}</span>
 </div>`;
 
-const NEWNODELISTDIVHTML = `
+const NEW_NODE_LIST_DIV_HTML = `
 <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="{0}">
   <i class="fas fa-code"></i><span> {0}</span>
 </div>`;
 
-const NEWMODULENODEHTML = `
+const NEW_MODULE_NODE_HTML = `
   <div class="dbclickbox" ondblclick="editor.changeModule('{0}')">{0}</div>`;
 /* -------------------- NODE HTML -------------------- */

@@ -32,12 +32,10 @@ $("#group_nodes").change(function (e) {
 
 $("#export_button").click(function (e) {
   e.preventDefault();
-  var export_data = {
-    data: editor.export(),
-    library: $("#library").val(),
-  };
+  var drawflow_data = editor.export();
+  drawflow_data["library"] = $("#library").val();
   $.post("/export_drawflow_data", {
-    drawflow_data: JSON.stringify(export_data),
+    drawflow_data: JSON.stringify(drawflow_data),
   });
 });
 
@@ -97,7 +95,7 @@ $("#create_component").click(function (e) {
 
   var paramHtml = "";
   for (const i in paramValues) {
-    paramHtml += String.format(NODEPARAMHTML, Object.keys(paramValues[i])[0]);
+    paramHtml += String.format(NODE_PARAM_HTML, Object.keys(paramValues[i])[0]);
   }
 
   var linkValues = { inputs: [], outputs: [] };
@@ -111,7 +109,7 @@ $("#create_component").click(function (e) {
     }
   });
 
-  var nodeHtml = String.format(NEWNODEHTML, name, desc, paramHtml);
+  var nodeHtml = String.format(NEW_NODE_HTML, name, desc, paramHtml);
 
   dfBoxDivs[name] = {};
   dfBoxDivs[name]["html"] = nodeHtml;
@@ -129,7 +127,7 @@ $("#create_component").click(function (e) {
     nodeHtml
   );
 
-  var newNodeDivHtml = String.format(NEWNODELISTDIVHTML, name);
+  var newNodeDivHtml = String.format(NEW_NODE_LIST_DIV_HTML, name);
   $(newNodeDivHtml).appendTo("#element_list");
 
   const inputStyles = addNodeConnectionLabels(name, [name], "inputs");
@@ -152,7 +150,7 @@ $("#group_button").click(function (e) {
       $("#group_nodes_msg").text("Created: " + groupName);
       editor.addModule(groupName);
       editor.changeModule(groupName);
-      var newModuleDivHtml = String.format(NEWMODULEDIVHTML, groupName);
+      var newModuleDivHtml = String.format(NEW_MODULE_DIV_HTML, groupName);
       $(newModuleDivHtml).appendTo("#hierarchy");
       moveNodesToModule(groupName, selectedNodes);
 
@@ -238,7 +236,7 @@ function addNodeConnectionLabels(moduleName, newNamesArr, io) {
     const ioArr = dfBoxDivs[newNamesArr[i]]["links"][io];
     for (var j = 0; j < ioArr.length; j++) {
       ioStyles += String.format(
-        IOSTYLE,
+        IO_STYLE,
         moduleName,
         io,
         io.substring(0, io.length - 1),
@@ -266,7 +264,7 @@ function addModuleNodeStyles(moduleName, newNamesArr) {
   );
 
   var newElementStyle = String.format(
-    NEWMODULENODESTYLE,
+    NEW_MODULE_NODE_STYLE,
     inputStyles + outputStyles,
     moduleName
   );
@@ -339,10 +337,10 @@ function moveNodesToModule(moduleName, selectedNodes) {
   moveConnectionsToModule(newConnectionsArr);
 
   editor.changeModule("Home");
-  var newElementDivHtml = String.format(NEWMODULELISTDIVHTML, moduleName);
+  var newElementDivHtml = String.format(NEW_MODULE_LIST_DIV_HTML, moduleName);
   $(newElementDivHtml).appendTo("#element_list");
 
-  var newGroupNodeHTML = String.format(NEWMODULENODEHTML, moduleName);
+  var newGroupNodeHTML = String.format(NEW_MODULE_NODE_HTML, moduleName);
 
   dfBoxDivs[moduleName] = {};
   dfBoxDivs[moduleName]["html"] = newGroupNodeHTML;

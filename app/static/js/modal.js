@@ -5,7 +5,7 @@ $(document).ready(function () {
 
   //Once add button is clicked
   $(addParamButton).click(function () {
-    var paramHtml = String.format(PARAMHTML, paramNum, removeIconPngPath);
+    var paramHtml = String.format(PARAM_HTML, paramNum, removeIconPngPath);
     $(paramWrapper).append(paramHtml); //Add param html
     paramNum++;
   });
@@ -23,7 +23,7 @@ $(document).ready(function () {
 
   //Once add button is clicked
   $(addLinkButton).click(function () {
-    var linkHtml = String.format(LINKHTML, linkNum, removeIconPngPath);
+    var linkHtml = String.format(LINK_HTML, linkNum, removeIconPngPath);
     $(linkWrapper).append(linkHtml); //Add link html
     linkNum++;
   });

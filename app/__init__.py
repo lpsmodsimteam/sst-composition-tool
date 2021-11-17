@@ -5,7 +5,7 @@ import json
 from pprint import pprint
 from pathlib import Path
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, Response, request
 
 from .boilerplate.demo import DEMO_COMPONENTS
 from .boilerplate.html import (
@@ -83,9 +83,9 @@ def create_app():
         json_data = json.loads(request.form["drawflow_data"])
 
         with open("save.json", "w") as fp:
-            json.dump(json_data["data"], fp)
+            json.dump(json_data, fp)
 
-        data = json_data["data"]["drawflow"]
+        data = json_data["drawflow"]
         library = json_data["library"]
         comp_parser = CompositionParser(data, library)
         comp_parser.filter()
@@ -96,6 +96,6 @@ def create_app():
         config_templ_str = render_template("run.py", **comp_parser.get_config())
         comp_parser.dump_config("run.py", config_templ_str)
 
-        return ""
+        return Response(status=200)
 
     return app
