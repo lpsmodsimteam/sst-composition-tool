@@ -3,6 +3,6 @@
 
 COMPONENT_INIT = """{name} = sst.Component("{name}", "{library}.{class_name}")"""
 COMPONENT_PARAM = "{name}.addParams({params})"
-COMPONENT_LINK = """sst.Link("{comp1}-{link1}").connect(
-    ({comp1}, "{link1}", LINK_DELAY), ({comp2}, "{link2}", LINK_DELAY)
+COMPONENT_LINK = """sst.Link("{comp_out}-{link_out}").connect(
+    ({comp_out}, "{link_out}", LINK_DELAY), ({comp_in}, "{link_in}", LINK_DELAY)
 )"""
