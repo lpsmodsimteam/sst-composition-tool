@@ -6,14 +6,6 @@ import json
 from flask import Flask, Response, redirect, render_template, request, url_for
 from werkzeug.utils import secure_filename
 
-from .boilerplate.demo import DEMO_COMPONENTS
-from .boilerplate.html import (
-    DF_BOX_DIVS,
-    ELEMENT_DIV,
-    INPUT_TAG,
-    NODE_INPUT_STYLE,
-    NODE_OUTPUT_STYLE,
-)
 from .compositionparser import CompositionParser
 
 
@@ -34,6 +26,7 @@ def create_app() -> Flask:
 
     @app.route("/canvas")
     @app.route("/canvas/<saved_config_file>")
+    @app.route("/demo")
     def canvas(saved_config_file=None) -> str:
 
         element_divs = ""
@@ -41,53 +34,23 @@ def create_app() -> Flask:
         df_box_divs = {}
         imported_drawflow = {}
 
-        if saved_config_file:
+        # ---------- DEMO FUNCTIONALITY ----------
+        if request.path == "/demo":
+
+            from . import demo
+
+            (element_divs, df_box_divs, node_styles) = demo.__generate_drawflow(
+                element_divs, df_box_divs, node_styles
+            )
+        # ---------- DEMO FUNCTIONALITY ----------
+
+        elif saved_config_file:
             with open(saved_config_file) as fp:
                 saved_config = json.loads(fp.read())
                 imported_drawflow = {"drawflow": saved_config["drawflow"]}
                 element_divs = saved_config["element_list_html"]
                 df_box_divs = saved_config["df_box_divs"]
                 node_styles = saved_config["node_styles_html"]
-                print(saved_config)
-
-        return render_template(
-            "canvas.html",
-            element_divs=element_divs,
-            df_box_divs=json.dumps(df_box_divs),
-            node_styles=node_styles,
-            imported_drawflow=imported_drawflow,
-        )
-
-    @app.route("/demo")
-    def demo() -> str:
-
-        element_divs = ""
-        node_styles = ""
-        df_box_divs = {}
-        imported_drawflow = {}
-
-        for element in DEMO_COMPONENTS:
-            input_tags = ""
-            element_name = element["name"]
-
-            for param in element["param"].keys():
-                input_tags += INPUT_TAG.format(key=param)
-            df_box_divs[element_name] = {}
-            df_box_divs[element_name]["html"] = DF_BOX_DIVS.format(
-                element=element_name, desc=element["desc"], input_tag=input_tags
-            )
-            df_box_divs[element_name]["links"] = element["links"]
-            df_box_divs[element_name]["param"] = element["param"]
-            node_styles += "\n".join(
-                NODE_INPUT_STYLE.format(class_name=element_name, index=i + 1, value=j)
-                for i, j in enumerate(element["links"]["inputs"])
-            )
-            node_styles += "\n".join(
-                NODE_OUTPUT_STYLE.format(class_name=element_name, index=i + 1, value=j)
-                for i, j in enumerate(element["links"]["outputs"])
-            )
-
-            element_divs += ELEMENT_DIV.format(element_name)
 
         return render_template(
             "canvas.html",
