@@ -133,26 +133,11 @@ header a {
   z-index: 5;
 }
 
-.btn-import {
-  float: right;
-  position: absolute;
-  top: 130px;
-  right: 85px;
-  color: #fff;
-  font-weight: 700;
-  border: 1px solid #0e5ba3;
-  background: #00b894;
-  padding: 5px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 5;
-}
-
 .btn-clear {
   float: right;
   position: absolute;
   top: 130px;
-  right: 160px;
+  right: 85px;
   color: #fff;
   font-weight: 700;
   border: 1px solid #96015b;
