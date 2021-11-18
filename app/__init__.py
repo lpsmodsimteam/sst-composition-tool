@@ -39,10 +39,12 @@ def create_app() -> Flask:
         element_divs = ""
         node_styles = ""
         df_box_divs = {}
+        imported_drawflow = {}
 
         if saved_config_file:
             with open(saved_config_file) as fp:
                 saved_config = json.loads(fp.read())
+                imported_drawflow = {"drawflow": saved_config["drawflow"]}
                 element_divs = saved_config["element_list_html"]
                 df_box_divs = saved_config["df_box_divs"]
                 node_styles = saved_config["node_styles_html"]
@@ -53,6 +55,7 @@ def create_app() -> Flask:
             element_divs=element_divs,
             df_box_divs=json.dumps(df_box_divs),
             node_styles=node_styles,
+            imported_drawflow=imported_drawflow,
         )
 
     @app.route("/demo")
@@ -61,6 +64,7 @@ def create_app() -> Flask:
         element_divs = ""
         node_styles = ""
         df_box_divs = {}
+        imported_drawflow = {}
 
         for element in DEMO_COMPONENTS:
             input_tags = ""
@@ -90,6 +94,7 @@ def create_app() -> Flask:
             element_divs=element_divs,
             df_box_divs=json.dumps(df_box_divs),
             node_styles=node_styles,
+            imported_drawflow=imported_drawflow,
         )
 
     @app.route("/import_data", methods=["POST"])

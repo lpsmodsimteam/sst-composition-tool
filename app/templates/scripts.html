@@ -23,6 +23,12 @@
   const editor = new Drawflow($("#drawflow")[0]);
   editor.reroute = true;
   editor.start();
+
+  {% if imported_drawflow|length %}
+  editor.import({{imported_drawflow| tojson}});
+  {% endif %}
+
+
   const width = editor.precanvas.clientWidth;
   const height = editor.precanvas.clientHeight;
 

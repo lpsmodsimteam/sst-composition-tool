@@ -37,7 +37,6 @@ $("#export_button").click(function (e) {
   drawflowData["element_list_html"] = $("#element_list").html();
   drawflowData["node_styles_html"] = $("#node_styles").html();
   drawflowData["df_box_divs"] = dfBoxDivs;
-  // console.log(dfBoxDivs);
   $.post("/export_drawflow_data", {
     drawflow_data: JSON.stringify(drawflowData),
   });
