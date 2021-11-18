@@ -1,80 +1,67 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>SST Hierarchical Composition Tool</title>
-    <meta name="description" content="SST Hierarchical Composition Tool" />
-  </head>
-  {% include "styles.html" %}
-
-  <body>
-    <header>
-      <h2>SST Hierarchical Composition Tool</h2>
-    </header>
-    <div class="wrapper">
-      {% if url_for(request.endpoint) == "/demo" %}
-      <div id="element_list" class="col">{{ element_divs|safe }}</div>
-      {% else %}
-      <div id="element_list" class="col"></div>
-      {% endif %}
-      <div id="element_inputs"></div>
-      <div class="col-right">
-        <div class="menu">
-          <ul id="hierarchy">
-            <li onclick="editor.changeModule('Home'); changeModule(event);">
-              Home
-            </li>
-          </ul>
-        </div>
-        <div id="drawflow" ondrop="drop(event)" ondragover="allowDrop(event)">
-          <form method="post">
-            {# library_name text input #}
-            <input
-              class="library"
-              id="library"
-              type="text"
-              value="library_name"
-            />
-            {# group_name text input #}
-            <input
-              class="group"
-              id="group_nodes_name"
-              type="text"
-              value="group_name_0"
-            />
-            {# group checkbox #}
-            <input id="group_nodes" class="toggle" type="checkbox" />
-            {# group button #}
-            <div class="btn-group" id="group_button">Group</div>
-            {# modal dialog box #} {% include "modal.html" %} {# create button
-            #}
-            <div
-              data-micromodal-trigger="modal-create"
-              class="btn-create"
-              id="create_button"
-            >
-              Create
-            </div>
-            {# clear button #}
-            <div class="btn-clear" onclick="editor.clearModuleSelected()">
-              Clear
-            </div>
-            {# export button #}
-            <div class="btn-export" id="export_button">Export</div>
-            {# import button #}
-            <input type="file" id="imgupload" style="display: none" />
-            <div class="btn-import" id="import_button">Import</div>
-          </form>
-
-          <div class="bar-zoom">
-            <span id="group_nodes_msg"></span>
+{% extends "base.html" %} {% block content %} {% include "styles.html" %}
+<body>
+  <header>
+    <h2>SST Hierarchical Composition Tool</h2>
+  </header>
+  <div class="wrapper">
+    {% if url_for(request.endpoint) == "/demo" %}
+    <div id="element_list" class="col">{{ element_divs|safe }}</div>
+    {% else %}
+    <div id="element_list" class="col"></div>
+    {% endif %}
+    <div id="element_inputs"></div>
+    <div class="col-right">
+      <div class="menu">
+        <ul id="hierarchy">
+          <li onclick="editor.changeModule('Home'); changeModule(event);">
+            Home
+          </li>
+        </ul>
+      </div>
+      <div id="drawflow" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <form method="post">
+          {# library_name text input #}
+          <input
+            class="library"
+            id="library"
+            type="text"
+            value="library_name"
+          />
+          {# group_name text input #}
+          <input
+            class="group"
+            id="group_nodes_name"
+            type="text"
+            value="group_name_0"
+          />
+          {# group checkbox #}
+          <input id="group_nodes" class="toggle" type="checkbox" />
+          {# group button #}
+          <div class="btn-group" id="group_button">Group</div>
+          {# modal dialog box #} {% include "modal.html" %} {# create button #}
+          <div
+            data-micromodal-trigger="modal-create"
+            class="btn-create"
+            id="create_button"
+          >
+            Create
           </div>
+          {# clear button #}
+          <div class="btn-clear" onclick="editor.clearModuleSelected()">
+            Clear
+          </div>
+          {# export button #}
+          <div class="btn-export" id="export_button">Export</div>
+          {# import button #}
+          <input type="file" id="imgupload" style="display: none" />
+          <div class="btn-import" id="import_button">Import</div>
+        </form>
+
+        <div class="bar-zoom">
+          <span id="group_nodes_msg"></span>
         </div>
       </div>
     </div>
-
-    {% include "scripts.html" %}
-  </body>
-</html>
+  </div>
+</body>
+{% endblock %}

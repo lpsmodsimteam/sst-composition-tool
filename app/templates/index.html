@@ -25,13 +25,24 @@
           >
             Create a new diagram
           </button>
-          <button
-            onclick="location.href='/demo'"
-            type="button"
-            class="btn btn-default CTA"
+
+          <form
+            method="POST"
+            action="/import_data"
+            enctype="multipart/form-data"
           >
-            Load diagram
-          </button>
+            <div class="upload-btn-wrapper">
+              <button type="button" class="btn btn-default CTA">
+                Load diagram
+              </button>
+              <input
+                type="file"
+                name="saved_config_file"
+                onchange="this.form.submit();"
+              />
+            </div>
+          </form>
+
           <div class="sub">
             <p>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do

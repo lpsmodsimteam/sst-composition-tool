@@ -34,27 +34,20 @@ $("#export_button").click(function (e) {
   e.preventDefault();
   var drawflow_data = editor.export();
   drawflow_data["library"] = $("#library").val();
+  console.log($("#element_list").html());
   $.post("/export_drawflow_data", {
     drawflow_data: JSON.stringify(drawflow_data),
   });
 });
 
-function handleFileSelect(event) {
-  const reader = new FileReader();
-  reader.onload = handleFileLoad;
-  reader.readAsText(event.target.files[0]);
-}
-
 function handleFileLoad(event) {
+  $.post("/import_drawflow_data", {
+    drawflow_data: JSON.stringify(drawflow_data),
+  });
+
   editor.import(JSON.parse(event.target.result));
 }
 
-$("#import_button").click(function () {
-  $("#imgupload").trigger("click");
-  document
-    .getElementById("imgupload")
-    .addEventListener("change", handleFileSelect, false);
-});
 /* ---------------------- EVENTS ---------------------- */
 
 function resetCreateComponent(numParams, numLinks) {

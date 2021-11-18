@@ -3,7 +3,8 @@
 
 import json
 
-from flask import Flask, Response, render_template, request
+from flask import Flask, Response, redirect, render_template, request, url_for
+from werkzeug.utils import secure_filename
 
 from .boilerplate.demo import DEMO_COMPONENTS
 from .boilerplate.html import (
@@ -30,7 +31,10 @@ def create_app() -> Flask:
         return render_template("index.html")
 
     @app.route("/canvas")
-    def canvas() -> str:
+    @app.route("/canvas/<saved_config_file>")
+    def canvas(saved_config_file=None) -> str:
+
+        print(saved_config_file)
 
         return render_template("canvas.html")
 
@@ -70,6 +74,16 @@ def create_app() -> Flask:
             df_box_divs=json.dumps(df_box_divs),
             node_styles=node_styles,
         )
+
+    @app.route("/import_data", methods=["POST"])
+    def import_data() -> Response:
+
+        saved_config_file = request.files["saved_config_file"]
+        if saved_config_file.filename.rsplit(".", 1)[1].lower() == "json":
+            file_name = secure_filename(saved_config_file.filename)
+            return redirect(url_for("canvas", saved_config_file=file_name))
+
+        return Response(status=500)
 
     @app.route("/export_drawflow_data", methods=["POST"])
     def export_data() -> Response:
