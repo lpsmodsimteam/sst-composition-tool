@@ -21,3 +21,10 @@
   href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
   rel="stylesheet"
 />
+<div id="node_styles">
+  {% if node_styles|length %}
+  <style>
+    {{ node_styles|safe }}
+  </style>
+  {% endif %}
+</div>

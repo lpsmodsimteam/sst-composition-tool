@@ -36,9 +36,24 @@ def create_app() -> Flask:
     @app.route("/canvas/<saved_config_file>")
     def canvas(saved_config_file=None) -> str:
 
-        print(saved_config_file)
+        element_divs = ""
+        node_styles = ""
+        df_box_divs = {}
 
-        return render_template("canvas.html")
+        if saved_config_file:
+            with open(saved_config_file) as fp:
+                saved_config = json.loads(fp.read())
+                element_divs = saved_config["element_list_html"]
+                df_box_divs = saved_config["df_box_divs"]
+                node_styles = saved_config["node_styles_html"]
+                print(saved_config)
+
+        return render_template(
+            "canvas.html",
+            element_divs=element_divs,
+            df_box_divs=json.dumps(df_box_divs),
+            node_styles=node_styles,
+        )
 
     @app.route("/demo")
     def demo() -> str:

@@ -32,21 +32,24 @@ $("#group_nodes").change(function (e) {
 
 $("#export_button").click(function (e) {
   e.preventDefault();
-  var drawflow_data = editor.export();
-  drawflow_data["library"] = $("#library").val();
-  console.log($("#element_list").html());
+  var drawflowData = editor.export();
+  drawflowData["library"] = $("#library").val();
+  drawflowData["element_list_html"] = $("#element_list").html();
+  drawflowData["node_styles_html"] = $("#node_styles").html();
+  drawflowData["df_box_divs"] = dfBoxDivs;
+  // console.log(dfBoxDivs);
   $.post("/export_drawflow_data", {
-    drawflow_data: JSON.stringify(drawflow_data),
+    drawflow_data: JSON.stringify(drawflowData),
   });
 });
 
-function handleFileLoad(event) {
-  $.post("/import_drawflow_data", {
-    drawflow_data: JSON.stringify(drawflow_data),
-  });
+// function handleFileLoad(event) {
+//   $.post("/import_drawflow_data", {
+//     drawflow_data: JSON.stringify(drawflow_data),
+//   });
 
-  editor.import(JSON.parse(event.target.result));
-}
+//   editor.import(JSON.parse(event.target.result));
+// }
 
 /* ---------------------- EVENTS ---------------------- */
 
@@ -261,7 +264,7 @@ function addModuleNodeStyles(moduleName, newNamesArr) {
     inputStyles + outputStyles,
     moduleName
   );
-  $(newElementStyle).appendTo("head");
+  $(newElementStyle).appendTo("#node_styles");
 }
 
 function moveNodesToModule(moduleName, selectedNodes) {

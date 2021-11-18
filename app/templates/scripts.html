@@ -14,7 +14,7 @@
 <script src="{{ url_for('static', filename='js/html.js') }}"></script>
 
 <script type="text/javascript">
-  {% if url_for(request.endpoint) == "/demo" %}
+  {% if element_divs|length %}
     const dfBoxDivs = JSON.parse({{df_box_divs | tojson}});
   {% else %}
     const dfBoxDivs = {};
