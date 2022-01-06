@@ -4,11 +4,12 @@
 editor.on("nodeCreated", function (id) {
   newNodeId = parseInt(id);
   nodeHistory[id] = newNodeId;
+  console.log("Node added " + newNodeId);
 });
 
 editor.on("nodeRemoved", function (id) {
   // removedNodes = parseInt(id);
-  // console.log("Node removed " + id);
+  console.log("Node removed " + id);
 });
 
 editor.on("nodeSelected", function (id) {
@@ -41,14 +42,6 @@ $("#export_button").click(function (e) {
     drawflow_data: JSON.stringify(drawflowData),
   });
 });
-
-// function handleFileLoad(event) {
-//   $.post("/import_drawflow_data", {
-//     drawflow_data: JSON.stringify(drawflow_data),
-//   });
-
-//   editor.import(JSON.parse(event.target.result));
-// }
 
 /* ---------------------- EVENTS ---------------------- */
 
@@ -184,7 +177,7 @@ function addNodeToDrawFlow(name, pos_x, pos_y) {
   pos_y -=
     editor.precanvas.getBoundingClientRect().y *
     (height / (height * editor.zoom));
-  console.log(dfBoxDivs);
+  // console.log(dfBoxDivs);
   editor.addNode(
     name,
     dfBoxDivs[name]["links"]["inputs"].length,

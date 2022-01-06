@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import json
+
+from flask import Blueprint, render_template
+
 from .boilerplate.html import (
     DEMO_COMPONENTS,
     DF_BOX_DIVS,
@@ -40,4 +44,30 @@ def __generate_drawflow(element_divs, df_box_divs, node_styles) -> tuple:
         element_divs,
         df_box_divs,
         node_styles,
+    )
+
+
+demo_bp = Blueprint("demo_bp", __name__)
+
+
+@demo_bp.route("/demo")
+def demo() -> str:
+
+    element_divs = ""
+    node_styles = ""
+    df_box_divs = {}
+    imported_drawflow = {}
+
+    from . import demo
+
+    (element_divs, df_box_divs, node_styles) = __generate_drawflow(
+        element_divs, df_box_divs, node_styles
+    )
+
+    return render_template(
+        "canvas.html",
+        element_divs=element_divs,
+        df_box_divs=json.dumps(df_box_divs),
+        node_styles=node_styles,
+        imported_drawflow=imported_drawflow,
     )
