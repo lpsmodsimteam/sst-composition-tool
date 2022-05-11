@@ -60,6 +60,7 @@ def export_data() -> Response:
         json.dump(json_data, fp)
 
     comp_parser = CompositionParser(json_data["drawflow"], json_data["library"])
+    comp_parser.dump_raw_data()
     comp_parser.parse()
     comp_parser.generate_config()
     config_templ_str = render_template("run.py", **comp_parser.get_config())

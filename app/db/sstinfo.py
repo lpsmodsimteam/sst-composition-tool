@@ -10,25 +10,30 @@ class SSTInfoXMLParser:
             ET.parse(file_name).getroot() if return_code.returncode == 0 else None
         )
         self.parsed_data = []
+        self.children_keys = {"Port", "Parameter"}
 
     def get_names_list(self) -> list:
 
         for element in self.tree.findall("Element"):
             element_data = {
-                "name": element.attrib["Name"],
-            }
-            component_data = {
-                "name": None,
-                "ports": [],
+                "Name": element.attrib["Name"],
+                "Component": [],
             }
             for component in element.findall("Component"):
-                component_data["name"] = component.attrib["Name"]
-                for item in component.findall("Port"):
-                    component_data["components"].append(component.attrib["Name"])
-            self.parsed_data.append(element_data)
+                component_data = {
+                    "Name": component.attrib["Name"],
+                }
 
-        # return [item.attrib["Name"] for item in tree.findall("Element")]
+                for child_item in self.children_keys:
+                    component_data[child_item] = []
+
+                    for child_data in component.findall(child_item):
+                        component_data[child_item].append(child_data.attrib)
+
+                element_data["Component"].append(component_data)
+
+            self.parsed_data.append(element_data)
 
 
 obj = SSTInfoXMLParser()
-print(obj.get_names_list())
+obj.get_names_list()
