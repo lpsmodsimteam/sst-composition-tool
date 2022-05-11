@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import json
 
 from .boilerplate.sst import (
@@ -8,8 +5,8 @@ from .boilerplate.sst import (
     COMPONENT_LINK,
     COMPONENT_PARAM,
 )
-from .componenttree import ComponentTree
-from .hierarchyresolver import HierarchyResolver
+from .component.tree import ComponentTree
+from .component.hierarchy import Hierarchy
 
 
 class CompositionParser:
@@ -56,7 +53,7 @@ class CompositionParser:
 
                 for component_index, component in enumerate(component_list.values()):
 
-                    # append a new CompressedNode object with CompressedNode.class_name
+                    # append a new ComponentNode object with ComponentNode.class_name
                     self.__ctree.add_child(
                         module_name,
                         component["name"],
@@ -78,8 +75,8 @@ class CompositionParser:
 
     def resolve_hierarchy(self) -> None:
 
-        hr = HierarchyResolver(self.__ctree.get_tree())
-        hr.resolve_hierarchy()
+        hr = Hierarchy(self.__ctree.get_tree())
+        hr.resolve()
         self.__resolved_links = hr.get_links()
 
     def get_resolved_links(self) -> list:

@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 """
 Resolves Drawflow connections between nodes to represent one-to-one
 relationships between SST Links.
@@ -10,10 +7,11 @@ The connections between the nodes must be resolved for the Python configuration
 file. Without the SST Links, the configuration file would instantiate SST
 Components that do not have any functionality.
 """
-from .componentnode import ComponentNode
+
+from .node import ComponentNode
 
 
-class HierarchyResolver:
+class Hierarchy:
     """
     Helper class to build SST Links from the ComponentNodes in an initialized
     ComponentTree object.
@@ -36,7 +34,7 @@ class HierarchyResolver:
     resolve_from_port(ComponentNode, str)
     resolve_to_port(ComponentNode, int, str)
     parse_connection(str)
-    resolve_hierarchy()
+    resolve()
     get_links()
 
     Private methods
@@ -245,7 +243,7 @@ class HierarchyResolver:
         connection_list = connection.split("#")
         return connection_list[0], [int(i) for i in connection_list[1:]]
 
-    def resolve_hierarchy(self) -> None:
+    def resolve(self) -> None:
 
         self.__resolve_hierarchy(self.__tree)
 

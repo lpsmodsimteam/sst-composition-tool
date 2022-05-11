@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 """
 Represent a Drawflow node as a ComponentNode with data relevent for the
 generated Python configuration file.

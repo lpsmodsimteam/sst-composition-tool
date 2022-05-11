@@ -5,9 +5,7 @@ import json
 from pathlib import Path
 from pprint import pprint
 
-
-from app.compositionparser import CompositionParser
-
+from app.composition import CompositionParser
 
 if __name__ == "__main__":
 

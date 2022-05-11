@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 """
 Represent the entire Drawflow node structure as a ComponentTree composed of
 ComponentNode objects.
@@ -10,7 +7,8 @@ be instantiated by a raw Drawflow node structure composition data structure.
 The object would however not be an accurate representation of the composition
 if the Drawflow node structure contains submodules.
 """
-from .componentnode import ComponentNode
+
+from .node import ComponentNode
 
 
 class ComponentTree:

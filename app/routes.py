@@ -1,12 +1,9 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import json
 
 from flask import Blueprint, Response, redirect, render_template, request, url_for
 from werkzeug.utils import secure_filename
 
-from .compositionparser import CompositionParser
+from .composition import CompositionParser
 
 bp = Blueprint("bp", __name__)
 

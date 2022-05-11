@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 """
 Driver function for the Flask application. This script implements the Flask
 configurations, views and database functionality.
