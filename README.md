@@ -27,3 +27,13 @@ FLASK_RUN_PORT=8000
 ```
 
 Once the Flask variables are set, execute `flask run` and run the application on the specified port in your browser.
+
+## Testing
+
+The application can be tested with `pytest`. Install through pip
+
+`pip install pytest`
+
+Run the tests located in `/tests`
+
+`pytest -v`

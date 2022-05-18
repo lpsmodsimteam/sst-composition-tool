@@ -8,6 +8,15 @@ from .composition import CompositionParser
 bp = Blueprint("bp", __name__)
 
 
+def valid_file_name(file_name: str) -> bool:
+
+    file_name_split = file_name.rsplit(".", 1)
+    if len(file_name_split) == 2:
+        return file_name_split[1].lower() == "json"
+
+    return False
+
+
 @bp.route("/")
 def index() -> str:
 
@@ -23,7 +32,7 @@ def canvas(saved_config_file=None) -> str:
     df_box_divs = {}
     imported_drawflow = {}
 
-    if saved_config_file:
+    if saved_config_file and valid_file_name(saved_config_file):
         with open(saved_config_file) as fp:
             saved_config = json.loads(fp.read())
             imported_drawflow = {"drawflow": saved_config["drawflow"]}
@@ -44,7 +53,7 @@ def canvas(saved_config_file=None) -> str:
 def import_data() -> Response:
 
     saved_config_file = request.files["saved_config_file"]
-    if saved_config_file.filename.rsplit(".", 1)[1].lower() == "json":
+    if valid_file_name(saved_config_file.filename):
         file_name = secure_filename(saved_config_file.filename)
         return redirect(url_for("canvas", saved_config_file=file_name))
 

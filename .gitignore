@@ -9,5 +9,5 @@ __pycache__/
 .env
 build/
 /run.py
-*.json
+dump.json
 *.xml

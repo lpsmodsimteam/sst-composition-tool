@@ -12,7 +12,7 @@ class SSTInfoXMLParser:
         self.parsed_data = []
         self.children_keys = {"Port", "Parameter"}
 
-    def get_names_list(self) -> list:
+    def xml_to_dict(self) -> list:
 
         for element in self.tree.findall("Element"):
             element_data = {
@@ -34,6 +34,16 @@ class SSTInfoXMLParser:
 
             self.parsed_data.append(element_data)
 
+    def get_dict(self):
 
-obj = SSTInfoXMLParser()
-obj.get_names_list()
+        return self.parsed_data
+
+
+if __name__ == "__main__":
+
+    obj = SSTInfoXMLParser()
+    obj.xml_to_dict()
+
+    from pprint import pprint
+
+    pprint(obj.get_dict())
