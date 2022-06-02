@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 COMPONENT_INIT = """{name} = sst.Component("{name}", "{library}.{class_name}")"""
 COMPONENT_PARAM = "{name}.addParams({params})"
 COMPONENT_LINK = """sst.Link("{comp_out}-{link_out}").connect(

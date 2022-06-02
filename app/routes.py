@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 from flask import Blueprint, Response, redirect, render_template, request, url_for
 from werkzeug.utils import secure_filename
@@ -8,13 +9,10 @@ from .composition import CompositionParser
 bp = Blueprint("bp", __name__)
 
 
-def valid_file_name(file_name: str) -> bool:
+def valid_checkpoint(file_name: str) -> bool:
 
-    file_name_split = file_name.rsplit(".", 1)
-    if len(file_name_split) == 2:
-        return file_name_split[1].lower() == "json"
-
-    return False
+    fp = Path(file_name)
+    return fp.is_file() and fp.suffix == ".json"
 
 
 @bp.route("/")
@@ -24,21 +22,22 @@ def index() -> str:
 
 
 @bp.route("/canvas")
-@bp.route("/canvas/<saved_config_file>")
-def canvas(saved_config_file=None) -> str:
+@bp.route("/canvas/<checkpoint>")
+def canvas(checkpoint: str = None) -> str:
 
     element_divs = ""
     node_styles = ""
     df_box_divs = {}
     imported_drawflow = {}
 
-    if saved_config_file and valid_file_name(saved_config_file):
-        with open(saved_config_file) as fp:
-            saved_config = json.loads(fp.read())
-            imported_drawflow = {"drawflow": saved_config["drawflow"]}
-            element_divs = saved_config["element_list_html"]
-            df_box_divs = saved_config["df_box_divs"]
-            node_styles = saved_config["node_styles_html"]
+    if checkpoint and valid_checkpoint(checkpoint):
+        with open(checkpoint) as fp:
+            checkpoint_data = json.loads(fp.read())
+            if "drawflow" in checkpoint_data:
+                imported_drawflow = {"drawflow": checkpoint_data["drawflow"]}
+                element_divs = checkpoint_data["element_list_html"]
+                df_box_divs = checkpoint_data["df_box_divs"]
+                node_styles = checkpoint_data["node_styles_html"]
 
     return render_template(
         "canvas.html",
@@ -49,19 +48,19 @@ def canvas(saved_config_file=None) -> str:
     )
 
 
-@bp.route("/import_data", methods=["POST"])
-def import_data() -> Response:
+@bp.route("/import", methods=["POST"])
+def import_checkpoint() -> Response:
 
-    saved_config_file = request.files["saved_config_file"]
-    if valid_file_name(saved_config_file.filename):
-        file_name = secure_filename(saved_config_file.filename)
-        return redirect(url_for("canvas", saved_config_file=file_name))
+    checkpoint = request.files["checkpoint"]
+    if valid_checkpoint(checkpoint.filename):
+        file_name = secure_filename(checkpoint.filename)
+        return redirect(url_for("canvas", checkpoint=file_name))
 
     return Response(status=500)
 
 
-@bp.route("/export_drawflow_data", methods=["POST"])
-def export_data() -> Response:
+@bp.route("/export", methods=["POST"])
+def export_checkpoint() -> Response:
 
     json_data = json.loads(request.form["drawflow_data"])
 
@@ -69,7 +68,6 @@ def export_data() -> Response:
         json.dump(json_data, fp)
 
     comp_parser = CompositionParser(json_data["drawflow"], json_data["library"])
-    comp_parser.dump_raw_data()
     comp_parser.parse()
     comp_parser.generate_config()
     config_templ_str = render_template("run.py", **comp_parser.get_config())

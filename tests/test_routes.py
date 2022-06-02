@@ -6,11 +6,11 @@ from app import create_app
 resources = Path(__file__).parent / "resources"
 
 
-def test_export_drawflow_data_success():
+def test_export_success():
 
     app = create_app()
     client = app.test_client()
-    url = "/export_drawflow_data"
+    url = "/export"
 
     with open(resources / "sample_form.json") as fp:
         response = client.post(url, data={"drawflow_data": fp.read()})
