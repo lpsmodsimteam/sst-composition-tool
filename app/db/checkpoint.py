@@ -1,26 +1,55 @@
 from datetime import datetime
-from pathlib import Path
+from pathlib import Path, PosixPath
 import json
 
-checkpoints = Path().resolve() / ".checkpoints"
+CHECKPOINTS = Path().resolve() / ".checkpoints"
 
 
-def log_history(library: str):
+def get_checkpoint_path(library: str) -> PosixPath:
 
-    fp = checkpoints / (library + ".json")
-    if fp.is_file():
-        with open(fp) as history_file:
-            history = json.loads(history_file.read())
-            history.append(1)
-            json.dump(history, history_file)
+    return CHECKPOINTS / (library + ".json")
+
+
+def get_history_path(library: str) -> PosixPath:
+
+    return get_checkpoint_path(f"{library}_log")
+
+
+def log_history(library: str) -> None:
+
+    history_file = get_history_path(library)
+    current_datetime = str(datetime.now())
+
+    if history_file.is_file():
+        with open(history_file, "r+") as fp:
+            history = json.loads(fp.read())
+            fp.seek(0)
+            history.append(current_datetime)
+            json.dump(history, fp)
 
     else:
-        with open(fp, "w") as history_file:
-            return 0
+        with open(history_file, "w") as fp:
+            json.dump([current_datetime], fp)
 
 
-def get_last_checkpoint_name(library: str):
-    pass
+def get_checkpoint_name(library: str) -> PosixPath:
+
+    history_file = get_history_path(library)
+    log_history(library)
+
+    with open(history_file) as fp:
+        history = json.loads(fp.read())
+        return get_checkpoint_path(f"{library}-{len(history) - 1}")
 
 
-print(log_history("adder"))
+def clear_checkpoints(library: str) -> None:
+
+    history_file = get_history_path(library)
+
+    if history_file.is_file():
+        with open(history_file) as fp:
+            history = json.loads(fp.read())
+            for i in range(len(history)):
+                get_checkpoint_path(f"{library}-{i}").unlink(missing_ok=True)
+
+        history_file.unlink()

@@ -5,6 +5,7 @@ from flask import Blueprint, Response, redirect, render_template, request, url_f
 from werkzeug.utils import secure_filename
 
 from .composition import CompositionParser
+from .db.checkpoint import get_checkpoint_name
 
 bp = Blueprint("bp", __name__)
 
@@ -62,12 +63,12 @@ def import_checkpoint() -> Response:
 @bp.route("/export", methods=["POST"])
 def export_checkpoint() -> Response:
 
-    json_data = json.loads(request.form["drawflow_data"])
+    drawflow_data = json.loads(request.form["drawflow_data"])
 
-    with open("save.json", "w") as fp:
-        json.dump(json_data, fp)
+    with open(get_checkpoint_name(drawflow_data["library"]), "w") as fp:
+        json.dump(drawflow_data, fp)
 
-    comp_parser = CompositionParser(json_data["drawflow"], json_data["library"])
+    comp_parser = CompositionParser(drawflow_data["drawflow"], drawflow_data["library"])
     comp_parser.parse()
     comp_parser.generate_config()
     config_templ_str = render_template("run.py", **comp_parser.get_config())
