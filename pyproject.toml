@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sst_ct"
+version = "0.0.9"
+authors = [{ name="lpsmodsim", email="modsim@lps.umd.edu" }]
+description = "SST Hierarchical Composition Tool"
+readme = "README.md"
+license = { file="LICENSE" }
+requires-python = ">=3.6"
+dependencies = [
+    "flask",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/lpsmodsimteam/sst-composition-tool"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
