@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sst_ct"
-version = "0.0.9"
+version = "0.0.10"
 authors = [{ name="lpsmodsim", email="modsim@lps.umd.edu" }]
 description = "SST Hierarchical Composition Tool"
 readme = "README.md"

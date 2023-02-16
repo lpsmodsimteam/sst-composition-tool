@@ -1,13 +1,31 @@
+# dev files
+.idea/
+.clang-format
+.vscode/
+
+# CMake
+cmake-build-*/
+CMakeFiles/
+*.cmake
+CMakeCache.txt
+
+# compiled binaries and library objects
+*.so
+*.out
+*.o
+
+# Python environment and cache
 *.pyc
 __pycache__/
 .venv/
 
-.clang-format
-*.pro.user
-.vscode/
+# generated files and executables
+.build/
+build/
+dist/
+*.egg-info/
 
 .env
-build/
 /run.py
 dump.json
 *.xml

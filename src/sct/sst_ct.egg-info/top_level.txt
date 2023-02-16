@@ -1,5 +1,0 @@
-boilerplate
-component
-db
-static
-templates
