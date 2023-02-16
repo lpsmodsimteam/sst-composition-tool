@@ -1,0 +1,30 @@
+Bootstrap: yum
+OSVersion: 8
+MirrorURL: http://packages.oit.ncsu.edu/centos/8-stream/BaseOS/x86_64/os/
+Include: yum
+
+%files
+
+
+
+%post
+    time yum clean all
+    time yum update -y
+    yum install -y dnf-plugins-core
+    yum install -y epel-release
+    yum install -y 'dnf-command(config-manager)'
+    yum config-manager --set-enabled powertools
+    dnf group install -y "Development Tools"
+    time yum install -y \
+               python3 \
+               python3-devel \
+               python3-pip
+
+
+    time yum clean all
+    time python3 -m pip install --upgrade pip --find-links=.
+    time python3 -m pip install --find-links=. --upgrade Pillow
+    time python3 -m pip install --upgrade pip --find-links=. \
+          black \
+          flask
+ 
