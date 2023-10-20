@@ -29,3 +29,4 @@ dist/
 /run.py
 dump.json
 *.xml
+.checkpoints/*.json
