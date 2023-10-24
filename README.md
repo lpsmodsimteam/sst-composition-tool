@@ -1,6 +1,58 @@
 # SST Composition Tool
 
-SST Composition Tool (SCT) is an advanced graphical tool that abstracts away the configuration setups, model compatibility checks, simulation executions, and the statistical analyses of SST within a user-friendly interface. SCT is designed as an [Occam](https://occam.cs.pitt.edu/) object that can be used collaboratively or in closed networks with the option to be later shared with the community.
+SST Composition Tool (SCT) is an advanced graphical tool that abstracts away the configuration setups, model compatibility checks, simulation executions, and the statistical analyses of [Structural Simulation Toolkit (SST)](https://sst-simulator.org/) within a user-friendly interface. SCT is designed as an [Occam](https://occam.cs.pitt.edu/) object that can be used collaboratively or in closed networks with the option to be later shared with the community.
+
+## Motivation
+
+SST, a parallel discrete event simulation framework, allows custom and vendor models to be interconnected to create a system simulation. However, SST has several barriers of entry that amplify its already steep learning curve:
+- C++; SST requires models to be translated into SST Components. This means that rapid prototyping is very difficult and infrequent. Computer architecture models are often written in hardware description languages (VHDL, Verilog, SystemVerilog, etc.) or popular scripting languages (Python, Scala, etc.)
+- MPI; an inherently complex but powerful concept, concurrent programming is crucial for SST’s core functionality. Common issues in this paradigm include interference, race conditions, process creation and termination, shared resources and consistency, synchronization and deadlock, etc.
+
+SCT aims to lower this barrier of entry by abstracting away the complexity under its graphical interface. The main target users of SCT are in fact not experts of SST, but users focused on computer systems, network topologies, system simulations, high-performance computing, and other computer architecture topics. For instance, SCT users are not expected to know the intricate setup and build processes of the `MemHierarchy` Element and its SubComponents, but rather be able to use the Component to rapid prototype a cache system.
+
+### Component Composition
+
+In SCT, the SST configurations are represented in multi-layered workflows composed of graph layouts; nodes are SST Components are represented as nodes and SST Links as the edges. The graphical canvas is similar to [Logisim](https://github.com/logisim-evolution/logisim-evolution), where each components can be composed into groups to create a larger system. The following set of images demonstrate the modular design of Logisim:
+
+![ls_fa_inside](./docs/statics/fa_inside.png)
+
+A simple 1-bit full adder, composed of basic logic gates.
+
+![ls_fa](./docs/statics/fa_2bit_inside.png)
+
+Two 1-bit full adders cascading to form a 2-bit full adder.
+
+![ls_fa_inside](./docs/statics/fa_2bit.png)
+
+A simple 2-bit full adder, composed of two 1-bit full adders.
+
+SCT is highly influenced from this modular design. It allows composition of Components into Grouped Components that can be copied, moved, and saved to create larger systems for SST to simulate.
+
+<img src="./docs/statics/nesting_before.png" width=600>
+
+Two simple 1-bit full adder SST Components.
+
+<img src="./docs/statics/nesting_after.png" width=400>
+
+The two simple 1-bit full adder SST Components being grouped into a Grouped Component.
+
+### External Components
+
+SCT adds support for components in external frameworks and hardware description languages. The external model is wrapped as SST Component and communication is established via inter-process communication.
+
+![external_comp](./docs/statics/external_comp.png)
+
+Sample Components written in Verilog and SystemC.
+
+For more information, see [SST Interoperability Tool](https://github.com/lpsmodsimteam/SIT).
+
+### Simulation Execution
+
+One of the main philosophy behind SCT is encapsulation of the underlying layers involved with running SST simulations. The software allows for the user to execute the SST simulation after being configured without having to leave the graphical interface.
+
+![run](./docs/statics/run.png)
+
+Sample pipeline of the SST experiment being run through SCT.
 
 ## Occam
 
@@ -99,12 +151,12 @@ The following is a non-exhaustive list of Phase 1 features to be added to SCT:
 
 The following is a non-exhaustive list of Phase 2 features to be added to SCT:
 
-- __Grouped Component:__ Ability to group a sub-layout into a Grouped Component.
+- __Composition:__ Ability to group a sub-layout into a Grouped Component.
   - The Grouped Component represents its constituents in an abstract manner.
   - Its ports are the aggregate of all the ports of its constituents.
   - Only unconnected ports within its constituents will be exposed externally.
   - The Grouped Component is accessible as a selectable component in the sidebar.
   - You can replicate the Grouped Component, similar to a regular Component or a sub-layout.
   - Grouped Components can be recursively nested within itself.
-- __External Components:__ Support for Components written in hardware description languages, such as SystemC, PyRTL, and Verilog. This support would be an integration of the [SST Interoperability Tool](https://github.com/lpsmodsimteam/SIT).
+- __External components:__ Support for Components written in hardware description languages, such as SystemC, PyRTL, and Verilog. This support would be an integration of the [SST Interoperability Tool](https://github.com/lpsmodsimteam/SIT).
 - __Advanced command line options:__ Support advanced CLI arugments, such as splitting Components with `-n`.
