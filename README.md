@@ -1,6 +1,8 @@
 # SST Composition Tool
 
-SST Composition Tool (SCT) is an advanced graphical tool that abstracts away the configuration setups, model compatibility checks, simulation executions, and the statistical analyses of [Structural Simulation Toolkit (SST)](https://sst-simulator.org/) within a user-friendly interface. SCT is designed as an [Occam](https://occam.cs.pitt.edu/) object that can be used collaboratively or in closed networks with the option to be later shared with the community.
+The SST Composition Tool (SCT) is an advanced graphical utility meticulously designed to abstract the intricate processes associated with configuring setups, validating model compatibility, executing simulations, and performing in-depth statistical analyses within the expansive [Structural Simulation Toolkit (SST)](https://sst-simulator.org/). This tool operates seamlessly within a user-friendly interface, allowing both newcomers and experienced users to harness the full potential of SST.
+
+SCT is conceptually crafted as an [Occam](https://occam.cs.pitt.edu/) object, which can be utilized both in collaborative work environments and within private networks. What's more, SCT offers the valuable option to share and disseminate its functionality with the broader community.
 
 ## Motivation
 
@@ -100,20 +102,19 @@ The [Workflow UI Widget](https://gitlab.com/wilkie/workflow-widget) is the main 
 
 It is highly recommended for rapid prototyping frontend features of SCT, the widget can be used independently from Occam. To set up the example layouts:
 - Clone the repository: `git clone https://gitlab.com/wilkie/workflow-widget`
-- Run a local web server and navigate to the examples directory. This can be achieved in numerous ways; running a Python web server is one approach: `python -m http.server`.
+- Run a local web server and navigate to the examples directory. This can be achieved in numerous ways; running a Python web server is one approach: `python -m http.server`
 
 #### Execution
 
 Once all of the dependencies are installed, run the kernel and the web client simultaneously.
 
-To run the kernel, from the root directory run the binary: `./bin/occam daemon run`.
+To run the kernel, from the root directory run the binary: `./bin/occam daemon run`
 
-To run the web client, from the root directory run the script `./start.sh`.
+To run the web client, from the root directory run the script `./start.sh`
 
 The default port of the local instance of Occam is 9292.
 
 ## Features and Requirements
-
 
 ### Existing Features
 
@@ -159,4 +160,4 @@ The following is a non-exhaustive list of Phase 2 features to be added to SCT:
   - You can replicate the Grouped Component, similar to a regular Component or a sub-layout.
   - Grouped Components can be recursively nested within itself.
 - __External components:__ Support for Components written in hardware description languages, such as SystemC, PyRTL, and Verilog. This support would be an integration of the [SST Interoperability Tool](https://github.com/lpsmodsimteam/SIT).
-- __Advanced command line options:__ Support advanced CLI arugments, such as splitting Components with `-n`.
+- __Advanced command line options:__ Support advanced CLI arguments, such as splitting Components with `-n`.
